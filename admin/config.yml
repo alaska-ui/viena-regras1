@@ -1,0 +1,93 @@
+# Editor oficial da Viena RP
+# O painel salva as alterações diretamente no GitHub.
+backend:
+  name: github
+  repo: alaska-ui/viena-regras1
+  branch: main
+  auth_methods:
+    - token
+
+media_folder: /uploads
+public_folder: /uploads
+
+collections:
+  - name: site
+    label: "🎨 Site e Layout"
+    files:
+      - name: settings
+        label: "Configurações do Site"
+        file: content/site.json
+        format: json
+        fields:
+          - { name: site_name, label: "Nome da cidade", widget: string }
+          - { name: site_title, label: "Título principal", widget: string }
+          - { name: tagline, label: "Bordão", widget: string }
+          - { name: description, label: "Descrição", widget: text }
+          - { name: logo, label: "Logo", widget: image }
+          - { name: favicon, label: "Favicon", widget: image, required: false }
+          - { name: discord_url, label: "Link do Discord", widget: string, required: false }
+          - { name: hero_eyebrow, label: "Texto pequeno do topo", widget: string }
+          - { name: hero_title, label: "Título da capa", widget: string }
+          - { name: hero_text, label: "Texto da capa", widget: text }
+          - { name: hero_image, label: "Imagem da capa", widget: image, required: false }
+          - { name: notice_title, label: "Título do aviso", widget: string }
+          - { name: notice_text, label: "Texto do aviso", widget: text }
+          - { name: footer_text, label: "Rodapé", widget: string }
+          - name: theme
+            label: "Cores"
+            widget: object
+            fields:
+              - { name: accent, label: "Cor principal", widget: color }
+              - { name: accent_light, label: "Cor secundária", widget: color }
+              - { name: background, label: "Fundo", widget: color }
+              - { name: surface, label: "Cards", widget: color }
+              - { name: text, label: "Texto", widget: color }
+              - { name: muted, label: "Texto secundário", widget: color }
+          - name: layout
+            label: "Elementos visíveis"
+            widget: object
+            fields:
+              - { name: show_search, label: "Mostrar pesquisa", widget: boolean }
+              - { name: show_updates, label: "Mostrar últimas alterações", widget: boolean }
+              - { name: show_notice, label: "Mostrar aviso", widget: boolean }
+              - { name: show_hero_image, label: "Mostrar imagem da capa", widget: boolean }
+              - { name: show_admin_link, label: "Mostrar link admin no site", widget: boolean }
+
+  - name: rules
+    label: "📕 Regras"
+    files:
+      - name: database
+        label: "Categorias e Regras"
+        file: content/rules.json
+        format: json
+        fields:
+          - name: categories
+            label: "Categorias"
+            widget: list
+            summary: "{{code}} — {{short}}"
+            fields:
+              - { name: id, label: "ID (sem espaços)", widget: string }
+              - { name: code, label: "Código", widget: string }
+              - { name: name, label: "Nome exibido", widget: string }
+              - { name: short, label: "Nome curto", widget: string }
+              - { name: desc, label: "Descrição", widget: text }
+              - { name: image, label: "Imagem da categoria", widget: image, required: false }
+              - name: rules
+                label: "Regras desta categoria"
+                widget: list
+                summary: "{{code}} — {{title}}"
+                fields:
+                  - { name: code, label: "Código da regra", widget: string }
+                  - { name: title, label: "Título", widget: string }
+                  - { name: text, label: "Texto da regra", widget: richtext }
+                  - { name: tag, label: "Tag", widget: string }
+                  - { name: image, label: "Imagem da regra", widget: image, required: false }
+          - name: updates
+            label: "Últimas alterações"
+            widget: list
+            summary: "{{date}} — {{title}}"
+            fields:
+              - { name: date, label: "Data", widget: string }
+              - { name: title, label: "Título", widget: string }
+              - { name: text, label: "Texto", widget: string }
+              - { name: tag, label: "Categoria", widget: string }

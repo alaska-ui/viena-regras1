@@ -1,0 +1,31 @@
+{
+  "site_name": "Viena Roleplay",
+  "site_title": "Código da Rua",
+  "tagline": "Quem vive Viena faz história.",
+  "description": "Central oficial de regras da Viena Roleplay.",
+  "logo": "/logo-viena.png",
+  "favicon": "/logo-viena.png",
+  "discord_url": "#",
+  "hero_eyebrow": "CENTRAL OFICIAL DE REGRAS",
+  "hero_title": "O CÓDIGO DA RUA.",
+  "hero_text": "As regras que mantêm Viena viva. Leia, entenda e faça parte da história.",
+  "hero_image": "",
+  "notice_title": "LEIA ANTES DE JOGAR",
+  "notice_text": "Desconhecer uma regra não isenta o jogador de sua responsabilidade.",
+  "footer_text": "© 2026 Viena Roleplay · Todos os direitos reservados.",
+  "theme": {
+    "accent": "#E50914",
+    "accent_light": "#FF3344",
+    "background": "#080808",
+    "surface": "#111111",
+    "text": "#F4F4F4",
+    "muted": "#9A9A9A"
+  },
+  "layout": {
+    "show_search": true,
+    "show_updates": true,
+    "show_notice": true,
+    "show_hero_image": true,
+    "show_admin_link": false
+  }
+}
