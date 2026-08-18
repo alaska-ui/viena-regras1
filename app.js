@@ -7,13 +7,15 @@ async function load(){
 function applySite(){
   const s=state.site, t=s.theme||{};
   for(const [k,v] of Object.entries(t)) document.documentElement.style.setProperty("--"+(k==="accent_light"?"accent2":k),v);
-  $("headerLogo").src=s.logo||"/logo-viena.png"; $("headerLogo").alt=s.site_name;
-  $("favicon").href=s.favicon||s.logo||"/logo-viena.png";
+  $(\"headerLogo\").src=s.logo||\"logo-viena.png\"; $("headerLogo").alt=s.site_name;
+  $(\"favicon\").href=s.favicon||s.logo||\"logo-viena.png\";
   $("brandTitle").textContent=s.site_title||"CÓDIGO DA RUA"; $("brandSite").textContent=(s.site_name||"VIENA ROLEPLAY").toUpperCase();
   $("heroEyebrow").textContent=s.hero_eyebrow||""; $("heroTitle").textContent=s.hero_title||"";
   $("heroText").textContent=s.hero_text||""; $("noticeTitle").textContent=s.notice_title||""; $("noticeText").textContent=s.notice_text||"";
   $("footerText").textContent=s.footer_text||"";
-  $("discordBtn").href=s.discord_url||"#";
+  $(\"discordBtn\").href=s.discord_url||\"#\";
+$(\"discordBtn\").target=\"_blank\";
+$(\"discordBtn\").rel=\"noopener noreferrer\";
   $("notice").style.display=s.layout?.show_notice===false?"none":"flex";
   $("updatesWrap").style.display=s.layout?.show_updates===false?"none":"block";
   $("searchOpen").style.display=s.layout?.show_search===false?"none":"block";
