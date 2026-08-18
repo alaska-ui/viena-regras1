@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Código da Rua — Central de Regras Viena Roleplay">
+  <title>Código da Rua — Viena RP</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="noise"></div>
+  <header class="topbar">
+    <button class="mobile-menu" id="mobileMenu" aria-label="Abrir menu">☰</button>
+    <a class="brand" href="#inicio" data-route="inicio">
+      <img src="logo-viena.png" alt="Viena Roleplay">
+      <span>CÓDIGO DA RUA</span>
+    </a>
+    <div class="top-actions">
+      <button id="searchOpen" class="icon-btn" title="Pesquisar">⌕</button>
+      <a href="#" class="discord-btn">DISCORD</a>
+    </div>
+  </header>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="side-label">VIENA ROLEPLAY</div>
+    <nav id="nav"></nav>
+    <div class="side-footer">QUEM VIVE VIENA<br><strong>FAZ HISTÓRIA.</strong></div>
+  </aside>
+
+  <main class="content">
+    <section id="inicio" class="page active">
+      <div class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">CENTRAL OFICIAL DE REGRAS</p>
+          <h1>O CÓDIGO<br><span>DA RUA.</span></h1>
+          <p class="hero-text">As regras que mantêm Viena viva. Leia, entenda e faça parte da história.</p>
+          <div class="hero-actions">
+            <button class="primary" data-route="corridas">EXPLORAR CORRIDAS <span>→</span></button>
+            <button class="ghost" data-route="gerais">VER TODAS AS REGRAS</button>
+          </div>
+        </div>
+        <div class="hero-mark"><div>VRP</div><span>EST. 2026</span></div>
+      </div>
+
+      <div class="notice">
+        <div class="notice-icon">!</div>
+        <div><strong>LEIA ANTES DE JOGAR</strong><p>Desconhecer uma regra não isenta o jogador de sua responsabilidade.</p></div>
+      </div>
+
+      <div class="section-head"><div><span>01</span><h2>MAPA DA RUA</h2></div><p>Escolha uma categoria para começar.</p></div>
+      <div class="category-grid" id="homeCategories"></div>
+
+      <div class="updates">
+        <div class="section-head"><div><span>02</span><h2>ÚLTIMAS ALTERAÇÕES</h2></div></div>
+        <div id="updatesList"></div>
+      </div>
+    </section>
+
+    <section id="categoryPage" class="page">
+      <button class="back" data-route="inicio">← VOLTAR AO MAPA</button>
+      <div class="category-title">
+        <p class="eyebrow" id="catCode"></p>
+        <h1 id="catTitle"></h1>
+        <p id="catDesc"></p>
+      </div>
+      <div class="rule-layout">
+        <div class="rule-list" id="ruleList"></div>
+        <aside class="rule-toc" id="ruleToc"></aside>
+      </div>
+    </section>
+
+    <section id="searchPage" class="page">
+      <button class="back" data-route="inicio">← VOLTAR</button>
+      <div class="category-title">
+        <p class="eyebrow">PESQUISA</p>
+        <h1>ENCONTRE A REGRA.</h1>
+        <input id="searchInput" class="big-search" placeholder="Digite uma palavra, exemplo: RDM, PIT, corrida..." autocomplete="off">
+      </div>
+      <div id="searchResults" class="search-results"></div>
+    </section>
+
+    <section id="adminPage" class="page">
+      <button class="back" data-route="inicio">← VOLTAR</button>
+      <div class="category-title">
+        <p class="eyebrow">PAINEL LOCAL</p>
+        <h1>EDITOR DE REGRAS.</h1>
+        <p>Editor demonstrativo salvo no navegador. Para produção, ligue este painel a um banco de dados/login.</p>
+      </div>
+      <div class="admin-box">
+        <label>Senha do painel</label>
+        <input id="adminPassword" type="password" placeholder="Senha">
+        <button class="primary" id="adminLogin">ENTRAR</button>
+        <div id="adminEditor" hidden>
+          <label>Categoria</label>
+          <select id="adminCategory"></select>
+          <label>Título</label>
+          <input id="adminRuleTitle">
+          <label>Texto</label>
+          <textarea id="adminRuleText" rows="7"></textarea>
+          <button class="primary" id="adminSave">SALVAR REGRA</button>
+          <p class="admin-note">Nesta versão inicial, as alterações ficam no localStorage deste navegador.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>© 2026 Viena Roleplay · Todos os direitos reservados. · <button id="adminLink">ADMIN</button></footer>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <button id="searchClose">×</button>
+      <p class="eyebrow">PESQUISA RÁPIDA</p>
+      <h2>QUAL REGRA VOCÊ PROCURA?</h2>
+      <input id="overlaySearch" autofocus placeholder="Ex.: VDM, metagaming, PIT...">
+      <div id="overlayResults"></div>
+    </div>
+  </div>
+
+<script src="app.js"></script>
+</body>
+</html>
