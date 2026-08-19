@@ -53,6 +53,17 @@ collections:
               - { name: show_hero_image, label: "Mostrar imagem da capa", widget: boolean }
               - { name: show_admin_link, label: "Mostrar link admin no site", widget: boolean }
 
+                        - name: cursor
+            label: "🖱️ Cursor e rastro"
+            widget: object
+            fields:
+              - { name: enabled, label: "Ativar cursor personalizado", widget: boolean, default: true }
+              - { name: image, label: "Ícone do cursor", widget: image, required: false }
+              - { name: size, label: "Tamanho do ícone", widget: number, value_type: int, min: 12, max: 96, default: 34 }
+              - { name: trail_enabled, label: "Ativar rastro vermelho", widget: boolean, default: true }
+              - { name: trail_color, label: "Cor do rastro", widget: color, default: "#e50914" }
+              - { name: trail_count, label: "Quantidade de partículas", widget: number, value_type: int, min: 2, max: 30, default: 10 }
+
   - name: rules
     label: "📕 Regras"
     files:
@@ -79,7 +90,7 @@ collections:
                 fields:
                   - { name: code, label: "Código da regra", widget: string }
                   - { name: title, label: "Título", widget: string }
-                  - { name: text, label: "Texto da regra", widget: richtext }
+                  - { name: text, label: "Texto da regra", widget: markdown }
                   - { name: tag, label: "Tag", widget: string }
                   - { name: image, label: "Imagem da regra", widget: image, required: false }
           - name: updates
