@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
 
@@ -21,20 +22,44 @@
 
   <title>Viena RP — Código da Rua</title>
 
-  <link rel="stylesheet" href="style.css">
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
 </head>
 
 <body>
 
+  <!-- RUÍDO DE FUNDO -->
+  <div class="noise"></div>
+
   <!-- CURSOR -->
-  <div id="customCursor" class="custom-cursor"></div>
+  <div
+    class="custom-cursor"
+    id="customCursor"
+  ></div>
 
-  <!-- TRAÇO DO CURSOR -->
-  <div id="cursorTrail"></div>
+  <div
+    class="cursor-dot"
+    id="cursorDot"
+  ></div>
 
-  <!-- ================= HEADER ================= -->
+
+  <!-- =====================================================
+       TOPO
+       ===================================================== -->
 
   <header class="topbar">
+
+    <button
+      class="mobile-menu"
+      id="mobileMenu"
+      type="button"
+      aria-label="Abrir menu"
+    >
+      ☰
+    </button>
+
 
     <a
       class="brand"
@@ -48,7 +73,7 @@
         alt="Viena Roleplay"
       >
 
-      <div class="brand-text">
+      <div>
 
         <strong id="brandTitle">
           CÓDIGO DA RUA
@@ -61,6 +86,7 @@
       </div>
 
     </a>
+
 
     <div class="top-actions">
 
@@ -88,7 +114,9 @@
   </header>
 
 
-  <!-- ================= SIDEBAR ================= -->
+  <!-- =====================================================
+       MENU LATERAL
+       ===================================================== -->
 
   <aside
     class="sidebar"
@@ -103,7 +131,9 @@
 
     <div class="side-footer">
 
-      QUEM VIVE VIENA<br>
+      QUEM VIVE VIENA
+
+      <br>
 
       <strong>
         FAZ HISTÓRIA.
@@ -114,34 +144,23 @@
   </aside>
 
 
-  <!-- ================= CONTEÚDO ================= -->
+  <!-- =====================================================
+       CONTEÚDO
+       ===================================================== -->
 
   <main class="content">
 
-    <!-- ================= INÍCIO ================= -->
+
+    <!-- ===================================================
+         INÍCIO
+         =================================================== -->
 
     <section
       id="inicio"
       class="page active"
     >
 
-      <!-- HERO -->
-
-      <div
-        class="hero"
-        id="hero"
-      >
-
-        <!-- IMAGEM DE FUNDO -->
-        <div
-          class="hero-background"
-          id="heroBackground"
-        ></div>
-
-        <!-- GRADIENTE -->
-        <div class="hero-gradient"></div>
-
-        <!-- CONTEÚDO -->
+      <div class="hero">
 
         <div class="hero-copy">
 
@@ -157,6 +176,7 @@
             id="heroText"
           ></p>
 
+
           <div class="hero-actions">
 
             <button
@@ -168,6 +188,7 @@
               <span>→</span>
             </button>
 
+
             <button
               class="ghost"
               data-route="gerais"
@@ -177,6 +198,21 @@
             </button>
 
           </div>
+
+        </div>
+
+
+        <!-- IMAGEM CONFIGURADA NO ADMIN -->
+
+        <div
+          class="hero-art"
+          id="heroArt"
+        >
+
+          <img
+            id="heroImage"
+            alt=""
+          >
 
         </div>
 
@@ -196,16 +232,20 @@
 
         <div>
 
-          <strong id="noticeTitle"></strong>
+          <strong
+            id="noticeTitle"
+          ></strong>
 
-          <p id="noticeText"></p>
+          <p
+            id="noticeText"
+          ></p>
 
         </div>
 
       </div>
 
 
-      <!-- MAPA -->
+      <!-- CATEGORIAS -->
 
       <div class="section-head">
 
@@ -234,7 +274,7 @@
       ></div>
 
 
-      <!-- ALTERAÇÕES -->
+      <!-- ATUALIZAÇÕES -->
 
       <div
         class="updates"
@@ -264,7 +304,9 @@
     </section>
 
 
-    <!-- ================= CATEGORIA ================= -->
+    <!-- ===================================================
+         CATEGORIA
+         =================================================== -->
 
     <section
       id="categoryPage"
@@ -292,9 +334,13 @@
             id="catCode"
           ></p>
 
-          <h1 id="catTitle"></h1>
+          <h1
+            id="catTitle"
+          ></h1>
 
-          <p id="catDesc"></p>
+          <p
+            id="catDesc"
+          ></p>
 
         </div>
 
@@ -308,6 +354,7 @@
           id="ruleList"
         ></div>
 
+
         <aside
           class="rule-toc"
           id="ruleToc"
@@ -318,7 +365,9 @@
     </section>
 
 
-    <!-- ================= PESQUISA ================= -->
+    <!-- ===================================================
+         PESQUISA
+         =================================================== -->
 
     <section
       id="searchPage"
@@ -334,7 +383,9 @@
       </button>
 
 
-      <div class="category-title search-title">
+      <div
+        class="category-title search-title"
+      >
 
         <p class="eyebrow">
           PESQUISA
@@ -343,6 +394,7 @@
         <h1>
           ENCONTRE A REGRA.
         </h1>
+
 
         <input
           id="searchInput"
@@ -364,12 +416,16 @@
   </main>
 
 
-  <!-- ================= RODAPÉ ================= -->
+  <!-- =====================================================
+       FOOTER
+       ===================================================== -->
 
   <footer id="footerText"></footer>
 
 
-  <!-- ================= PESQUISA OVERLAY ================= -->
+  <!-- =====================================================
+       PESQUISA OVERLAY
+       ===================================================== -->
 
   <div
     class="search-overlay"
@@ -393,20 +449,27 @@
         QUAL REGRA VOCÊ PROCURA?
       </h2>
 
+
       <input
         id="overlaySearch"
         placeholder="Ex.: VDM, metagaming, PIT..."
         autocomplete="off"
       >
 
-      <div id="overlayResults"></div>
+
+      <div
+        id="overlayResults"
+      ></div>
 
     </div>
 
   </div>
 
 
+  <!-- JAVASCRIPT -->
+
   <script src="app.js"></script>
 
 </body>
+
 </html>
