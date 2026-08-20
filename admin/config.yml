@@ -27,19 +27,19 @@ collections:
 
         fields:
 
-          - { name: site_name, label: "Nome da cidade", widget: string }
-          - { name: site_title, label: "Título principal", widget: string }
-          - { name: tagline, label: "Bordão", widget: string }
-          - { name: description, label: "Descrição", widget: text }
+          - { name: site_name, label: "Nome da cidade", widget: string, required: false }
+          - { name: site_title, label: "Título principal", widget: string, required: false }
+          - { name: tagline, label: "Bordão", widget: string, required: false }
+          - { name: description, label: "Descrição", widget: text, required: false }
 
-          - { name: logo, label: "Logo", widget: image }
+          - { name: logo, label: "Logo", widget: image, required: false }
           - { name: favicon, label: "Favicon", widget: image, required: false }
 
           - { name: discord_url, label: "Link do Discord", widget: string, required: false }
 
-          - { name: hero_eyebrow, label: "Texto pequeno da capa", widget: string }
-          - { name: hero_title, label: "Título da capa", widget: string }
-          - { name: hero_text, label: "Texto da capa", widget: text }
+          - { name: hero_eyebrow, label: "Texto pequeno da capa", widget: string, required: false }
+          - { name: hero_title, label: "Título da capa", widget: string, required: false }
+          - { name: hero_text, label: "Texto da capa", widget: text, required: false }
 
           - {
               name: hero_image,
@@ -48,9 +48,9 @@ collections:
               required: false
             }
 
-          - { name: notice_title, label: "Título do aviso", widget: string }
-          - { name: notice_text, label: "Texto do aviso", widget: text }
-          - { name: footer_text, label: "Rodapé", widget: string }
+          - { name: notice_title, label: "Título do aviso", widget: string, required: false }
+          - { name: notice_text, label: "Texto do aviso", widget: text, required: false }
+          - { name: footer_text, label: "Rodapé", widget: string, required: false }
 
           # -------------------------------------------------
           # CORES
@@ -60,14 +60,15 @@ collections:
             label: "🎨 Cores"
             widget: object
             collapsed: true
+            required: false
 
             fields:
-              - { name: accent, label: "Cor principal", widget: color }
-              - { name: accent_light, label: "Cor secundária", widget: color }
-              - { name: background, label: "Fundo", widget: color }
-              - { name: surface, label: "Cards", widget: color }
-              - { name: text, label: "Texto", widget: color }
-              - { name: muted, label: "Texto secundário", widget: color }
+              - { name: accent, label: "Cor principal", widget: color, required: false }
+              - { name: accent_light, label: "Cor secundária", widget: color, required: false }
+              - { name: background, label: "Fundo", widget: color, required: false }
+              - { name: surface, label: "Cards", widget: color, required: false }
+              - { name: text, label: "Texto", widget: color, required: false }
+              - { name: muted, label: "Texto secundário", widget: color, required: false }
 
           # -------------------------------------------------
           # ELEMENTOS
@@ -77,13 +78,14 @@ collections:
             label: "👁️ Elementos visíveis"
             widget: object
             collapsed: true
+            required: false
 
             fields:
-              - { name: show_search, label: "Mostrar pesquisa", widget: boolean }
-              - { name: show_updates, label: "Mostrar últimas alterações", widget: boolean }
-              - { name: show_notice, label: "Mostrar aviso", widget: boolean }
-              - { name: show_hero_image, label: "Mostrar imagem de fundo da capa", widget: boolean }
-              - { name: show_admin_link, label: "Mostrar link admin no site", widget: boolean }
+              - { name: show_search, label: "Mostrar pesquisa", widget: boolean, required: false }
+              - { name: show_updates, label: "Mostrar últimas alterações", widget: boolean, required: false }
+              - { name: show_notice, label: "Mostrar aviso", widget: boolean, required: false }
+              - { name: show_hero_image, label: "Mostrar imagem de fundo da capa", widget: boolean, required: false }
+              - { name: show_admin_link, label: "Mostrar link admin no site", widget: boolean, required: false }
 
           # -------------------------------------------------
           # CURSOR
@@ -93,13 +95,15 @@ collections:
             label: "🖱️ Cursor e rastro"
             widget: object
             collapsed: true
+            required: false
 
             fields:
               - {
                   name: enabled,
                   label: "Ativar cursor personalizado",
                   widget: boolean,
-                  default: true
+                  default: true,
+                  required: false
                 }
 
               - {
@@ -116,21 +120,24 @@ collections:
                   value_type: int,
                   min: 12,
                   max: 96,
-                  default: 34
+                  default: 34,
+                  required: false
                 }
 
               - {
                   name: trail_enabled,
                   label: "Ativar rastro",
                   widget: boolean,
-                  default: true
+                  default: true,
+                  required: false
                 }
 
               - {
                   name: trail_color,
                   label: "Cor do rastro",
                   widget: color,
-                  default: "#e50914"
+                  default: "#e50914",
+                  required: false
                 }
 
               - {
@@ -140,7 +147,8 @@ collections:
                   value_type: int,
                   min: 2,
                   max: 30,
-                  default: 10
+                  default: 10,
+                  required: false
                 }
 
 
@@ -163,6 +171,7 @@ collections:
           - name: categories
             label: "Categorias"
             widget: list
+            required: false
 
             summary: "{{code}} — {{short}}"
 
@@ -174,31 +183,36 @@ collections:
                   name: id,
                   label: "ID da categoria",
                   widget: string,
+                  required: false,
                   hint: "NÃO altere este campo depois que a categoria estiver publicada."
                 }
 
               - {
                   name: code,
                   label: "Código",
-                  widget: string
+                  widget: string,
+                  required: false
                 }
 
               - {
                   name: name,
                   label: "Nome exibido",
-                  widget: string
+                  widget: string,
+                  required: false
                 }
 
               - {
                   name: short,
                   label: "Nome curto",
-                  widget: string
+                  widget: string,
+                  required: false
                 }
 
               - {
                   name: desc,
                   label: "Descrição",
-                  widget: text
+                  widget: text,
+                  required: false
                 }
 
               - {
@@ -215,10 +229,11 @@ collections:
               - name: rules
                 label: "📌 Regras desta categoria"
                 widget: list
+                required: false
 
                 summary: "{{code}} — {{title}}"
 
-                hint: "Adicione uma regra preenchendo Código, Título, Texto e Tag. A imagem é opcional."
+                hint: "Todos os campos são opcionais. Preencha somente o que quiser."
 
                 fields:
 
@@ -226,19 +241,22 @@ collections:
                       name: code,
                       label: "1. Código da regra",
                       widget: string,
+                      required: false,
                       hint: "Exemplo: 02.11"
                     }
 
                   - {
                       name: title,
                       label: "2. Título da regra",
-                      widget: string
+                      widget: string,
+                      required: false
                     }
 
                   - {
                       name: text,
                       label: "3. Texto da regra",
                       widget: text,
+                      required: false,
                       hint: "Escreva normalmente. Não precisa usar o editor avançado."
                     }
 
@@ -246,6 +264,7 @@ collections:
                       name: tag,
                       label: "4. Tag",
                       widget: string,
+                      required: false,
                       default: "REGRA"
                     }
 
@@ -264,12 +283,13 @@ collections:
           - name: updates
             label: "📝 Últimas alterações"
             widget: list
+            required: false
 
             summary: "{{date}} — {{title}}"
 
             fields:
 
-              - { name: date, label: "Data", widget: string }
-              - { name: title, label: "Título", widget: string }
-              - { name: text, label: "Texto", widget: string }
-              - { name: tag, label: "Categoria", widget: string }
+              - { name: date, label: "Data", widget: string, required: false }
+              - { name: title, label: "Título", widget: string, required: false }
+              - { name: text, label: "Texto", widget: string, required: false }
+              - { name: tag, label: "Categoria", widget: string, required: false }
