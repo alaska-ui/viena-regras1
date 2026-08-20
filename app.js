@@ -1,109 +1,78 @@
+/* =========================================================
+   VIENA RP — APP.JS
+========================================================= */
+
 const state = {
-  site: {},
-  data: {
-    categories: [],
-    updates: []
-  }
+  site: null,
+  data: null
 };
 
 const $ = id => document.getElementById(id);
 
 
-/* =========================
-   CURSOR
-========================= */
+/* =========================================================
+   CONVERTER CAMINHOS DO ADMIN PARA GITHUB PAGES
+========================================================= */
 
-const customCursor = $("customCursor");
-const cursorDot = $("cursorDot");
+function assetUrl(value) {
 
-let mouseX = 0;
-let mouseY = 0;
+  if (!value) return "";
 
-document.addEventListener("mousemove", e => {
+  value = String(value).trim();
 
-  mouseX = e.clientX;
-  mouseY = e.clientY;
+  if (!value) return "";
 
-  if (customCursor) {
-    customCursor.style.left = mouseX + "px";
-    customCursor.style.top = mouseY + "px";
+  /*
+    Se o Admin salvou:
+
+    /uploads/imagem.png
+
+    o GitHub Pages precisa procurar:
+
+    ./uploads/imagem.png
+
+    dentro do repositório.
+  */
+
+  if (value.startsWith("/uploads/")) {
+    return "./uploads/" + value.substring(9);
   }
 
-  if (cursorDot) {
-    cursorDot.style.left = mouseX + "px";
-    cursorDot.style.top = mouseY + "px";
+  /*
+    Caso o Admin tenha salvo /logo-viena.png
+  */
+
+  if (
+    value.startsWith("/") &&
+    !value.startsWith("//")
+  ) {
+    return "." + value;
   }
 
-});
+  return value;
+}
 
 
-document.addEventListener(
-  "mouseover",
-  e => {
-
-    const target =
-      e.target.closest(
-        "a, button, input, textarea, select, [data-route], .cat-card, .result"
-      );
-
-    if (
-      target &&
-      customCursor
-    ) {
-      customCursor.classList.add(
-        "cursor-hover"
-      );
-    }
-
-  }
-);
-
-
-document.addEventListener(
-  "mouseout",
-  e => {
-
-    const target =
-      e.target.closest(
-        "a, button, input, textarea, select, [data-route], .cat-card, .result"
-      );
-
-    if (
-      target &&
-      customCursor
-    ) {
-      customCursor.classList.remove(
-        "cursor-hover"
-      );
-    }
-
-  }
-);
-
-
-/* =========================
-   CARREGAMENTO
-========================= */
+/* =========================================================
+   CARREGAR JSON
+========================================================= */
 
 async function load() {
 
   try {
 
-    const siteResponse =
-      await fetch(
-        "content/site.json",
-        {
-          cache: "no-store"
-        }
-      );
+    const [siteResponse, rulesResponse] =
+      await Promise.all([
 
-    const rulesResponse =
-      await fetch(
-        "content/rules.json",
-        {
+        fetch("./content/site.json", {
           cache: "no-store"
-        }
-      );
+        }),
+
+        fetch("./content/rules.json", {
+          cache: "no-store"
+        })
+
+      ]);
 
 
     if (!siteResponse.ok) {
@@ -126,62 +95,42 @@ async function load() {
       await rulesResponse.json();
 
 
-    if (
-      !Array.isArray(
-        state.data.categories
-      )
-    ) {
-      state.data.categories = [];
-    }
-
-
-    if (
-      !Array.isArray(
-        state.data.updates
-      )
-    ) {
-      state.data.updates = [];
-    }
-
-
     applySite();
 
     renderNav();
 
     renderHome();
 
+    setupCursor();
 
-    const current =
-      location.hash
-        .replace("#", "")
-        .trim() || "inicio";
+    setupEvents();
 
-    route(current);
+
+    route(
+      location.hash.replace("#", "")
+      || "inicio"
+    );
 
   }
 
   catch (error) {
 
-    console.error(
-      "ERRO AO CARREGAR:",
-      error
-    );
+    console.error(error);
 
-    showError(error);
+    showError(error.message);
 
   }
 
 }
 
 
-/* =========================
+/* =========================================================
    CONFIGURAÇÕES DO SITE
-========================= */
+========================================================= */
 
 function applySite() {
 
-  const s =
-    state.site || {};
+  const s = state.site || {};
 
   const theme =
     s.theme || {};
@@ -197,7 +146,8 @@ function applySite() {
     document.documentElement
       .style
       .setProperty(
-        "--" + (
+        "--" +
+        (
           key === "accent_light"
             ? "accent2"
             : key
@@ -211,8 +161,11 @@ function applySite() {
   /* LOGO */
 
   const logo =
-    s.logo ||
-    "logo-viena.png";
+    assetUrl(
+      s.logo ||
+      s.logo_url ||
+      "logo-viena.png"
+    );
 
 
   if ($("headerLogo")) {
@@ -231,13 +184,12 @@ function applySite() {
   if ($("favicon")) {
 
     $("favicon").href =
-      s.favicon ||
       logo;
 
   }
 
 
-  /* NOME */
+  /* TÍTULOS */
 
   $("brandTitle").textContent =
     s.site_title ||
@@ -250,8 +202,6 @@ function applySite() {
       "VIENA ROLEPLAY"
     ).toUpperCase();
 
-
-  /* HERO */
 
   $("heroEyebrow").textContent =
     s.hero_eyebrow ||
@@ -268,34 +218,6 @@ function applySite() {
     "As regras que mantêm Viena viva. Leia, entenda e faça parte da história.";
 
 
-  /* IMAGEM DO HERO */
-
-  if (
-    s.hero_image &&
-    s.hero_image.trim() !== ""
-  ) {
-
-    document.documentElement
-      .style
-      .setProperty(
-        "--hero-image",
-        `url("${s.hero_image}")`
-      );
-
-  } else {
-
-    document.documentElement
-      .style
-      .setProperty(
-        "--hero-image",
-        "none"
-      );
-
-  }
-
-
-  /* AVISO */
-
   $("noticeTitle").textContent =
     s.notice_title ||
     "LEIA ANTES DE JOGAR";
@@ -306,8 +228,6 @@ function applySite() {
     "Desconhecer uma regra não isenta o jogador de sua responsabilidade.";
 
 
-  /* RODAPÉ */
-
   $("footerText").textContent =
     s.footer_text ||
     "© 2026 Viena Roleplay · Todos os direitos reservados.";
@@ -317,6 +237,7 @@ function applySite() {
 
   const discord =
     s.discord_url ||
+    s.discord ||
     "#";
 
 
@@ -332,228 +253,720 @@ function applySite() {
     "noopener noreferrer";
 
 
-  /* ELEMENTOS OPCIONAIS */
+  /*
+    IMPORTANTE:
+
+    Não deixar o Discord ser capturado
+    pelo sistema data-route.
+  */
+
+  $("discordBtn")
+    .removeAttribute("data-route");
+
+
+  /* AVISO */
+
+  $("notice").style.display =
+    s.layout?.show_notice === false
+      ? "none"
+      : "flex";
+
+
+  /* ATUALIZAÇÕES */
+
+  $("updatesWrap").style.display =
+    s.layout?.show_updates === false
+      ? "none"
+      : "block";
+
+
+  /* PESQUISA */
+
+  $("searchOpen").style.display =
+    s.layout?.show_search === false
+      ? "none"
+      : "block";
+
+
+  /* =======================================================
+     IMAGEM DA CAPA
+  ======================================================= */
+
+  const heroImage =
+    assetUrl(
+      s.hero_image ||
+      s.heroImage ||
+      s.cover_image ||
+      s.cover ||
+      ""
+    );
+
+
+  const heroBackground =
+    $("heroBackground");
+
 
   if (
-    s.layout &&
-    s.layout.show_notice === false
+    heroImage &&
+    s.layout?.show_hero_image !== false
   ) {
 
-    $("notice").style.display =
+    heroBackground.style.backgroundImage =
+      `url("${heroImage}")`;
+
+    heroBackground.style.display =
+      "block";
+
+  }
+
+  else {
+
+    heroBackground.style.backgroundImage =
+      "none";
+
+    heroBackground.style.display =
       "none";
 
   }
 
 
-  if (
-    s.layout &&
-    s.layout.show_updates === false
-  ) {
+  /* =======================================================
+     CURSOR
+  ======================================================= */
 
-    $("updatesWrap").style.display =
-      "none";
-
-  }
-
+  setupCursorConfig(s);
 
 }
 
 
-/* =========================
+/* =========================================================
+   CONFIGURAR CURSOR
+========================================================= */
+
+function setupCursorConfig(s) {
+
+  const cursor =
+    $("customCursor");
+
+  if (!cursor) return;
+
+
+  const cursorConfig =
+    s.cursor ||
+    s.cursor_settings ||
+    {};
+
+
+  /*
+    Aceita vários nomes para funcionar
+    com diferentes versões do Admin.
+  */
+
+  const enabled =
+    cursorConfig.enabled !== false &&
+    s.cursor_enabled !== false;
+
+
+  const icon =
+    cursorConfig.icon ||
+    cursorConfig.image ||
+    s.cursor_icon ||
+    s.cursor_image ||
+    s.cursor ||
+    "";
+
+
+  const size =
+    Number(
+      cursorConfig.size ||
+      s.cursor_size ||
+      34
+    );
+
+
+  document.documentElement
+    .style
+    .setProperty(
+      "--cursor-size",
+      Math.max(12, Math.min(size, 100))
+      + "px"
+    );
+
+
+  if (!enabled) {
+
+    cursor.style.display =
+      "none";
+
+    document.body.style.cursor =
+      "auto";
+
+    return;
+  }
+
+
+  cursor.style.display =
+    "block";
+
+
+  cursor.classList.remove(
+    "fallback"
+  );
+
+
+  if (icon) {
+
+    const url =
+      assetUrl(icon);
+
+
+    cursor.style.backgroundImage =
+      `url("${url}")`;
+
+  }
+
+  else {
+
+    cursor.classList.add(
+      "fallback"
+    );
+
+  }
+
+
+  /*
+    TRAÇO
+  */
+
+  const trailEnabled =
+    cursorConfig.trail === true ||
+    s.cursor_trail === true;
+
+
+  window.__cursorTrailEnabled =
+    trailEnabled;
+
+}
+
+
+/* =========================================================
+   CURSOR
+========================================================= */
+
+function setupCursor() {
+
+  const cursor =
+    $("customCursor");
+
+  if (!cursor) return;
+
+
+  let mouseX = -100;
+  let mouseY = -100;
+
+  let currentX = -100;
+  let currentY = -100;
+
+
+  document.addEventListener(
+    "mousemove",
+    event => {
+
+      mouseX =
+        event.clientX;
+
+      mouseY =
+        event.clientY;
+
+      /*
+        O cursor funciona no SITE INTEIRO.
+
+        Não está preso à Home.
+      */
+
+      cursor.style.left =
+        mouseX + "px";
+
+      cursor.style.top =
+        mouseY + "px";
+
+    },
+    {
+      passive: true
+    }
+  );
+
+
+  /*
+    Hover global
+
+    Funciona:
+    Home
+    Categorias
+    Pesquisa
+    Menu
+    Botões
+    Links
+    etc.
+  */
+
+  document.addEventListener(
+    "mouseover",
+    event => {
+
+      const target =
+        event.target.closest(
+          "a, button, input, .cat-card, .result"
+        );
+
+
+      if (target) {
+
+        cursor.classList.add(
+          "hover"
+        );
+
+      }
+
+    }
+  );
+
+
+  document.addEventListener(
+    "mouseout",
+    event => {
+
+      const target =
+        event.target.closest(
+          "a, button, input, .cat-card, .result"
+        );
+
+
+      if (target) {
+
+        cursor.classList.remove(
+          "hover"
+        );
+
+      }
+
+    }
+  );
+
+
+  /*
+    ESCONDER QUANDO SAI DA JANELA
+  */
+
+  document.addEventListener(
+    "mouseleave",
+    () => {
+
+      cursor.style.opacity =
+        "0";
+
+    }
+  );
+
+
+  document.addEventListener(
+    "mouseenter",
+    () => {
+
+      cursor.style.opacity =
+        "1";
+
+    }
+  );
+
+
+  /*
+    TRAÇO
+  */
+
+  document.addEventListener(
+    "mousemove",
+    event => {
+
+      if (
+        !window.__cursorTrailEnabled
+      ) return;
+
+
+      createTrailDot(
+        event.clientX,
+        event.clientY
+      );
+
+    },
+    {
+      passive: true
+    }
+  );
+
+}
+
+
+/* =========================================================
+   TRAÇO
+========================================================= */
+
+function createTrailDot(x, y) {
+
+  const dot =
+    document.createElement("div");
+
+  dot.className =
+    "cursor-trail-dot";
+
+
+  dot.style.left =
+    x + "px";
+
+
+  dot.style.top =
+    y + "px";
+
+
+  document.body.appendChild(dot);
+
+
+  setTimeout(() => {
+
+    dot.style.opacity =
+      "0";
+
+    dot.style.transform =
+      "translate(-50%, -50%) scale(.3)";
+
+  }, 20);
+
+
+  setTimeout(() => {
+
+    dot.remove();
+
+  }, 500);
+
+}
+
+
+/* =========================================================
    MENU
-========================= */
+========================================================= */
+
+function setupEvents() {
+
+  /*
+    BOTÕES DATA-ROUTE
+  */
+
+  document.addEventListener(
+    "click",
+    event => {
+
+      const target =
+        event.target.closest(
+          "[data-route]"
+        );
+
+
+      if (!target) return;
+
+
+      event.preventDefault();
+
+
+      const routeId =
+        target.dataset.route;
+
+
+      route(routeId);
+
+
+      history.replaceState(
+        null,
+        "",
+        "#" + routeId
+      );
+
+    }
+  );
+
+
+  /*
+    PESQUISA
+  */
+
+  $("searchOpen").onclick =
+    () => {
+
+      $("searchOverlay")
+        .classList.add("open");
+
+      setTimeout(() => {
+
+        $("overlaySearch")
+          .focus();
+
+      }, 50);
+
+    };
+
+
+  $("searchClose").onclick =
+    () => {
+
+      $("searchOverlay")
+        .classList.remove("open");
+
+    };
+
+
+  $("overlaySearch").oninput =
+    event => {
+
+      search(
+        event.target.value,
+        $("overlayResults")
+      );
+
+    };
+
+
+  $("searchInput").oninput =
+    event => {
+
+      search(
+        event.target.value,
+        $("searchResults")
+      );
+
+    };
+
+
+  /*
+    ESC
+  */
+
+  document.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key === "Escape"
+      ) {
+
+        $("searchOverlay")
+          .classList.remove("open");
+
+      }
+
+    }
+  );
+
+
+  /*
+    FECHAR OVERLAY CLICANDO FORA
+  */
+
+  $("searchOverlay").addEventListener(
+    "click",
+    event => {
+
+      if (
+        event.target ===
+        $("searchOverlay")
+      ) {
+
+        $("searchOverlay")
+          .classList.remove("open");
+
+      }
+
+    }
+  );
+
+
+  /*
+    HASH
+  */
+
+  window.addEventListener(
+    "hashchange",
+    () => {
+
+      route(
+        location.hash.replace("#", "")
+        || "inicio"
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   MENU LATERAL
+========================================================= */
 
 function renderNav() {
 
-  const nav =
-    $("nav");
-
-  if (!nav) return;
+  const categories =
+    state.data?.categories || [];
 
 
-  nav.innerHTML =
-    state.data.categories
-      .map(category => {
+  $("nav").innerHTML =
+    categories
+      .map(category => `
 
-        return `
-          <button
-            type="button"
-            data-route="${escapeHtml(category.id)}"
-          >
-            <span>
-              ${escapeHtml(category.code || "")}
-            </span>
+        <button
+          type="button"
+          data-route="${category.id}"
+        >
 
-            ${escapeHtml(
-              category.short ||
-              category.name ||
-              ""
-            )}
-          </button>
-        `;
+          <span>
+            ${category.code}
+          </span>
 
-      })
+          ${category.short}
+
+        </button>
+
+      `)
       .join("");
 
 }
 
 
-/* =========================
+/* =========================================================
    HOME
-========================= */
+========================================================= */
 
 function renderHome() {
 
-  const container =
-    $("homeCategories");
+  const categories =
+    state.data?.categories || [];
 
 
-  if (!container) return;
+  $("homeCategories").innerHTML =
+    categories
+      .map(category => `
+
+        <article
+          class="cat-card"
+          data-route="${category.id}"
+        >
+
+          <div class="num">
+
+            ${category.code}
+            / VIENA
+
+          </div>
 
 
-  container.innerHTML =
-    state.data.categories
-      .map(category => {
+          ${
+            category.image
 
-        const image =
-          category.image ||
-          "";
+              ? `
 
+                <img
+                  class="card-image"
+                  src="${assetUrl(category.image)}"
+                  alt=""
+                >
 
-        return `
-          <article
-            class="cat-card"
-            data-route="${escapeHtml(category.id)}"
-          >
+              `
 
-            ${
-              image
-                ? `
-                  <img
-                    class="card-image"
-                    src="${escapeHtml(image)}"
-                    alt=""
-                    loading="lazy"
-                  >
-                `
-                : ""
-            }
+              : ""
+          }
 
 
-            <div class="num">
-              ${escapeHtml(
-                category.code || ""
-              )}
-              / VIENA
-            </div>
+          <h3>
+            ${category.short}
+          </h3>
 
 
-            <h3>
-              ${escapeHtml(
-                category.short ||
-                category.name ||
-                ""
-              )}
-            </h3>
+          <p>
+            ${category.desc || ""}
+          </p>
 
+        </article>
 
-            <p>
-              ${escapeHtml(
-                category.desc ||
-                ""
-              )}
-            </p>
-
-          </article>
-        `;
-
-      })
+      `)
       .join("");
 
 
   const updates =
-    $("updatesList");
+    state.data?.updates || [];
 
 
-  if (!updates) return;
+  $("updatesList").innerHTML =
+    updates
+      .map(item => `
 
+        <div class="update">
 
-  updates.innerHTML =
-    state.data.updates
-      .map(update => {
+          <time>
+            ${item.date || ""}
+          </time>
 
-        return `
-          <div class="update">
+          <strong>
+            ${item.title || ""}
+            ${
+              item.text
+                ? " — " + item.text
+                : ""
+            }
+          </strong>
 
-            <time>
-              ${escapeHtml(
-                update.date || ""
-              )}
-            </time>
+          <span>
+            ${item.tag || ""}
+          </span>
 
-            <strong>
-              ${escapeHtml(
-                update.title || ""
-              )}
-              ${
-                update.text
-                  ? " — " +
-                    escapeHtml(
-                      update.text
-                    )
-                  : ""
-              }
-            </strong>
+        </div>
 
-            <span>
-              ${escapeHtml(
-                update.tag || ""
-              )}
-            </span>
-
-          </div>
-        `;
-
-      })
+      `)
       .join("");
 
 }
 
 
-/* =========================
+/* =========================================================
    TODAS AS REGRAS
-========================= */
+========================================================= */
 
 function allRules() {
 
-  return state.data.categories
-    .flatMap(category => {
+  return (
+    state.data?.categories || []
+  ).flatMap(category =>
 
-      const rules =
-        Array.isArray(category.rules)
-          ? category.rules
-          : [];
+    (category.rules || [])
+      .map(rule => ({
 
-      return rules.map(rule => ({
         cat: category,
-        ...rule
-      }));
 
-    });
+        ...rule
+
+      }))
+
+  );
 
 }
 
 
-/* =========================
+/* =========================================================
    CATEGORIA
-========================= */
+========================================================= */
 
 function renderCategory(id) {
 
   const category =
     state.data.categories.find(
-      item =>
-        String(item.id) === String(id)
+      item => item.id === id
     );
 
 
@@ -567,164 +980,170 @@ function renderCategory(id) {
 
 
   $("catCode").textContent =
-    "CÓDIGO " +
-    (category.code || "");
+    `CÓDIGO ${category.code}`;
 
 
   $("catTitle").textContent =
-    category.name ||
-    category.short ||
-    "";
+    category.name;
 
 
   $("catDesc").textContent =
-    category.desc ||
-    "";
+    category.desc || "";
 
 
-  /* IMAGEM DA CATEGORIA */
+  /*
+    IMAGEM DA CATEGORIA
+
+    Se existir, usamos como fundo.
+  */
 
   const categoryHero =
     $("categoryHero");
 
 
-  if (
-    category.image &&
-    category.image.trim() !== ""
-  ) {
+  if (category.image) {
 
-    categoryHero.style
-      .setProperty(
-        "--category-image",
-        `url("${category.image}")`
-      );
+    categoryHero.style.backgroundImage = `
+      linear-gradient(
+        90deg,
+        rgba(5,5,5,.98),
+        rgba(5,5,5,.70),
+        rgba(5,5,5,.35)
+      ),
+      url("${assetUrl(category.image)}")
+    `;
 
-  } else {
+    categoryHero.style.backgroundSize =
+      "cover";
 
-    categoryHero.style
-      .setProperty(
-        "--category-image",
-        "none"
-      );
+    categoryHero.style.backgroundPosition =
+      "center";
+
+    categoryHero.style.padding =
+      "70px 0";
+
+  }
+
+  else {
+
+    categoryHero.style.backgroundImage =
+      "none";
 
   }
 
 
-  const rules =
-    Array.isArray(category.rules)
-      ? category.rules
-      : [];
-
+  /*
+    REGRAS
+  */
 
   $("ruleList").innerHTML =
-    rules
-      .map((rule, index) => {
+    (category.rules || [])
+      .map((rule, index) => `
 
-        return `
-          <article
-            class="rule"
-            id="rule-${index}"
-          >
+        <article
+          class="rule"
+          id="rule-${index}"
+        >
 
-            <div class="rule-top">
+          <div class="rule-top">
 
-              <div class="rule-num">
-                ${escapeHtml(
-                  rule.code ||
-                  `${category.code}.${index + 1}`
-                )}
-              </div>
+            <div class="rule-num">
+              ${rule.code}
+            </div>
 
-              <div>
+            <div>
 
-                <h3>
-                  ${escapeHtml(
-                    rule.title ||
-                    ""
-                  )}
-                </h3>
+              <h3>
+                ${rule.title}
+              </h3>
 
-                <p>
-                  ${escapeHtml(
-                    rule.text ||
-                    ""
-                  )}
-                </p>
+              <p>
+                ${rule.text || ""}
+              </p>
 
 
-                ${
-                  rule.tag
-                    ? `
-                      <span class="tag">
-                        ${escapeHtml(
-                          rule.tag
-                        )}
-                      </span>
-                    `
-                    : ""
-                }
+              ${
+                rule.tag
+
+                  ? `
+
+                    <span class="tag">
+                      ${rule.tag}
+                    </span>
+
+                  `
+
+                  : ""
+              }
 
 
-                ${
-                  rule.image
-                    ? `
-                      <img
-                        class="rule-image"
-                        src="${escapeHtml(
-                          rule.image
-                        )}"
-                        alt=""
-                        loading="lazy"
-                      >
-                    `
-                    : ""
-                }
+              ${
+                rule.image
 
-              </div>
+                  ? `
+
+                    <img
+                      class="rule-image"
+                      src="${assetUrl(rule.image)}"
+                      alt=""
+                    >
+
+                  `
+
+                  : ""
+              }
 
             </div>
 
-          </article>
-        `;
+          </div>
 
-      })
+        </article>
+
+      `)
       .join("");
 
 
-  $("ruleToc").innerHTML =
-    `
-      <strong>
-        NESTA CATEGORIA
-      </strong>
-    ` +
+  /*
+    TOC
+  */
 
-    rules
-      .map((rule, index) => {
+  $("ruleToc").innerHTML = `
 
-        return `
-          <button
-            type="button"
-            data-scroll-rule="${index}"
-          >
-            ${escapeHtml(
-              rule.code ||
-              ""
-            )}
-            —
-            ${escapeHtml(
-              rule.title ||
-              ""
-            )}
-          </button>
-        `;
+    <strong>
+      NESTA CATEGORIA
+    </strong>
 
-      })
-      .join("");
+    ${
+      (category.rules || [])
+        .map(
+          (rule, index) => `
+
+            <button
+              type="button"
+              data-rule-index="${index}"
+            >
+
+              ${rule.code}
+              —
+              ${rule.title}
+
+            </button>
+
+          `
+        )
+        .join("")
+    }
+
+  `;
 
 
-  document
+  /*
+    TOC FUNCIONAL
+  */
+
+  $("ruleToc")
     .querySelectorAll(
-      "[data-scroll-rule]"
+      "[data-rule-index]"
     )
     .forEach(button => {
 
@@ -733,16 +1152,18 @@ function renderCategory(id) {
         () => {
 
           const index =
-            button.dataset.scrollRule;
+            button.dataset.ruleIndex;
 
-          const target =
+
+          const element =
             document.getElementById(
               "rule-" + index
             );
 
-          if (target) {
 
-            target.scrollIntoView({
+          if (element) {
+
+            element.scrollIntoView({
               behavior: "smooth",
               block: "center"
             });
@@ -757,19 +1178,16 @@ function renderCategory(id) {
 }
 
 
-/* =========================
+/* =========================================================
    PESQUISA
-========================= */
+========================================================= */
 
 function search(query, target) {
 
   query =
-    String(query || "")
+    query
       .trim()
       .toLowerCase();
-
-
-  if (!target) return;
 
 
   if (!query) {
@@ -784,34 +1202,31 @@ function search(query, target) {
 
   const results =
     allRules()
-      .filter(rule => {
+      .filter(rule => `
 
-        const text = `
+        ${rule.cat.short}
 
-          ${rule.cat.short || ""}
+        ${rule.cat.name}
 
-          ${rule.cat.name || ""}
+        ${rule.cat.code}
 
-          ${rule.cat.code || ""}
+        ${rule.title}
 
-          ${rule.title || ""}
+        ${rule.text}
 
-          ${rule.text || ""}
+        ${rule.tag}
 
-          ${rule.tag || ""}
-
-        `.toLowerCase();
-
-
-        return text.includes(query);
-
-      })
+      `
+        .toLowerCase()
+        .includes(query)
+      )
       .slice(0, 30);
 
 
   if (!results.length) {
 
     target.innerHTML = `
+
       <div class="result">
 
         <h3>
@@ -823,6 +1238,7 @@ function search(query, target) {
         </p>
 
       </div>
+
     `;
 
     return;
@@ -832,50 +1248,42 @@ function search(query, target) {
 
   target.innerHTML =
     results
-      .map(rule => {
+      .map(rule => `
 
-        return `
-          <div
-            class="result"
-            data-route="${escapeHtml(
-              rule.cat.id
-            )}"
-          >
+        <div
+          class="result"
+          data-route="${rule.cat.id}"
+        >
 
-            <small>
-              ${escapeHtml(
-                rule.cat.short || ""
-              )}
-              ·
-              ${escapeHtml(
-                rule.code || ""
-              )}
-            </small>
+          <small>
 
-            <h3>
-              ${escapeHtml(
-                rule.title || ""
-              )}
-            </h3>
+            ${rule.cat.short}
+            ·
+            ${rule.cat.code}
 
-            <p>
-              ${escapeHtml(
-                rule.text || ""
-              )}
-            </p>
+          </small>
 
-          </div>
-        `;
 
-      })
+          <h3>
+            ${rule.title}
+          </h3>
+
+
+          <p>
+            ${rule.text || ""}
+          </p>
+
+        </div>
+
+      `)
       .join("");
 
 }
 
 
-/* =========================
+/* =========================================================
    ROTAS
-========================= */
+========================================================= */
 
 function route(id) {
 
@@ -897,35 +1305,50 @@ function route(id) {
   if (id === "inicio") {
 
     $("inicio")
-      .classList
-      .add("active");
+      .classList.add("active");
 
   }
 
   else if (id === "pesquisa") {
 
     $("searchPage")
-      .classList
-      .add("active");
-
-    setTimeout(() => {
-
-      $("searchInput")?.focus();
-
-    }, 100);
+      .classList.add("active");
 
   }
 
   else {
 
-    $("categoryPage")
-      .classList
-      .add("active");
+    const exists =
+      state.data?.categories?.some(
+        category =>
+          category.id === id
+      );
 
-    renderCategory(id);
+
+    if (!exists) {
+
+      $("inicio")
+        .classList.add("active");
+
+      id = "inicio";
+
+    }
+
+    else {
+
+      $("categoryPage")
+        .classList.add("active");
+
+      renderCategory(id);
+
+    }
 
   }
 
+
+  /*
+    ATUALIZAR MENU
+  */
 
   document
     .querySelectorAll(
@@ -949,253 +1372,58 @@ function route(id) {
 }
 
 
-/* =========================
-   CLIQUES
-========================= */
-
-document.addEventListener(
-  "click",
-  event => {
-
-    const target =
-      event.target.closest(
-        "[data-route]"
-      );
-
-
-    if (!target) return;
-
-
-    const id =
-      target.dataset.route;
-
-
-    if (!id) return;
-
-
-    event.preventDefault();
-
-
-    route(id);
-
-
-    history.replaceState(
-      null,
-      "",
-      "#" + id
-    );
-
-  }
-);
-
-
-/* =========================
-   PESQUISA
-========================= */
-
-$("searchOpen")
-  ?.addEventListener(
-    "click",
-    () => {
-
-      $("searchOverlay")
-        .classList
-        .add("open");
-
-      setTimeout(() => {
-
-        $("overlaySearch")
-          ?.focus();
-
-      }, 100);
-
-    }
-  );
-
-
-$("searchClose")
-  ?.addEventListener(
-    "click",
-    () => {
-
-      $("searchOverlay")
-        .classList
-        .remove("open");
-
-    }
-  );
-
-
-$("overlaySearch")
-  ?.addEventListener(
-    "input",
-    event => {
-
-      search(
-        event.target.value,
-        $("overlayResults")
-      );
-
-    }
-  );
-
-
-$("searchInput")
-  ?.addEventListener(
-    "input",
-    event => {
-
-      search(
-        event.target.value,
-        $("searchResults")
-      );
-
-    }
-  );
-
-
-/* ESC FECHA PESQUISA */
-
-document.addEventListener(
-  "keydown",
-  event => {
-
-    if (
-      event.key === "Escape"
-    ) {
-
-      $("searchOverlay")
-        ?.classList
-        .remove("open");
-
-    }
-
-  }
-);
-
-
-/* =========================
-   HASH
-========================= */
-
-window.addEventListener(
-  "hashchange",
-  () => {
-
-    const id =
-      location.hash
-        .replace("#", "")
-        .trim() || "inicio";
-
-    route(id);
-
-  }
-);
-
-
-/* =========================
+/* =========================================================
    ERRO
-========================= */
+========================================================= */
 
-function showError(error) {
+function showError(message) {
 
-  const box =
-    document.createElement(
-      "div"
-    );
+  document.body.insertAdjacentHTML(
+    "beforeend",
 
+    `
 
-  box.style.position =
-    "fixed";
+      <div
+        style="
+          position:fixed;
+          left:20px;
+          right:20px;
+          bottom:20px;
+          z-index:999999;
+          padding:20px;
+          background:#120000;
+          color:#fff;
+          border:1px solid #ff1018;
+          font-family:Arial,sans-serif;
+        "
+      >
 
-  box.style.left =
-    "20px";
+        <strong>
+          ERRO AO CARREGAR O SITE
+        </strong>
 
-  box.style.right =
-    "20px";
+        <br><br>
 
-  box.style.bottom =
-    "20px";
+        ${message}
 
-  box.style.zIndex =
-    "9999999";
+        <br><br>
 
-  box.style.padding =
-    "20px";
+        Verifique se
+        <b>content/site.json</b>
+        e
+        <b>content/rules.json</b>
+        existem.
 
-  box.style.background =
-    "#120000";
+      </div>
 
-  box.style.border =
-    "1px solid #ff1018";
-
-  box.style.color =
-    "white";
-
-  box.innerHTML = `
-
-    <strong>
-      ERRO AO CARREGAR O SITE
-    </strong>
-
-    <br><br>
-
-    ${escapeHtml(
-      error.message ||
-      String(error)
-    )}
-
-    <br><br>
-
-    Verifique se existem:
-
-    <br>
-
-    <b>
-      content/site.json
-    </b>
-
-    <br>
-
-    <b>
-      content/rules.json
-    </b>
-
-  `;
-
-
-  document.body.appendChild(
-    box
+    `
   );
 
 }
 
 
-/* =========================
-   SEGURANÇA
-========================= */
-
-function escapeHtml(value) {
-
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-
-}
-
-
-/* =========================
-   MENU MOBILE
-========================= */
-
-/*
-   Não existe mais aquele botão
-   de 3 riscos no desktop.
-
-   O menu lateral permanece normal.
-*/
+/* =========================================================
+   INICIAR
+========================================================= */
 
 load();
