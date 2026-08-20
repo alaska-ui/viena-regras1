@@ -28,9 +28,12 @@
 
   <!-- CURSOR -->
   <div id="customCursor" class="custom-cursor"></div>
-  <div id="cursorDot" class="cursor-dot"></div>
 
-  <!-- TOPO -->
+  <!-- TRAÇO DO CURSOR -->
+  <div id="cursorTrail"></div>
+
+  <!-- ================= HEADER ================= -->
+
   <header class="topbar">
 
     <a
@@ -85,7 +88,8 @@
   </header>
 
 
-  <!-- MENU LATERAL -->
+  <!-- ================= SIDEBAR ================= -->
+
   <aside
     class="sidebar"
     id="sidebar"
@@ -99,7 +103,7 @@
 
     <div class="side-footer">
 
-      QUEM VIVE VIENA
+      QUEM VIVE VIENA<br>
 
       <strong>
         FAZ HISTÓRIA.
@@ -110,22 +114,34 @@
   </aside>
 
 
-  <!-- CONTEÚDO -->
+  <!-- ================= CONTEÚDO ================= -->
+
   <main class="content">
 
+    <!-- ================= INÍCIO ================= -->
 
-    <!-- INÍCIO -->
     <section
       id="inicio"
       class="page active"
     >
+
+      <!-- HERO -->
 
       <div
         class="hero"
         id="hero"
       >
 
-        <div class="hero-overlay"></div>
+        <!-- IMAGEM DE FUNDO -->
+        <div
+          class="hero-background"
+          id="heroBackground"
+        ></div>
+
+        <!-- GRADIENTE -->
+        <div class="hero-gradient"></div>
+
+        <!-- CONTEÚDO -->
 
         <div class="hero-copy">
 
@@ -168,6 +184,7 @@
 
 
       <!-- AVISO -->
+
       <div
         class="notice"
         id="notice"
@@ -188,7 +205,8 @@
       </div>
 
 
-      <!-- CATEGORIAS -->
+      <!-- MAPA -->
+
       <div class="section-head">
 
         <div>
@@ -216,7 +234,8 @@
       ></div>
 
 
-      <!-- ATUALIZAÇÕES -->
+      <!-- ALTERAÇÕES -->
+
       <div
         class="updates"
         id="updatesWrap"
@@ -245,7 +264,8 @@
     </section>
 
 
-    <!-- CATEGORIA -->
+    <!-- ================= CATEGORIA ================= -->
+
     <section
       id="categoryPage"
       class="page"
@@ -298,7 +318,8 @@
     </section>
 
 
-    <!-- PESQUISA -->
+    <!-- ================= PESQUISA ================= -->
+
     <section
       id="searchPage"
       class="page"
@@ -311,6 +332,7 @@
       >
         ← VOLTAR
       </button>
+
 
       <div class="category-title search-title">
 
@@ -331,6 +353,7 @@
 
       </div>
 
+
       <div
         id="searchResults"
         class="search-results"
@@ -341,13 +364,13 @@
   </main>
 
 
-  <!-- RODAPÉ -->
-  <footer id="footerText">
-    © 2026 Viena Roleplay · Todos os direitos reservados.
-  </footer>
+  <!-- ================= RODAPÉ ================= -->
+
+  <footer id="footerText"></footer>
 
 
-  <!-- PESQUISA OVERLAY -->
+  <!-- ================= PESQUISA OVERLAY ================= -->
+
   <div
     class="search-overlay"
     id="searchOverlay"
@@ -358,7 +381,6 @@
       <button
         id="searchClose"
         type="button"
-        class="search-close"
       >
         ×
       </button>
