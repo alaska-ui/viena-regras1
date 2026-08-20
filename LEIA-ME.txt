@@ -1,31 +1,65 @@
-CORREÇÃO VIENA — 20/08/2026
+# VIENA — ATUALIZAÇÃO
 
-Substitua no seu projeto:
-- index.html
-- style.css
-- app.js
+Esta pasta contém os arquivos que devem substituir os arquivos atuais do site.
 
-Não apague:
-- content/site.json
-- content/rules.json
-- uploads/
-- admin/
+## Arquivos
 
-O código agora:
-1. Usa a IMAGEM DA CAPA do Admin como fundo inteiro do HERO, com degradê escuro por cima.
-2. Usa site.cursor.image (ícone enviado no Admin) como cursor.
-3. Mantém o rastro vermelho do cursor.
-4. Faz o cursor funcionar sobre links, botões, cards, menu, pesquisa e todas as abas.
-5. Corrige caminhos /uploads/... para GitHub Pages de projeto.
-6. Mantém as imagens das categorias como fundo nas páginas de categoria.
+- `index.html`
+- `style.css`
+- `app.js`
+- `admin/config.yml`
 
-IMPORTANTE:
-O site.json precisa continuar contendo a configuração do Admin. O cursor é lido de:
-site.cursor.enabled
-site.cursor.image
-site.cursor.size
-site.cursor.trail_enabled
-site.cursor.trail_count
-site.cursor.trail_color
+## IMPORTANTE
 
-Se o painel salvar esses mesmos campos, não precisa editar mais nada.
+NÃO substitua:
+
+- `content/site.json`
+- `content/rules.json`
+- `uploads/`
+
+Esses arquivos já possuem os dados e imagens cadastrados.
+
+## O que foi corrigido
+
+### 1. Regra nova do Admin
+
+O `app.js` agora busca `site.json` e `rules.json` diretamente do GitHub RAW primeiro.
+
+Isso evita que o GitHub Pages continue entregando uma versão antiga do JSON depois que você salva uma regra nova pelo Admin.
+
+### 2. Admin mais simples
+
+O texto da regra agora usa campo de texto simples em vez do editor Markdown avançado.
+
+Para criar uma regra:
+
+1. Abra `Regras`.
+2. Abra `Categorias e Regras`.
+3. Abra a categoria desejada.
+4. Abra `📌 Regras desta categoria`.
+5. Clique para adicionar uma regra.
+6. Preencha:
+   - Código
+   - Título
+   - Texto
+   - Tag
+   - Imagem opcional
+7. Salve.
+
+### 3. Imagem da capa
+
+A imagem escolhida em `Imagem de fundo da capa` continua sendo usada como imagem de fundo de toda a área inicial.
+
+### 4. Cursor
+
+O cursor continua usando a imagem escolhida no Admin e o rastro continua funcionando em todas as áreas da página.
+
+### 5. Navegação
+
+O cursor e os cliques funcionam no menu, cards, botões, pesquisa, resultados e índice das regras.
+
+## Não apague os dados atuais
+
+O objetivo desta atualização é trocar apenas a estrutura do site e do painel.
+
+As regras e imagens existentes devem permanecer nos arquivos atuais.

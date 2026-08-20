@@ -6,32 +6,61 @@ backend:
 media_folder: uploads
 public_folder: uploads
 
+output:
+  omit_empty_optional_fields: true
+
 collections:
+
+  # =====================================================
+  # SITE
+  # =====================================================
+
   - name: site
     label: "🎨 Site e Layout"
+
     files:
+
       - name: settings
         label: "Configurações do Site"
         file: content/site.json
         format: json
+
         fields:
+
           - { name: site_name, label: "Nome da cidade", widget: string }
           - { name: site_title, label: "Título principal", widget: string }
           - { name: tagline, label: "Bordão", widget: string }
           - { name: description, label: "Descrição", widget: text }
+
           - { name: logo, label: "Logo", widget: image }
           - { name: favicon, label: "Favicon", widget: image, required: false }
+
           - { name: discord_url, label: "Link do Discord", widget: string, required: false }
-          - { name: hero_eyebrow, label: "Texto pequeno do topo", widget: string }
+
+          - { name: hero_eyebrow, label: "Texto pequeno da capa", widget: string }
           - { name: hero_title, label: "Título da capa", widget: string }
           - { name: hero_text, label: "Texto da capa", widget: text }
-          - { name: hero_image, label: "Imagem da capa", widget: image, required: false }
+
+          - {
+              name: hero_image,
+              label: "Imagem de fundo da capa",
+              widget: image,
+              required: false
+            }
+
           - { name: notice_title, label: "Título do aviso", widget: string }
           - { name: notice_text, label: "Texto do aviso", widget: text }
           - { name: footer_text, label: "Rodapé", widget: string }
+
+          # -------------------------------------------------
+          # CORES
+          # -------------------------------------------------
+
           - name: theme
-            label: "Cores"
+            label: "🎨 Cores"
             widget: object
+            collapsed: true
+
             fields:
               - { name: accent, label: "Cor principal", widget: color }
               - { name: accent_light, label: "Cor secundária", widget: color }
@@ -39,60 +68,207 @@ collections:
               - { name: surface, label: "Cards", widget: color }
               - { name: text, label: "Texto", widget: color }
               - { name: muted, label: "Texto secundário", widget: color }
+
+          # -------------------------------------------------
+          # ELEMENTOS
+          # -------------------------------------------------
+
           - name: layout
-            label: "Elementos visíveis"
+            label: "👁️ Elementos visíveis"
             widget: object
+            collapsed: true
+
             fields:
               - { name: show_search, label: "Mostrar pesquisa", widget: boolean }
               - { name: show_updates, label: "Mostrar últimas alterações", widget: boolean }
               - { name: show_notice, label: "Mostrar aviso", widget: boolean }
-              - { name: show_hero_image, label: "Mostrar imagem da capa", widget: boolean }
+              - { name: show_hero_image, label: "Mostrar imagem de fundo da capa", widget: boolean }
               - { name: show_admin_link, label: "Mostrar link admin no site", widget: boolean }
+
+          # -------------------------------------------------
+          # CURSOR
+          # -------------------------------------------------
+
           - name: cursor
             label: "🖱️ Cursor e rastro"
             widget: object
+            collapsed: true
+
             fields:
-              - { name: enabled, label: "Ativar cursor personalizado", widget: boolean, default: true }
-              - { name: image, label: "Ícone do cursor", widget: image, required: false }
-              - { name: size, label: "Tamanho do ícone", widget: number, value_type: int, min: 12, max: 96, default: 34 }
-              - { name: trail_enabled, label: "Ativar rastro vermelho", widget: boolean, default: true }
-              - { name: trail_color, label: "Cor do rastro", widget: color, default: "#e50914" }
-              - { name: trail_count, label: "Quantidade de partículas", widget: number, value_type: int, min: 2, max: 30, default: 10 }
+              - {
+                  name: enabled,
+                  label: "Ativar cursor personalizado",
+                  widget: boolean,
+                  default: true
+                }
+
+              - {
+                  name: image,
+                  label: "Logo/ícone do cursor",
+                  widget: image,
+                  required: false
+                }
+
+              - {
+                  name: size,
+                  label: "Tamanho do cursor",
+                  widget: number,
+                  value_type: int,
+                  min: 12,
+                  max: 96,
+                  default: 34
+                }
+
+              - {
+                  name: trail_enabled,
+                  label: "Ativar rastro",
+                  widget: boolean,
+                  default: true
+                }
+
+              - {
+                  name: trail_color,
+                  label: "Cor do rastro",
+                  widget: color,
+                  default: "#e50914"
+                }
+
+              - {
+                  name: trail_count,
+                  label: "Quantidade de partículas",
+                  widget: number,
+                  value_type: int,
+                  min: 2,
+                  max: 30,
+                  default: 10
+                }
+
+
+  # =====================================================
+  # REGRAS
+  # =====================================================
 
   - name: rules
     label: "📕 Regras"
+
     files:
+
       - name: database
         label: "Categorias e Regras"
         file: content/rules.json
         format: json
+
         fields:
+
           - name: categories
             label: "Categorias"
             widget: list
+
             summary: "{{code}} — {{short}}"
+
+            hint: "Abra uma categoria e depois abra 'Regras desta categoria'. Para adicionar uma regra, clique em Adicionar."
+
             fields:
-              - { name: id, label: "ID (sem espaços)", widget: string }
-              - { name: code, label: "Código", widget: string }
-              - { name: name, label: "Nome exibido", widget: string }
-              - { name: short, label: "Nome curto", widget: string }
-              - { name: desc, label: "Descrição", widget: text }
-              - { name: image, label: "Imagem da categoria", widget: image, required: false }
+
+              - {
+                  name: id,
+                  label: "ID da categoria",
+                  widget: string,
+                  hint: "NÃO altere este campo depois que a categoria estiver publicada."
+                }
+
+              - {
+                  name: code,
+                  label: "Código",
+                  widget: string
+                }
+
+              - {
+                  name: name,
+                  label: "Nome exibido",
+                  widget: string
+                }
+
+              - {
+                  name: short,
+                  label: "Nome curto",
+                  widget: string
+                }
+
+              - {
+                  name: desc,
+                  label: "Descrição",
+                  widget: text
+                }
+
+              - {
+                  name: image,
+                  label: "Imagem da categoria",
+                  widget: image,
+                  required: false
+                }
+
+              # -------------------------------------------------
+              # REGRAS
+              # -------------------------------------------------
+
               - name: rules
-                label: "Regras desta categoria"
+                label: "📌 Regras desta categoria"
                 widget: list
+
                 summary: "{{code}} — {{title}}"
+
+                hint: "Adicione uma regra preenchendo Código, Título, Texto e Tag. A imagem é opcional."
+
                 fields:
-                  - { name: code, label: "Código da regra", widget: string }
-                  - { name: title, label: "Título", widget: string }
-                  - { name: text, label: "Texto da regra", widget: markdown }
-                  - { name: tag, label: "Tag", widget: string }
-                  - { name: image, label: "Imagem da regra", widget: image, required: false }
+
+                  - {
+                      name: code,
+                      label: "1. Código da regra",
+                      widget: string,
+                      hint: "Exemplo: 02.11"
+                    }
+
+                  - {
+                      name: title,
+                      label: "2. Título da regra",
+                      widget: string
+                    }
+
+                  - {
+                      name: text,
+                      label: "3. Texto da regra",
+                      widget: text,
+                      hint: "Escreva normalmente. Não precisa usar o editor avançado."
+                    }
+
+                  - {
+                      name: tag,
+                      label: "4. Tag",
+                      widget: string,
+                      default: "REGRA"
+                    }
+
+                  - {
+                      name: image,
+                      label: "5. Imagem da regra (opcional)",
+                      widget: image,
+                      required: false
+                    }
+
+
+          # -----------------------------------------------------
+          # ALTERAÇÕES
+          # -----------------------------------------------------
+
           - name: updates
-            label: "Últimas alterações"
+            label: "📝 Últimas alterações"
             widget: list
+
             summary: "{{date}} — {{title}}"
+
             fields:
+
               - { name: date, label: "Data", widget: string }
               - { name: title, label: "Título", widget: string }
               - { name: text, label: "Texto", widget: string }

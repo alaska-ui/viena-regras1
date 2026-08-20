@@ -13,10 +13,15 @@
 
 <header class="topbar">
   <button class="mobile-menu" id="mobileMenu" type="button">☰</button>
+
   <a class="brand" href="#inicio" data-route="inicio">
     <img id="headerLogo" src="logo-viena.png" alt="Viena Roleplay">
-    <div><strong id="brandTitle">CÓDIGO DA RUA</strong><small id="brandSite">VIENA ROLEPLAY</small></div>
+    <div>
+      <strong id="brandTitle">CÓDIGO DA RUA</strong>
+      <small id="brandSite">VIENA ROLEPLAY</small>
+    </div>
   </a>
+
   <div class="top-actions">
     <button id="searchOpen" class="icon-btn" type="button">⌕</button>
     <a id="discordBtn" href="#" class="discord-btn" target="_blank" rel="noopener noreferrer">DISCORD</a>
@@ -26,43 +31,72 @@
 <aside class="sidebar" id="sidebar">
   <div class="side-label">VIENA ROLEPLAY</div>
   <nav id="nav"></nav>
-  <div class="side-footer">QUEM VIVE VIENA<br><strong>FAZ HISTÓRIA.</strong></div>
+  <div class="side-footer">
+    QUEM VIVE VIENA<br>
+    <strong>FAZ HISTÓRIA.</strong>
+  </div>
 </aside>
 
 <main class="content">
+
 <section id="inicio" class="page active">
   <div class="hero">
     <div class="hero-copy">
       <p class="eyebrow" id="heroEyebrow"></p>
       <h1 id="heroTitle"></h1>
       <p class="hero-text" id="heroText"></p>
+
       <div class="hero-actions">
-        <button class="primary" data-route="corridas" type="button">EXPLORAR CORRIDAS <span>→</span></button>
-        <button class="ghost" data-route="gerais" type="button">VER TODAS AS REGRAS</button>
+        <button class="primary" data-route="corridas" type="button">
+          EXPLORAR CORRIDAS <span>→</span>
+        </button>
+
+        <button class="ghost" data-route="gerais" type="button">
+          VER TODAS AS REGRAS
+        </button>
       </div>
     </div>
-    <div class="hero-art" id="heroArt"><img id="heroImage" alt=""></div>
+
+    <!-- Mantido para compatibilidade com o painel. A imagem real é aplicada
+         como fundo do hero pelo app.js/style.css. -->
+    <div class="hero-art" id="heroArt">
+      <img id="heroImage" alt="">
+    </div>
   </div>
 
   <div class="notice" id="notice">
     <div class="notice-icon">!</div>
-    <div><strong id="noticeTitle"></strong><p id="noticeText"></p></div>
+    <div>
+      <strong id="noticeTitle"></strong>
+      <p id="noticeText"></p>
+    </div>
   </div>
 
   <div class="section-head">
-    <div><span>01</span><h2>MAPA DA RUA</h2></div>
+    <div>
+      <span>01</span>
+      <h2>MAPA DA RUA</h2>
+    </div>
     <p>Escolha uma categoria para começar.</p>
   </div>
+
   <div class="category-grid" id="homeCategories"></div>
 
   <div class="updates" id="updatesWrap">
-    <div class="section-head"><div><span>02</span><h2>ÚLTIMAS ALTERAÇÕES</h2></div></div>
+    <div class="section-head">
+      <div>
+        <span>02</span>
+        <h2>ÚLTIMAS ALTERAÇÕES</h2>
+      </div>
+    </div>
     <div id="updatesList"></div>
   </div>
 </section>
 
 <section id="categoryPage" class="page">
-  <button class="back" data-route="inicio" type="button">← VOLTAR AO MAPA</button>
+  <button class="back" data-route="inicio" type="button">
+    ← VOLTAR AO MAPA
+  </button>
 
   <div class="category-title" id="categoryHero">
     <div class="category-title-content">
@@ -79,14 +113,24 @@
 </section>
 
 <section id="searchPage" class="page">
-  <button class="back" data-route="inicio" type="button">← VOLTAR</button>
+  <button class="back" data-route="inicio" type="button">
+    ← VOLTAR
+  </button>
+
   <div class="category-title search-title">
     <p class="eyebrow">PESQUISA</p>
     <h1>ENCONTRE A REGRA.</h1>
-    <input id="searchInput" class="big-search" placeholder="Digite: RDM, PIT, corrida, aposta..." autocomplete="off">
+    <input
+      id="searchInput"
+      class="big-search"
+      placeholder="Digite: RDM, PIT, corrida, aposta..."
+      autocomplete="off"
+    >
   </div>
+
   <div id="searchResults" class="search-results"></div>
 </section>
+
 </main>
 
 <footer id="footerText"></footer>
@@ -96,7 +140,13 @@
     <button id="searchClose" type="button">×</button>
     <p class="eyebrow">PESQUISA RÁPIDA</p>
     <h2>QUAL REGRA VOCÊ PROCURA?</h2>
-    <input id="overlaySearch" placeholder="Ex.: VDM, metagaming, PIT..." autocomplete="off">
+
+    <input
+      id="overlaySearch"
+      placeholder="Ex.: VDM, metagaming, PIT..."
+      autocomplete="off"
+    >
+
     <div id="overlayResults"></div>
   </div>
 </div>

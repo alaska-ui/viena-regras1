@@ -1,21 +1,48 @@
-const state = { site: null, data: null };
+const state = {
+  site: null,
+  data: null
+};
+
 const $ = id => document.getElementById(id);
 
-/* =========================================================
-   ASSETS
-   Corrige automaticamente /uploads/... em GitHub Pages de projeto.
-   ========================================================= */
+/*
+=========================================================
+DADOS
+=========================================================
+
+O painel salva os arquivos em content/.
+
+O site tenta primeiro o GitHub RAW. Isso evita que uma alteração
+feita pelo Admin fique presa no cache do GitHub Pages.
+
+Depois existe fallback para o caminho local.
+*/
+
+const RAW_BASE =
+  "https://raw.githubusercontent.com/alaska-ui/viena-regras1/main/content/";
+
 function assetUrl(value) {
   if (!value) return "";
-  value = String(value).trim();
-  if (/^(https?:|data:|blob:|#)/i.test(value)) return value;
 
-  const clean = value.replace(/^\.\//, "");
+  value = String(value).trim();
+
+  if (/^(https?:|data:|blob:|#)/i.test(value)) {
+    return value;
+  }
+
+  const clean = value.replace(/^\.\/+/, "");
 
   if (clean.startsWith("/")) {
     const parts = location.pathname.split("/").filter(Boolean);
-    const repo = location.hostname.endsWith("github.io") && parts.length ? parts[0] : "";
-    return repo ? `/${repo}${clean}` : clean;
+
+    const repo =
+      location.hostname.endsWith("github.io") && parts.length
+        ? parts[0]
+        : "";
+
+    return repo
+      ? `/${repo}${clean}`
+      : clean;
   }
 
   return clean;
@@ -36,347 +63,1180 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 }
-function escapeAttr(value){ return escapeHtml(value); }
+
+function escapeAttr(value) {
+  return escapeHtml(value);
+}
+
+async function getJson(filename) {
+  const stamp = Date.now();
+
+  /*
+    RAW é a fonte principal.
+    O parâmetro ?v= impede respostas antigas em cache.
+  */
+  const rawUrl =
+    `${RAW_BASE}${filename}?v=${stamp}`;
+
+  try {
+    const response = await fetch(
+      rawUrl,
+      {
+        cache: "no-store",
+        headers: {
+          "Cache-Control": "no-cache"
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `${filename}: HTTP ${response.status}`
+      );
+    }
+
+    return await response.json();
+
+  } catch (rawError) {
+    console.warn(
+      "GitHub RAW falhou. Tentando caminho local:",
+      rawError
+    );
+
+    const localUrl =
+      `content/${filename}?v=${stamp}`;
+
+    const response = await fetch(
+      localUrl,
+      {
+        cache: "no-store",
+        headers: {
+          "Cache-Control": "no-cache"
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `${filename}: não encontrado`
+      );
+    }
+
+    return await response.json();
+  }
+}
 
 async function load() {
-  const [s, r] = await Promise.all([
-    fetch("content/site.json?v=" + Date.now(), { cache: "no-store" }).then(x => {
-      if (!x.ok) throw new Error("site.json não encontrado");
-      return x.json();
-    }),
-    fetch("content/rules.json?v=" + Date.now(), { cache: "no-store" }).then(x => {
-      if (!x.ok) throw new Error("rules.json não encontrado");
-      return x.json();
-    })
+  const [site, rules] = await Promise.all([
+    getJson("site.json"),
+    getJson("rules.json")
   ]);
 
-  state.site = s || {};
-  state.data = r || { categories: [], updates: [] };
+  state.site = site || {};
+  state.data = rules || {
+    categories: [],
+    updates: []
+  };
+
+  /*
+    Normalização para evitar erro caso alguma categoria/regra
+    esteja sem algum campo.
+  */
+  state.data.categories =
+    Array.isArray(state.data.categories)
+      ? state.data.categories
+      : [];
+
+  state.data.categories.forEach(category => {
+    category.rules =
+      Array.isArray(category.rules)
+        ? category.rules
+        : [];
+  });
+
+  state.data.updates =
+    Array.isArray(state.data.updates)
+      ? state.data.updates
+      : [];
 
   applySite();
   renderNav();
   renderHome();
   setupCursor(state.site);
-  route(location.hash.replace(/^#/, "") || "inicio");
-}
 
-/* =========================================================
-   SITE
-   A imagem enviada no Admin é usada como FUNDO inteiro do hero.
-   ========================================================= */
-function applySite() {
-  const s = state.site || {};
-  const t = s.theme || {};
-
-  for (const [k, v] of Object.entries(t)) {
-    const cssName = k === "accent_light" ? "accent2" : k;
-    document.documentElement.style.setProperty("--" + cssName, v);
-  }
-
-  $("headerLogo").src = assetUrl(s.logo || "logo-viena.png");
-  $("headerLogo").alt = s.site_name || "Viena Roleplay";
-  $("favicon").href = assetUrl(s.favicon || s.logo || "logo-viena.png");
-
-  $("brandTitle").textContent = s.site_title || "CÓDIGO DA RUA";
-  $("brandSite").textContent = (s.site_name || "VIENA ROLEPLAY").toUpperCase();
-
-  $("heroEyebrow").textContent = s.hero_eyebrow || "";
-  $("heroTitle").textContent = s.hero_title || "";
-  $("heroText").textContent = s.hero_text || "";
-  $("noticeTitle").textContent = s.notice_title || "";
-  $("noticeText").textContent = s.notice_text || "";
-  $("footerText").textContent = s.footer_text || "";
-
-  $("discordBtn").href = s.discord_url || "#";
-  $("discordBtn").target = "_blank";
-  $("discordBtn").rel = "noopener noreferrer";
-
-  $("notice").style.display = s.layout?.show_notice === false ? "none" : "flex";
-  $("updatesWrap").style.display = s.layout?.show_updates === false ? "none" : "block";
-  $("searchOpen").style.display = s.layout?.show_search === false ? "none" : "block";
-
-  /* Aceita o formato atual hero_image e também nomes equivalentes. */
-  const heroImage = s.hero_image || s.cover_image || s.cover?.image || s.background_image || "";
-  const showHero = s.layout?.show_hero_image !== false && heroImage;
-  const hero = document.querySelector(".hero");
-
-  if (showHero) {
-    const url = assetUrl(heroImage);
-    hero.style.setProperty("--hero-image", `url("${cssUrl(url)}")`);
-    hero.classList.add("has-image");
-
-    /* Mantém o elemento antigo sem ocupar espaço e testa carregamento. */
-    $("heroImage").src = url;
-    $("heroImage").onerror = () => {
-      console.warn("Imagem do hero não carregou:", url);
-    };
-  } else {
-    hero.style.removeProperty("--hero-image");
-    hero.classList.remove("has-image");
-    $("heroImage").removeAttribute("src");
-  }
-}
-
-function renderNav() {
-  $("nav").innerHTML = (state.data.categories || [])
-    .map(c => `
-      <button data-route="${escapeAttr(c.id)}" type="button">
-        <span>${escapeHtml(c.code)}</span>${escapeHtml(c.short)}
-      </button>
-    `)
-    .join("");
-}
-
-function renderHome() {
-  $("homeCategories").innerHTML = (state.data.categories || [])
-    .map(c => `
-      <article class="cat-card" data-route="${escapeAttr(c.id)}">
-        <div class="num">${escapeHtml(c.code)} / VIENA</div>
-        ${c.image ? `<div class="card-image-wrap"><img class="card-image" src="${escapeAttr(assetUrl(c.image))}" alt=""></div>` : ""}
-        <h3>${escapeHtml(c.short)}</h3>
-        <p>${escapeHtml(c.desc)}</p>
-      </article>
-    `)
-    .join("");
-
-  $("updatesList").innerHTML = (state.data.updates || [])
-    .map(x => `
-      <div class="update">
-        <time>${escapeHtml(x.date)}</time>
-        <strong>${escapeHtml(x.title)} — ${escapeHtml(x.text)}</strong>
-        <span>${escapeHtml(x.tag)}</span>
-      </div>
-    `)
-    .join("");
-}
-
-function allRules() {
-  return (state.data.categories || []).flatMap(c =>
-    (c.rules || []).map(r => ({ cat: c, ...r }))
+  route(
+    location.hash.replace(/^#/, "") ||
+    "inicio"
   );
 }
 
-function renderCategory(id) {
-  const c = state.data.categories.find(x => x.id === id);
-  if (!c) return;
+/*
+=========================================================
+SITE
+=========================================================
+*/
 
-  $("catCode").textContent = `CÓDIGO ${c.code}`;
-  $("catTitle").textContent = c.name || "";
-  $("catDesc").textContent = c.desc || "";
+function applySite() {
+  const s = state.site || {};
+  const theme = s.theme || {};
 
-  const hero = $("categoryHero");
-  if (c.image) {
-    hero.style.setProperty("--category-image", `url("${cssUrl(assetUrl(c.image))}")`);
-    hero.classList.add("has-image");
-  } else {
-    hero.style.removeProperty("--category-image");
-    hero.classList.remove("has-image");
+  for (const [key, value] of Object.entries(theme)) {
+    const cssName =
+      key === "accent_light"
+        ? "accent2"
+        : key;
+
+    document.documentElement.style.setProperty(
+      `--${cssName}`,
+      value
+    );
   }
 
-  $("ruleList").innerHTML = (c.rules || [])
-    .map((r, i) => `
-      <article class="rule" id="rule-${i}">
-        <div class="rule-top">
-          <div class="rule-num">${escapeHtml(r.code)}</div>
-          <div>
-            <h3>${escapeHtml(r.title)}</h3>
-            <p>${escapeHtml(r.text)}</p>
-            <span class="tag">${escapeHtml(r.tag || "REGRA")}</span>
-            ${r.image ? `<br><img class="rule-image" src="${escapeAttr(assetUrl(r.image))}" alt="">` : ""}
-          </div>
-        </div>
-      </article>
-    `)
-    .join("");
+  $("headerLogo").src =
+    assetUrl(
+      s.logo ||
+      "logo-viena.png"
+    );
 
-  $("ruleToc").innerHTML =
-    `<strong>NESTA CATEGORIA</strong>` +
-    (c.rules || [])
-      .map((r, i) => `
-        <button data-scroll-rule="rule-${i}" type="button">
-          ${escapeHtml(r.code)} — ${escapeHtml(r.title)}
+  $("headerLogo").alt =
+    s.site_name ||
+    "Viena Roleplay";
+
+  $("favicon").href =
+    assetUrl(
+      s.favicon ||
+      s.logo ||
+      "logo-viena.png"
+    );
+
+  $("brandTitle").textContent =
+    s.site_title ||
+    "CÓDIGO DA RUA";
+
+  $("brandSite").textContent =
+    (
+      s.site_name ||
+      "VIENA ROLEPLAY"
+    ).toUpperCase();
+
+  $("heroEyebrow").textContent =
+    s.hero_eyebrow ||
+    "";
+
+  $("heroTitle").textContent =
+    s.hero_title ||
+    "";
+
+  $("heroText").textContent =
+    s.hero_text ||
+    "";
+
+  $("noticeTitle").textContent =
+    s.notice_title ||
+    "";
+
+  $("noticeText").textContent =
+    s.notice_text ||
+    "";
+
+  $("footerText").textContent =
+    s.footer_text ||
+    "";
+
+  $("discordBtn").href =
+    s.discord_url ||
+    "#";
+
+  $("discordBtn").target =
+    "_blank";
+
+  $("discordBtn").rel =
+    "noopener noreferrer";
+
+  $("notice").style.display =
+    s.layout?.show_notice === false
+      ? "none"
+      : "flex";
+
+  $("updatesWrap").style.display =
+    s.layout?.show_updates === false
+      ? "none"
+      : "block";
+
+  $("searchOpen").style.display =
+    s.layout?.show_search === false
+      ? "none"
+      : "block";
+
+  /*
+    IMPORTANTE:
+    hero_image é a imagem enviada pelo Admin.
+
+    Ela NÃO é colocada dentro do quadrado lateral.
+    Ela vira o fundo inteiro da capa.
+  */
+
+  const heroImage =
+    s.hero_image ||
+    s.cover_image ||
+    s.cover?.image ||
+    s.background_image ||
+    "";
+
+  const hero =
+    document.querySelector(".hero");
+
+  if (
+    heroImage &&
+    s.layout?.show_hero_image !== false
+  ) {
+    const url =
+      assetUrl(heroImage);
+
+    hero.style.setProperty(
+      "--hero-image",
+      `url("${cssUrl(url)}")`
+    );
+
+    hero.classList.add(
+      "has-image"
+    );
+
+    /*
+      Mantemos o elemento para compatibilidade,
+      mas a imagem visual é o background.
+    */
+    $("heroImage").src = url;
+
+  } else {
+    hero.style.removeProperty(
+      "--hero-image"
+    );
+
+    hero.classList.remove(
+      "has-image"
+    );
+
+    $("heroImage")
+      .removeAttribute("src");
+  }
+}
+
+/*
+=========================================================
+MENU
+=========================================================
+*/
+
+function renderNav() {
+  $("nav").innerHTML =
+    state.data.categories
+      .map(category => `
+        <button
+          data-route="${escapeAttr(category.id)}"
+          type="button"
+        >
+          <span>
+            ${escapeHtml(category.code)}
+          </span>
+          ${escapeHtml(category.short)}
         </button>
       `)
       .join("");
 }
 
-function search(q, target) {
-  q = q.trim().toLowerCase();
-  if (!q) { target.innerHTML = ""; return; }
+/*
+=========================================================
+HOME
+=========================================================
+*/
 
-  const res = allRules()
-    .filter(r => `${r.cat.short} ${r.cat.name} ${r.code} ${r.title} ${r.text} ${r.tag}`.toLowerCase().includes(q))
-    .slice(0, 30);
+function renderHome() {
+  $("homeCategories").innerHTML =
+    state.data.categories
+      .map(category => `
+        <article
+          class="cat-card"
+          data-route="${escapeAttr(category.id)}"
+        >
 
-  target.innerHTML = res.length
-    ? res.map(r => `
-      <div class="result" data-route="${escapeAttr(r.cat.id)}">
-        <small>${escapeHtml(r.cat.short)} · ${escapeHtml(r.code)}</small>
-        <h3>${escapeHtml(r.title)}</h3>
-        <p>${escapeHtml(r.text)}</p>
-      </div>
-    `).join("")
-    : `<div class="result"><h3>Nenhuma regra encontrada.</h3><p>Tente outra palavra.</p></div>`;
+          <div class="num">
+            ${escapeHtml(category.code)}
+            / VIENA
+          </div>
+
+          ${
+            category.image
+              ? `
+                <div class="card-image-wrap">
+                  <img
+                    class="card-image"
+                    src="${escapeAttr(
+                      assetUrl(category.image)
+                    )}"
+                    alt=""
+                  >
+                </div>
+              `
+              : ""
+          }
+
+          <h3>
+            ${escapeHtml(
+              category.short ||
+              category.name
+            )}
+          </h3>
+
+          <p>
+            ${escapeHtml(
+              category.desc
+            )}
+          </p>
+
+        </article>
+      `)
+      .join("");
+
+  $("updatesList").innerHTML =
+    state.data.updates
+      .map(update => `
+        <div class="update">
+
+          <time>
+            ${escapeHtml(update.date)}
+          </time>
+
+          <strong>
+            ${escapeHtml(update.title)}
+            —
+            ${escapeHtml(update.text)}
+          </strong>
+
+          <span>
+            ${escapeHtml(update.tag)}
+          </span>
+
+        </div>
+      `)
+      .join("");
 }
 
-function route(id) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+/*
+=========================================================
+TODAS AS REGRAS
+=========================================================
+*/
 
-  if (id === "inicio") {
-    $("inicio").classList.add("active");
-  } else if (id === "pesquisa") {
-    $("searchPage").classList.add("active");
-    setTimeout(() => $("searchInput")?.focus(), 0);
-  } else if ((state.data.categories || []).some(c => c.id === id)) {
-    $("categoryPage").classList.add("active");
-    renderCategory(id);
-  } else {
-    id = "inicio";
-    $("inicio").classList.add("active");
-  }
-
-  document.querySelectorAll(".sidebar nav button").forEach(b =>
-    b.classList.toggle("active", b.dataset.route === id)
+function allRules() {
+  return state.data.categories.flatMap(
+    category =>
+      category.rules.map(rule => ({
+        cat: category,
+        ...rule
+      }))
   );
-
-  $("sidebar").classList.remove("open");
-  window.scrollTo(0, 0);
 }
 
-/* Navegação em TODAS as abas/cards/resultados. */
-document.addEventListener("click", e => {
-  const scrollTarget = e.target.closest("[data-scroll-rule]");
-  if (scrollTarget) {
-    const el = document.getElementById(scrollTarget.dataset.scrollRule);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+/*
+=========================================================
+CATEGORIA
+=========================================================
+*/
+
+function renderCategory(id) {
+  const category =
+    state.data.categories.find(
+      item => item.id === id
+    );
+
+  if (!category) {
     return;
   }
 
-  const target = e.target.closest("[data-route]");
-  if (!target) return;
+  $("catCode").textContent =
+    `CÓDIGO ${category.code}`;
 
-  e.preventDefault();
-  const id = target.dataset.route;
-  route(id);
-  history.replaceState(null, "", "#" + id);
-});
+  $("catTitle").textContent =
+    category.name ||
+    "";
+
+  $("catDesc").textContent =
+    category.desc ||
+    "";
+
+  const categoryHero =
+    $("categoryHero");
+
+  if (category.image) {
+    categoryHero.style.setProperty(
+      "--category-image",
+      `url("${cssUrl(
+        assetUrl(category.image)
+      )}")`
+    );
+
+    categoryHero.classList.add(
+      "has-image"
+    );
+
+  } else {
+    categoryHero.style.removeProperty(
+      "--category-image"
+    );
+
+    categoryHero.classList.remove(
+      "has-image"
+    );
+  }
+
+  $("ruleList").innerHTML =
+    category.rules
+      .map((rule, index) => `
+        <article
+          class="rule"
+          id="rule-${index}"
+        >
+
+          <div class="rule-top">
+
+            <div class="rule-num">
+              ${escapeHtml(
+                rule.code
+              )}
+            </div>
+
+            <div>
+
+              <h3>
+                ${escapeHtml(
+                  rule.title
+                )}
+              </h3>
+
+              <p>
+                ${escapeHtml(
+                  rule.text
+                )}
+              </p>
+
+              <span class="tag">
+                ${escapeHtml(
+                  rule.tag ||
+                  "REGRA"
+                )}
+              </span>
+
+              ${
+                rule.image
+                  ? `
+                    <br>
+
+                    <img
+                      class="rule-image"
+                      src="${escapeAttr(
+                        assetUrl(
+                          rule.image
+                        )
+                      )}"
+                      alt=""
+                    >
+                  `
+                  : ""
+              }
+
+            </div>
+
+          </div>
+
+        </article>
+      `)
+      .join("");
+
+  $("ruleToc").innerHTML =
+    `
+      <strong>
+        NESTA CATEGORIA
+      </strong>
+    ` +
+
+    category.rules
+      .map((rule, index) => `
+        <button
+          data-scroll-rule="rule-${index}"
+          type="button"
+        >
+          ${escapeHtml(
+            rule.code
+          )}
+          —
+          ${escapeHtml(
+            rule.title
+          )}
+        </button>
+      `)
+      .join("");
+}
+
+/*
+=========================================================
+PESQUISA
+=========================================================
+*/
+
+function search(query, target) {
+  query =
+    query
+      .trim()
+      .toLowerCase();
+
+  if (!query) {
+    target.innerHTML = "";
+    return;
+  }
+
+  const results =
+    allRules()
+      .filter(rule => {
+
+        const content = `
+          ${rule.cat.short}
+          ${rule.cat.name}
+          ${rule.cat.code}
+          ${rule.code}
+          ${rule.title}
+          ${rule.text}
+          ${rule.tag}
+        `;
+
+        return content
+          .toLowerCase()
+          .includes(query);
+      })
+      .slice(0, 30);
+
+  target.innerHTML =
+    results.length
+
+      ? results
+          .map(rule => `
+            <div
+              class="result"
+              data-route="${escapeAttr(
+                rule.cat.id
+              )}"
+            >
+
+              <small>
+                ${escapeHtml(
+                  rule.cat.short
+                )}
+                ·
+                ${escapeHtml(
+                  rule.code
+                )}
+              </small>
+
+              <h3>
+                ${escapeHtml(
+                  rule.title
+                )}
+              </h3>
+
+              <p>
+                ${escapeHtml(
+                  rule.text
+                )}
+              </p>
+
+            </div>
+          `)
+          .join("")
+
+      : `
+          <div class="result">
+
+            <h3>
+              Nenhuma regra encontrada.
+            </h3>
+
+            <p>
+              Tente outra palavra.
+            </p>
+
+          </div>
+        `;
+}
+
+/*
+=========================================================
+ROTAS
+=========================================================
+*/
+
+function route(id) {
+  document
+    .querySelectorAll(".page")
+    .forEach(page =>
+      page.classList.remove(
+        "active"
+      )
+    );
+
+  if (id === "inicio") {
+
+    $("inicio")
+      .classList.add("active");
+
+  } else if (id === "pesquisa") {
+
+    $("searchPage")
+      .classList.add("active");
+
+    setTimeout(
+      () =>
+        $("searchInput")?.focus(),
+      0
+    );
+
+  } else if (
+    state.data.categories.some(
+      category =>
+        category.id === id
+    )
+  ) {
+
+    $("categoryPage")
+      .classList.add("active");
+
+    renderCategory(id);
+
+  } else {
+
+    id = "inicio";
+
+    $("inicio")
+      .classList.add("active");
+  }
+
+  document
+    .querySelectorAll(
+      ".sidebar nav button"
+    )
+    .forEach(button =>
+      button.classList.toggle(
+        "active",
+        button.dataset.route === id
+      )
+    );
+
+  $("sidebar")
+    .classList.remove("open");
+
+  window.scrollTo(
+    0,
+    0
+  );
+}
+
+/*
+=========================================================
+CLIQUES / NAVEGAÇÃO
+=========================================================
+*/
+
+document.addEventListener(
+  "click",
+  event => {
+
+    const scrollTarget =
+      event.target.closest(
+        "[data-scroll-rule]"
+      );
+
+    if (scrollTarget) {
+
+      const element =
+        document.getElementById(
+          scrollTarget.dataset.scrollRule
+        );
+
+      if (element) {
+        element.scrollIntoView({
+          behavior:"smooth",
+          block:"center"
+        });
+      }
+
+      return;
+    }
+
+    const target =
+      event.target.closest(
+        "[data-route]"
+      );
+
+    if (!target) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const id =
+      target.dataset.route;
+
+    route(id);
+
+    history.replaceState(
+      null,
+      "",
+      "#" + id
+    );
+  }
+);
+
+/*
+=========================================================
+PESQUISA
+=========================================================
+*/
 
 $("searchOpen").onclick = () => {
-  $("searchOverlay").classList.add("open");
-  $("overlaySearch").focus();
+  $("searchOverlay")
+    .classList.add("open");
+
+  $("overlaySearch")
+    .focus();
 };
-$("searchClose").onclick = () => $("searchOverlay").classList.remove("open");
-$("searchOverlay").addEventListener("click", e => {
-  if (e.target === $("searchOverlay")) $("searchOverlay").classList.remove("open");
-});
-$("overlaySearch").oninput = e => search(e.target.value, $("overlayResults"));
-$("searchInput").oninput = e => search(e.target.value, $("searchResults"));
-$("mobileMenu").onclick = () => $("sidebar").classList.toggle("open");
-window.addEventListener("hashchange", () => route(location.hash.replace(/^#/, "") || "inicio"));
 
-/* =========================================================
-   CURSOR DO ADMIN — LOGO/SPRAY + RASTRO
-   Usa site.cursor exatamente como o painel atual grava.
-   ========================================================= */
+$("searchClose").onclick = () => {
+  $("searchOverlay")
+    .classList.remove("open");
+};
+
+$("searchOverlay").addEventListener(
+  "click",
+  event => {
+
+    if (
+      event.target ===
+      $("searchOverlay")
+    ) {
+      $("searchOverlay")
+        .classList.remove("open");
+    }
+  }
+);
+
+$("overlaySearch").oninput =
+  event =>
+    search(
+      event.target.value,
+      $("overlayResults")
+    );
+
+$("searchInput").oninput =
+  event =>
+    search(
+      event.target.value,
+      $("searchResults")
+    );
+
+$("mobileMenu").onclick = () =>
+  $("sidebar")
+    .classList.toggle("open");
+
+window.addEventListener(
+  "hashchange",
+  () =>
+    route(
+      location.hash.replace(
+        /^#/,
+        ""
+      ) || "inicio"
+    )
+);
+
+/*
+=========================================================
+CURSOR DO ADMIN
+=========================================================
+
+O cursor usa exatamente o arquivo escolhido no painel:
+
+site.cursor.image
+
+e mantém o rastro.
+
+Também funciona em:
+- menu lateral
+- botões
+- cards
+- regras
+- pesquisa
+- links
+- mobile (no mobile volta ao cursor normal)
+*/
+
 function setupCursor(site) {
-  document.getElementById("vienaGlobalCursor")?.remove();
-  document.querySelectorAll(".viena-global-trail").forEach(x => x.remove());
-  document.getElementById("vienaGlobalCursorStyle")?.remove();
-  document.documentElement.classList.remove("viena-cursor-active");
+  document
+    .getElementById(
+      "vienaGlobalCursor"
+    )
+    ?.remove();
 
-  if (window.matchMedia("(pointer: coarse)").matches) return;
+  document
+    .querySelectorAll(
+      ".viena-global-trail"
+    )
+    .forEach(
+      element =>
+        element.remove()
+    );
 
-  const config = site?.cursor || {};
-  if (config.enabled === false) return;
+  document
+    .getElementById(
+      "vienaGlobalCursorStyle"
+    )
+    ?.remove();
 
-  const image = assetUrl(
-    config.image || config.icon || config.cursor_image || "uploads/SPRAY PNG.png"
+  document.documentElement
+    .classList.remove(
+      "viena-cursor-active"
+    );
+
+  if (
+    window.matchMedia(
+      "(pointer: coarse)"
+    ).matches
+  ) {
+    return;
+  }
+
+  const config =
+    site?.cursor || {};
+
+  if (
+    config.enabled === false
+  ) {
+    return;
+  }
+
+  const image =
+    assetUrl(
+      config.image ||
+      config.icon ||
+      config.cursor_image ||
+      "uploads/SPRAY PNG.png"
+    );
+
+  const size =
+    Math.max(
+      12,
+      Math.min(
+        96,
+        Number(
+          config.size ||
+          config.icon_size
+        ) || 34
+      )
+    );
+
+  const trailEnabled =
+    config.trail_enabled !== false &&
+    config.trail !== false;
+
+  const trailCount =
+    Math.max(
+      2,
+      Math.min(
+        30,
+        Number(
+          config.trail_count
+        ) || 10
+      )
+    );
+
+  const trailColor =
+    config.trail_color ||
+    "#e50914";
+
+  /*
+    Remove o cursor padrão em TODA a página.
+  */
+  const style =
+    document.createElement(
+      "style"
+    );
+
+  style.id =
+    "vienaGlobalCursorStyle";
+
+  style.textContent = `
+    html.viena-cursor-active,
+    html.viena-cursor-active *,
+    html.viena-cursor-active a,
+    html.viena-cursor-active button,
+    html.viena-cursor-active input,
+    html.viena-cursor-active textarea,
+    html.viena-cursor-active select,
+    html.viena-cursor-active [role="button"]{
+      cursor:none!important;
+    }
+  `;
+
+  document.head.appendChild(
+    style
   );
 
-  const size = Math.max(12, Math.min(96, Number(config.size || config.icon_size) || 34));
-  const trailEnabled = config.trail_enabled !== false && config.trail !== false;
-  const trailCount = Math.max(2, Math.min(30, Number(config.trail_count) || 10));
-  const trailColor = config.trail_color || "#e50914";
+  document.documentElement
+    .classList.add(
+      "viena-cursor-active"
+    );
 
-  const style = document.createElement("style");
-  style.id = "vienaGlobalCursorStyle";
-  style.textContent = `
-    html.viena-cursor-active,html.viena-cursor-active *,html.viena-cursor-active a,
-    html.viena-cursor-active button,html.viena-cursor-active input,
-    html.viena-cursor-active textarea,html.viena-cursor-active select,
-    html.viena-cursor-active [role="button"]{cursor:none!important}
-  `;
-  document.head.appendChild(style);
-  document.documentElement.classList.add("viena-cursor-active");
+  /*
+    CURSOR PRINCIPAL
+  */
+  const cursor =
+    document.createElement(
+      "div"
+    );
 
-  const cursor = document.createElement("div");
-  cursor.id = "vienaGlobalCursor";
-  cursor.className = "viena-global-cursor";
+  cursor.id =
+    "vienaGlobalCursor";
+
+  cursor.className =
+    "viena-global-cursor";
+
   cursor.style.cssText = `
-    position:fixed;left:0;top:0;width:${size}px;height:${size}px;
-    z-index:2147483647;display:none;pointer-events:none;user-select:none;
-    transform:translate(-50%,-50%);background-image:url("${cssUrl(image)}");
-    background-size:contain;background-repeat:no-repeat;background-position:center;
+    position:fixed;
+    left:0;
+    top:0;
+    width:${size}px;
+    height:${size}px;
+    z-index:2147483647;
+    display:none;
+    pointer-events:none;
+    user-select:none;
+    transform:translate(-50%,-50%);
+    background-image:url("${cssUrl(image)}");
+    background-size:contain;
+    background-repeat:no-repeat;
+    background-position:center;
   `;
-  document.body.appendChild(cursor);
 
+  document.body.appendChild(
+    cursor
+  );
+
+  /*
+    RASTRO
+  */
   const trail = [];
+
   if (trailEnabled) {
-    for (let i=0;i<trailCount;i++) {
-      const dot = document.createElement("span");
-      dot.className = "viena-global-trail";
-      const dotSize = Math.max(3, 9 - i * .5);
-      const opacity = Math.max(.05, .8 - i * .07);
+
+    for (
+      let index = 0;
+      index < trailCount;
+      index++
+    ) {
+
+      const dot =
+        document.createElement(
+          "span"
+        );
+
+      dot.className =
+        "viena-global-trail";
+
+      const dotSize =
+        Math.max(
+          3,
+          9 - index * .5
+        );
+
+      const opacity =
+        Math.max(
+          .05,
+          .8 - index * .07
+        );
+
       dot.style.cssText = `
-        position:fixed;left:0;top:0;width:${dotSize}px;height:${dotSize}px;
-        border-radius:50%;z-index:2147483646;display:none;pointer-events:none;
-        background:${trailColor};opacity:${opacity};transform:translate(-50%,-50%);
+        position:fixed;
+        left:0;
+        top:0;
+        width:${dotSize}px;
+        height:${dotSize}px;
+        border-radius:50%;
+        z-index:2147483646;
+        display:none;
+        pointer-events:none;
+        background:${trailColor};
+        opacity:${opacity};
+        transform:translate(-50%,-50%);
       `;
-      document.body.appendChild(dot);
-      trail.push({el:dot,x:-100,y:-100});
+
+      document.body.appendChild(
+        dot
+      );
+
+      trail.push({
+        el:dot,
+        x:-100,
+        y:-100
+      });
     }
   }
 
-  let mouseX=-100,mouseY=-100,currentX=-100,currentY=-100;
-  let active=false;
+  let mouseX = -100;
+  let mouseY = -100;
 
-  const move = event => {
-    mouseX=event.clientX; mouseY=event.clientY;
-    active=true;
-    cursor.style.display="block";
-    trail.forEach(x=>x.el.style.display="block");
-  };
-  window.addEventListener("mousemove", move, {passive:true});
-  window.addEventListener("mouseleave", () => {
-    active=false; cursor.style.display="none"; trail.forEach(x=>x.el.style.display="none");
-  });
+  let currentX = -100;
+  let currentY = -100;
 
-  function animate(){
-    currentX += (mouseX-currentX)*.38;
-    currentY += (mouseY-currentY)*.38;
-    if(active){cursor.style.left=currentX+"px";cursor.style.top=currentY+"px";}
+  let active = false;
 
-    let px=currentX,py=currentY;
-    trail.forEach(item=>{
-      item.x += (px-item.x)*.25;
-      item.y += (py-item.y)*.25;
-      item.el.style.left=item.x+"px";
-      item.el.style.top=item.y+"px";
-      px=item.x;py=item.y;
-    });
-    requestAnimationFrame(animate);
+  const move =
+    event => {
+
+      mouseX =
+        event.clientX;
+
+      mouseY =
+        event.clientY;
+
+      active = true;
+
+      cursor.style.display =
+        "block";
+
+      trail.forEach(
+        item =>
+          item.el.style.display =
+            "block"
+      );
+    };
+
+  window.addEventListener(
+    "mousemove",
+    move,
+    { passive:true }
+  );
+
+  window.addEventListener(
+    "mouseleave",
+    () => {
+
+      active = false;
+
+      cursor.style.display =
+        "none";
+
+      trail.forEach(
+        item =>
+          item.el.style.display =
+            "none"
+      );
+    }
+  );
+
+  function animate() {
+
+    currentX +=
+      (
+        mouseX -
+        currentX
+      ) * .38;
+
+    currentY +=
+      (
+        mouseY -
+        currentY
+      ) * .38;
+
+    if (active) {
+
+      cursor.style.left =
+        currentX + "px";
+
+      cursor.style.top =
+        currentY + "px";
+    }
+
+    let previousX =
+      currentX;
+
+    let previousY =
+      currentY;
+
+    trail.forEach(
+      item => {
+
+        item.x +=
+          (
+            previousX -
+            item.x
+          ) * .25;
+
+        item.y +=
+          (
+            previousY -
+            item.y
+          ) * .25;
+
+        item.el.style.left =
+          item.x + "px";
+
+        item.el.style.top =
+          item.y + "px";
+
+        previousX =
+          item.x;
+
+        previousY =
+          item.y;
+      }
+    );
+
+    requestAnimationFrame(
+      animate
+    );
   }
+
   animate();
 }
 
-load().catch(err => {
-  console.error(err);
-  document.body.insertAdjacentHTML("beforeend", `
-    <div class="load-error">
-      Não foi possível carregar o conteúdo.<br>
-      Verifique se <strong>content/site.json</strong> e <strong>content/rules.json</strong> foram enviados.
-    </div>
-  `);
-  /* Mesmo que o JSON falhe, não deixa o cursor quebrado. */
-  setupCursor({cursor:{enabled:true,image:"uploads/SPRAY PNG.png",size:34,trail_enabled:true,trail_count:10,trail_color:"#e50914"}});
+/*
+=========================================================
+ERRO
+=========================================================
+*/
+
+load().catch(error => {
+
+  console.error(error);
+
+  document
+    .querySelector(
+      ".load-error"
+    )
+    ?.remove();
+
+  document.body.insertAdjacentHTML(
+    "beforeend",
+    `
+      <div class="load-error">
+        Não foi possível carregar o conteúdo.
+        Verifique content/site.json e
+        content/rules.json.
+        <br>
+        <small>
+          ${escapeHtml(
+            error.message
+          )}
+        </small>
+      </div>
+    `
+  );
 });
