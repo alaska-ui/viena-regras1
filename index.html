@@ -1,475 +1,106 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <meta
-    name="description"
-    content="Central oficial de regras da Viena Roleplay"
-  >
-
-  <link
-    id="favicon"
-    rel="icon"
-    href="logo-viena.png"
-  >
-
-  <title>Viena RP — Código da Rua</title>
-
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Central oficial de regras da Viena Roleplay">
+<link id="favicon" rel="icon" href="logo-viena.png">
+<title>Viena RP — Código da Rua</title>
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+<div class="noise"></div>
 
-  <!-- RUÍDO DE FUNDO -->
-  <div class="noise"></div>
+<header class="topbar">
+  <button class="mobile-menu" id="mobileMenu" type="button">☰</button>
+  <a class="brand" href="#inicio" data-route="inicio">
+    <img id="headerLogo" src="logo-viena.png" alt="Viena Roleplay">
+    <div><strong id="brandTitle">CÓDIGO DA RUA</strong><small id="brandSite">VIENA ROLEPLAY</small></div>
+  </a>
+  <div class="top-actions">
+    <button id="searchOpen" class="icon-btn" type="button">⌕</button>
+    <a id="discordBtn" href="#" class="discord-btn" target="_blank" rel="noopener noreferrer">DISCORD</a>
+  </div>
+</header>
 
-  <!-- CURSOR -->
-  <div
-    class="custom-cursor"
-    id="customCursor"
-  ></div>
+<aside class="sidebar" id="sidebar">
+  <div class="side-label">VIENA ROLEPLAY</div>
+  <nav id="nav"></nav>
+  <div class="side-footer">QUEM VIVE VIENA<br><strong>FAZ HISTÓRIA.</strong></div>
+</aside>
 
-  <div
-    class="cursor-dot"
-    id="cursorDot"
-  ></div>
-
-
-  <!-- =====================================================
-       TOPO
-       ===================================================== -->
-
-  <header class="topbar">
-
-    <button
-      class="mobile-menu"
-      id="mobileMenu"
-      type="button"
-      aria-label="Abrir menu"
-    >
-      ☰
-    </button>
-
-
-    <a
-      class="brand"
-      href="#inicio"
-      data-route="inicio"
-    >
-
-      <img
-        id="headerLogo"
-        src="logo-viena.png"
-        alt="Viena Roleplay"
-      >
-
-      <div>
-
-        <strong id="brandTitle">
-          CÓDIGO DA RUA
-        </strong>
-
-        <small id="brandSite">
-          VIENA ROLEPLAY
-        </small>
-
+<main class="content">
+<section id="inicio" class="page active">
+  <div class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow" id="heroEyebrow"></p>
+      <h1 id="heroTitle"></h1>
+      <p class="hero-text" id="heroText"></p>
+      <div class="hero-actions">
+        <button class="primary" data-route="corridas" type="button">EXPLORAR CORRIDAS <span>→</span></button>
+        <button class="ghost" data-route="gerais" type="button">VER TODAS AS REGRAS</button>
       </div>
-
-    </a>
-
-
-    <div class="top-actions">
-
-      <button
-        id="searchOpen"
-        class="icon-btn"
-        type="button"
-        aria-label="Pesquisar"
-      >
-        ⌕
-      </button>
-
-      <a
-        id="discordBtn"
-        href="#"
-        class="discord-btn"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        DISCORD
-      </a>
-
     </div>
-
-  </header>
-
-
-  <!-- =====================================================
-       MENU LATERAL
-       ===================================================== -->
-
-  <aside
-    class="sidebar"
-    id="sidebar"
-  >
-
-    <div class="side-label">
-      VIENA ROLEPLAY
-    </div>
-
-    <nav id="nav"></nav>
-
-    <div class="side-footer">
-
-      QUEM VIVE VIENA
-
-      <br>
-
-      <strong>
-        FAZ HISTÓRIA.
-      </strong>
-
-    </div>
-
-  </aside>
-
-
-  <!-- =====================================================
-       CONTEÚDO
-       ===================================================== -->
-
-  <main class="content">
-
-
-    <!-- ===================================================
-         INÍCIO
-         =================================================== -->
-
-    <section
-      id="inicio"
-      class="page active"
-    >
-
-      <div class="hero">
-
-        <div class="hero-copy">
-
-          <p
-            class="eyebrow"
-            id="heroEyebrow"
-          ></p>
-
-          <h1 id="heroTitle"></h1>
-
-          <p
-            class="hero-text"
-            id="heroText"
-          ></p>
-
-
-          <div class="hero-actions">
-
-            <button
-              class="primary"
-              data-route="corridas"
-              type="button"
-            >
-              EXPLORAR CORRIDAS
-              <span>→</span>
-            </button>
-
-
-            <button
-              class="ghost"
-              data-route="gerais"
-              type="button"
-            >
-              VER TODAS AS REGRAS
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <!-- IMAGEM CONFIGURADA NO ADMIN -->
-
-        <div
-          class="hero-art"
-          id="heroArt"
-        >
-
-          <img
-            id="heroImage"
-            alt=""
-          >
-
-        </div>
-
-      </div>
-
-
-      <!-- AVISO -->
-
-      <div
-        class="notice"
-        id="notice"
-      >
-
-        <div class="notice-icon">
-          !
-        </div>
-
-        <div>
-
-          <strong
-            id="noticeTitle"
-          ></strong>
-
-          <p
-            id="noticeText"
-          ></p>
-
-        </div>
-
-      </div>
-
-
-      <!-- CATEGORIAS -->
-
-      <div class="section-head">
-
-        <div>
-
-          <span>
-            01
-          </span>
-
-          <h2>
-            MAPA DA RUA
-          </h2>
-
-        </div>
-
-        <p>
-          Escolha uma categoria para começar.
-        </p>
-
-      </div>
-
-
-      <div
-        class="category-grid"
-        id="homeCategories"
-      ></div>
-
-
-      <!-- ATUALIZAÇÕES -->
-
-      <div
-        class="updates"
-        id="updatesWrap"
-      >
-
-        <div class="section-head">
-
-          <div>
-
-            <span>
-              02
-            </span>
-
-            <h2>
-              ÚLTIMAS ALTERAÇÕES
-            </h2>
-
-          </div>
-
-        </div>
-
-        <div id="updatesList"></div>
-
-      </div>
-
-    </section>
-
-
-    <!-- ===================================================
-         CATEGORIA
-         =================================================== -->
-
-    <section
-      id="categoryPage"
-      class="page"
-    >
-
-      <button
-        class="back"
-        data-route="inicio"
-        type="button"
-      >
-        ← VOLTAR AO MAPA
-      </button>
-
-
-      <div
-        class="category-title"
-        id="categoryHero"
-      >
-
-        <div class="category-title-content">
-
-          <p
-            class="eyebrow"
-            id="catCode"
-          ></p>
-
-          <h1
-            id="catTitle"
-          ></h1>
-
-          <p
-            id="catDesc"
-          ></p>
-
-        </div>
-
-      </div>
-
-
-      <div class="rule-layout">
-
-        <div
-          class="rule-list"
-          id="ruleList"
-        ></div>
-
-
-        <aside
-          class="rule-toc"
-          id="ruleToc"
-        ></aside>
-
-      </div>
-
-    </section>
-
-
-    <!-- ===================================================
-         PESQUISA
-         =================================================== -->
-
-    <section
-      id="searchPage"
-      class="page"
-    >
-
-      <button
-        class="back"
-        data-route="inicio"
-        type="button"
-      >
-        ← VOLTAR
-      </button>
-
-
-      <div
-        class="category-title search-title"
-      >
-
-        <p class="eyebrow">
-          PESQUISA
-        </p>
-
-        <h1>
-          ENCONTRE A REGRA.
-        </h1>
-
-
-        <input
-          id="searchInput"
-          class="big-search"
-          placeholder="Digite: RDM, PIT, corrida, aposta..."
-          autocomplete="off"
-        >
-
-      </div>
-
-
-      <div
-        id="searchResults"
-        class="search-results"
-      ></div>
-
-    </section>
-
-  </main>
-
-
-  <!-- =====================================================
-       FOOTER
-       ===================================================== -->
-
-  <footer id="footerText"></footer>
-
-
-  <!-- =====================================================
-       PESQUISA OVERLAY
-       ===================================================== -->
-
-  <div
-    class="search-overlay"
-    id="searchOverlay"
-  >
-
-    <div class="search-modal">
-
-      <button
-        id="searchClose"
-        type="button"
-      >
-        ×
-      </button>
-
-      <p class="eyebrow">
-        PESQUISA RÁPIDA
-      </p>
-
-      <h2>
-        QUAL REGRA VOCÊ PROCURA?
-      </h2>
-
-
-      <input
-        id="overlaySearch"
-        placeholder="Ex.: VDM, metagaming, PIT..."
-        autocomplete="off"
-      >
-
-
-      <div
-        id="overlayResults"
-      ></div>
-
-    </div>
-
+    <div class="hero-art" id="heroArt"><img id="heroImage" alt=""></div>
   </div>
 
+  <div class="notice" id="notice">
+    <div class="notice-icon">!</div>
+    <div><strong id="noticeTitle"></strong><p id="noticeText"></p></div>
+  </div>
 
-  <!-- JAVASCRIPT -->
+  <div class="section-head">
+    <div><span>01</span><h2>MAPA DA RUA</h2></div>
+    <p>Escolha uma categoria para começar.</p>
+  </div>
+  <div class="category-grid" id="homeCategories"></div>
 
-  <script src="app.js"></script>
+  <div class="updates" id="updatesWrap">
+    <div class="section-head"><div><span>02</span><h2>ÚLTIMAS ALTERAÇÕES</h2></div></div>
+    <div id="updatesList"></div>
+  </div>
+</section>
 
+<section id="categoryPage" class="page">
+  <button class="back" data-route="inicio" type="button">← VOLTAR AO MAPA</button>
+
+  <div class="category-title" id="categoryHero">
+    <div class="category-title-content">
+      <p class="eyebrow" id="catCode"></p>
+      <h1 id="catTitle"></h1>
+      <p id="catDesc"></p>
+    </div>
+  </div>
+
+  <div class="rule-layout">
+    <div class="rule-list" id="ruleList"></div>
+    <aside class="rule-toc" id="ruleToc"></aside>
+  </div>
+</section>
+
+<section id="searchPage" class="page">
+  <button class="back" data-route="inicio" type="button">← VOLTAR</button>
+  <div class="category-title search-title">
+    <p class="eyebrow">PESQUISA</p>
+    <h1>ENCONTRE A REGRA.</h1>
+    <input id="searchInput" class="big-search" placeholder="Digite: RDM, PIT, corrida, aposta..." autocomplete="off">
+  </div>
+  <div id="searchResults" class="search-results"></div>
+</section>
+</main>
+
+<footer id="footerText"></footer>
+
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-modal">
+    <button id="searchClose" type="button">×</button>
+    <p class="eyebrow">PESQUISA RÁPIDA</p>
+    <h2>QUAL REGRA VOCÊ PROCURA?</h2>
+    <input id="overlaySearch" placeholder="Ex.: VDM, metagaming, PIT..." autocomplete="off">
+    <div id="overlayResults"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
 </body>
-
 </html>

@@ -1,0 +1,31 @@
+CORREÇÃO VIENA — 20/08/2026
+
+Substitua no seu projeto:
+- index.html
+- style.css
+- app.js
+
+Não apague:
+- content/site.json
+- content/rules.json
+- uploads/
+- admin/
+
+O código agora:
+1. Usa a IMAGEM DA CAPA do Admin como fundo inteiro do HERO, com degradê escuro por cima.
+2. Usa site.cursor.image (ícone enviado no Admin) como cursor.
+3. Mantém o rastro vermelho do cursor.
+4. Faz o cursor funcionar sobre links, botões, cards, menu, pesquisa e todas as abas.
+5. Corrige caminhos /uploads/... para GitHub Pages de projeto.
+6. Mantém as imagens das categorias como fundo nas páginas de categoria.
+
+IMPORTANTE:
+O site.json precisa continuar contendo a configuração do Admin. O cursor é lido de:
+site.cursor.enabled
+site.cursor.image
+site.cursor.size
+site.cursor.trail_enabled
+site.cursor.trail_count
+site.cursor.trail_color
+
+Se o painel salvar esses mesmos campos, não precisa editar mais nada.
