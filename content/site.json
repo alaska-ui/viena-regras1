@@ -30,9 +30,9 @@
   },
   "cursor": {
     "enabled": true,
-    "image": "",
+    "image": "/uploads/SPRAY PNG.png",
     "size": 34,
-    "trail_enabled": false,
+    "trail_enabled": true,
     "trail_color": "#e60a0a",
     "trail_count": 19
   }
