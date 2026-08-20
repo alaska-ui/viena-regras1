@@ -1,219 +1,71 @@
+/* =========================================================
+   VIENA ROLEPLAY
+   APP.JS COMPLETO
+   ========================================================= */
+
+
 const state = {
+
   site: null,
+
   data: null
+
 };
 
-const $ = id => document.getElementById(id);
+
+/* =========================================================
+   ATALHO
+   ========================================================= */
+
+const $ = id =>
+  document.getElementById(id);
 
 
 /* =========================================================
-   CURSOR PERSONALIZADO
-========================================================= */
-
-const customCursor = document.getElementById("customCursor");
-const cursorDot = document.getElementById("cursorDot");
-
-let mouseX = 0;
-let mouseY = 0;
-
-let cursorX = 0;
-let cursorY = 0;
-
-let dotX = 0;
-let dotY = 0;
-
-
-/* Movimento do mouse */
-
-document.addEventListener("mousemove", e => {
-
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-
-  if (customCursor) {
-    customCursor.style.left = mouseX + "px";
-    customCursor.style.top = mouseY + "px";
-  }
-
-});
-
-
-/* Animação do cursor */
-
-function animateCursor() {
-
-  cursorX += (mouseX - cursorX) * 0.15;
-  cursorY += (mouseY - cursorY) * 0.15;
-
-  dotX += (mouseX - dotX) * 0.35;
-  dotY += (mouseY - dotY) * 0.35;
-
-
-  if (cursorDot) {
-
-    cursorDot.style.left =
-      dotX + "px";
-
-    cursorDot.style.top =
-      dotY + "px";
-
-  }
-
-
-  requestAnimationFrame(animateCursor);
-
-}
-
-animateCursor();
-
-
-/* =========================================================
-   RASTRO DO CURSOR
-========================================================= */
-
-let lastTrailX = 0;
-let lastTrailY = 0;
-
-document.addEventListener("mousemove", e => {
-
-  const distance = Math.hypot(
-    e.clientX - lastTrailX,
-    e.clientY - lastTrailY
-  );
-
-
-  /* Evita criar partículas demais */
-
-  if (distance < 8) {
-    return;
-  }
-
-
-  lastTrailX = e.clientX;
-  lastTrailY = e.clientY;
-
-
-  const trail =
-    document.createElement("span");
-
-
-  trail.className =
-    "cursor-trail";
-
-
-  trail.style.left =
-    e.clientX + "px";
-
-  trail.style.top =
-    e.clientY + "px";
-
-
-  document.body.appendChild(trail);
-
-
-  setTimeout(() => {
-
-    trail.remove();
-
-  }, 600);
-
-});
-
-
-/* =========================================================
-   EFEITO DO CURSOR SOBRE ELEMENTOS CLICÁVEIS
-========================================================= */
-
-document.addEventListener("mouseover", e => {
-
-  const clickable =
-    e.target.closest(
-      "a, button, input, textarea, select, [data-route]"
-    );
-
-
-  if (!customCursor) {
-    return;
-  }
-
-
-  if (clickable) {
-
-    customCursor.classList.add(
-      "cursor-hover"
-    );
-
-  }
-
-});
-
-
-document.addEventListener("mouseout", e => {
-
-  const clickable =
-    e.target.closest(
-      "a, button, input, textarea, select, [data-route]"
-    );
-
-
-  if (!customCursor) {
-    return;
-  }
-
-
-  if (clickable) {
-
-    customCursor.classList.remove(
-      "cursor-hover"
-    );
-
-  }
-
-});
-
-
-/* =========================================================
-   CARREGAR CONTEÚDO
-========================================================= */
+   CARREGAR SITE
+   ========================================================= */
 
 async function load() {
 
   try {
 
-    const [s, r] = await Promise.all([
+    const [siteResponse, rulesResponse] =
+      await Promise.all([
 
-      fetch("content/site.json")
-        .then(x => {
+        fetch("content/site.json")
+          .then(response => {
 
-          if (!x.ok) {
-            throw new Error(
-              "Não foi possível carregar site.json"
-            );
-          }
+            if (!response.ok) {
+              throw new Error(
+                "Não foi possível carregar site.json"
+              );
+            }
 
-          return x.json();
+            return response.json();
 
-        }),
+          }),
+
+        fetch("content/rules.json")
+          .then(response => {
+
+            if (!response.ok) {
+              throw new Error(
+                "Não foi possível carregar rules.json"
+              );
+            }
+
+            return response.json();
+
+          })
+
+      ]);
 
 
-      fetch("content/rules.json")
-        .then(x => {
+    state.site =
+      siteResponse;
 
-          if (!x.ok) {
-            throw new Error(
-              "Não foi possível carregar rules.json"
-            );
-          }
-
-          return x.json();
-
-        })
-
-    ]);
-
-
-    state.site = s;
-    state.data = r;
+    state.data =
+      rulesResponse;
 
 
     applySite();
@@ -228,42 +80,50 @@ async function load() {
       "inicio"
     );
 
-  }
 
-  catch (err) {
+  } catch (error) {
 
-    console.error(err);
-
+    console.error(error);
 
     document.body.insertAdjacentHTML(
 
       "beforeend",
 
       `
-        <div
-          style="
-            position:fixed;
-            bottom:0;
-            left:0;
-            right:0;
 
-            background:#e50914;
-            color:#fff;
+      <div
+        style="
+          position:fixed;
+          bottom:0;
+          left:0;
+          right:0;
+          background:#e50914;
+          color:#fff;
+          padding:14px;
+          text-align:center;
+          z-index:999999;
+          font-family:Arial;
+        "
+      >
 
-            padding:14px;
+        Não foi possível carregar o conteúdo.
 
-            text-align:center;
+        <br>
 
-            font-family:Arial,sans-serif;
+        Verifique:
 
-            z-index:999999;
-          "
-        >
-          Não foi possível carregar o conteúdo.
-          Verifique se <strong>content/site.json</strong>
-          e <strong>content/rules.json</strong>
-          foram enviados corretamente.
-        </div>
+        <strong>
+          content/site.json
+        </strong>
+
+        e
+
+        <strong>
+          content/rules.json
+        </strong>
+
+      </div>
+
       `
 
     );
@@ -275,50 +135,55 @@ async function load() {
 
 /* =========================================================
    CONFIGURAÇÕES DO SITE
-========================================================= */
+   ========================================================= */
 
 function applySite() {
 
   const s =
     state.site || {};
 
-  const t =
+  const theme =
     s.theme || {};
 
 
-  /* Tema */
+  /*
+     TEMA
+  */
 
   for (
-    const [k, v]
-    of Object.entries(t)
+    const [key, value]
+    of Object.entries(theme)
   ) {
 
     document.documentElement.style.setProperty(
 
       "--" +
       (
-        k === "accent_light"
+        key === "accent_light"
           ? "accent2"
-          : k
+          : key
       ),
 
-      v
+      value
 
     );
 
   }
 
 
-  /* =====================================================
+  /*
      LOGO
-  ===================================================== */
+  */
+
+  const logo =
+    s.logo ||
+    "logo-viena.png";
+
 
   if ($("headerLogo")) {
 
     $("headerLogo").src =
-      s.logo ||
-      "logo-viena.png";
-
+      logo;
 
     $("headerLogo").alt =
       s.site_name ||
@@ -327,23 +192,23 @@ function applySite() {
   }
 
 
-  /* =====================================================
+  /*
      FAVICON
-  ===================================================== */
+  */
 
   if ($("favicon")) {
 
     $("favicon").href =
       s.favicon ||
-      s.logo ||
+      logo ||
       "logo-viena.png";
 
   }
 
 
-  /* =====================================================
-     TÍTULO
-  ===================================================== */
+  /*
+     TÍTULOS
+  */
 
   if ($("brandTitle")) {
 
@@ -357,7 +222,6 @@ function applySite() {
   if ($("brandSite")) {
 
     $("brandSite").textContent =
-
       (
         s.site_name ||
         "VIENA ROLEPLAY"
@@ -366,9 +230,9 @@ function applySite() {
   }
 
 
-  /* =====================================================
+  /*
      HERO
-  ===================================================== */
+  */
 
   if ($("heroEyebrow")) {
 
@@ -397,9 +261,9 @@ function applySite() {
   }
 
 
-  /* =====================================================
+  /*
      AVISO
-  ===================================================== */
+  */
 
   if ($("noticeTitle")) {
 
@@ -419,9 +283,9 @@ function applySite() {
   }
 
 
-  /* =====================================================
-     RODAPÉ
-  ===================================================== */
+  /*
+     FOOTER
+  */
 
   if ($("footerText")) {
 
@@ -432,9 +296,9 @@ function applySite() {
   }
 
 
-  /* =====================================================
+  /*
      DISCORD
-  ===================================================== */
+  */
 
   if ($("discordBtn")) {
 
@@ -442,10 +306,8 @@ function applySite() {
       s.discord_url ||
       "#";
 
-
     $("discordBtn").target =
       "_blank";
-
 
     $("discordBtn").rel =
       "noopener noreferrer";
@@ -453,15 +315,18 @@ function applySite() {
   }
 
 
-  /* =====================================================
-     ELEMENTOS OPCIONAIS
-  ===================================================== */
+  /*
+     LAYOUT
+  */
+
+  const layout =
+    s.layout || {};
+
 
   if ($("notice")) {
 
     $("notice").style.display =
-
-      s.layout?.show_notice === false
+      layout.show_notice === false
         ? "none"
         : "flex";
 
@@ -471,8 +336,7 @@ function applySite() {
   if ($("updatesWrap")) {
 
     $("updatesWrap").style.display =
-
-      s.layout?.show_updates === false
+      layout.show_updates === false
         ? "none"
         : "block";
 
@@ -482,48 +346,94 @@ function applySite() {
   if ($("searchOpen")) {
 
     $("searchOpen").style.display =
-
-      s.layout?.show_search === false
+      layout.show_search === false
         ? "none"
-        : "block";
+        : "flex";
 
   }
 
 
-  /* =====================================================
-     IMAGEM DA CAPA / HERO
-  ===================================================== */
+  /*
+     ========================================================
+     IMAGEM DO HERO
+     ========================================================
+
+     ESTA É A IMAGEM QUE VOCÊ ENVIA PELO ADMIN.
+
+     Ela NÃO usa a logo.
+
+  */
+
+  const heroImage =
+    s.hero_image ||
+    "";
+
 
   if (
-    s.hero_image &&
-    s.layout?.show_hero_image !== false
+    heroImage &&
+    layout.show_hero_image !== false
   ) {
 
-    if ($("heroImage")) {
+    $("heroImage").src =
+      heroImage;
 
-      $("heroImage").src =
-        s.hero_image;
+    $("heroImage").style.display =
+      "block";
 
-    }
+    $("heroArt").style.display =
+      "flex";
 
+  } else {
 
-    if ($("heroArt")) {
+    $("heroImage").removeAttribute(
+      "src"
+    );
 
-      $("heroArt").style.display =
-        "flex";
-
-    }
+    $("heroArt").style.display =
+      "none";
 
   }
 
-  else {
 
-    if ($("heroArt")) {
+  /*
+     ========================================================
+     CURSOR DO ADMIN
+     ========================================================
 
-      $("heroArt").style.display =
-        "none";
+     O Admin deve salvar:
 
-    }
+     cursor: {
+       image: "uploads/spray.png"
+     }
+
+  */
+
+  const cursor =
+    s.cursor || {};
+
+
+  if (
+    cursor.enabled !== false &&
+    cursor.image
+  ) {
+
+    document.documentElement.style.setProperty(
+
+      "--cursor-image",
+
+      `url("${cursor.image}")`
+
+    );
+
+  } else {
+
+    document.documentElement.style.setProperty(
+
+      "--cursor-image",
+
+      `url("logo-viena.png")`
+
+    );
 
   }
 
@@ -531,119 +441,124 @@ function applySite() {
 
 
 /* =========================================================
-   MENU LATERAL
-========================================================= */
+   MENU
+   ========================================================= */
 
 function renderNav() {
 
-  if (!$("nav")) {
+  if (
+    !state.data ||
+    !Array.isArray(
+      state.data.categories
+    )
+  ) {
+
     return;
+
   }
 
 
   $("nav").innerHTML =
 
-    (
-      state.data.categories ||
-      []
-    )
+    state.data.categories
 
-    .map(c => `
+      .map(category => `
 
-      <button
-        data-route="${c.id}"
-        type="button"
-      >
+        <button
+          data-route="${category.id}"
+          type="button"
+        >
 
-        <span>
-          ${c.code}
-        </span>
+          <span>
+            ${category.code}
+          </span>
 
-        ${c.short}
+          ${category.short}
 
-      </button>
+        </button>
 
-    `)
+      `)
 
-    .join("");
+      .join("");
 
 }
 
 
 /* =========================================================
-   PÁGINA INICIAL
-========================================================= */
+   HOME
+   ========================================================= */
 
 function renderHome() {
 
-  if (!$("homeCategories")) {
+  if (
+    !state.data ||
+    !Array.isArray(
+      state.data.categories
+    )
+  ) {
+
     return;
+
   }
 
 
   $("homeCategories").innerHTML =
 
-    (
-      state.data.categories ||
-      []
-    )
+    state.data.categories
 
-    .map(c => `
+      .map(category => `
 
-      <article
-        class="cat-card"
-        data-route="${c.id}"
-      >
+        <article
+          class="cat-card"
+          data-route="${category.id}"
+        >
 
-        <div class="num">
+          <div class="num">
 
-          ${c.code} / VIENA
+            ${category.code}
+            /
+            VIENA
 
-        </div>
-
-
-        ${
-          c.image
-
-            ? `
-
-              <img
-                class="card-image"
-                src="${c.image}"
-                alt=""
-              >
-
-            `
-
-            : ""
-        }
+          </div>
 
 
-        <h3>
-          ${c.short}
-        </h3>
+          ${
+            category.image
+
+              ? `
+
+                <img
+                  class="card-image"
+                  src="${category.image}"
+                  alt=""
+                >
+
+              `
+
+              : ""
+
+          }
 
 
-        <p>
-          ${c.desc}
-        </p>
+          <h3>
+            ${category.short}
+          </h3>
 
 
-      </article>
+          <p>
+            ${category.desc}
+          </p>
 
-    `)
+        </article>
 
-    .join("");
+      `)
+
+      .join("");
 
 
-  /* =====================================================
+  /*
      ATUALIZAÇÕES
-  ===================================================== */
-
-  if (!$("updatesList")) {
-    return;
-  }
-
+  */
 
   $("updatesList").innerHTML =
 
@@ -652,177 +567,136 @@ function renderHome() {
       []
     )
 
-    .map(x => `
+      .map(update => `
 
-      <div class="update">
+        <div class="update">
 
-        <time>
-          ${x.date}
-        </time>
+          <time>
+            ${update.date}
+          </time>
 
+          <strong>
+            ${update.title}
+            —
+            ${update.text}
+          </strong>
 
-        <strong>
+          <span>
+            ${update.tag}
+          </span>
 
-          ${x.title}
-          —
-          ${x.text}
+        </div>
 
-        </strong>
+      `)
 
-
-        <span>
-          ${x.tag}
-        </span>
-
-      </div>
-
-    `)
-
-    .join("");
+      .join("");
 
 }
 
 
 /* =========================================================
    TODAS AS REGRAS
-========================================================= */
+   ========================================================= */
 
 function allRules() {
 
-  return (
+  return state.data.categories
 
-    state.data.categories || []
+    .flatMap(category =>
 
-  ).flatMap(c =>
+      (category.rules || [])
 
-    (c.rules || []).map(r => ({
+        .map(rule => ({
 
-      cat: c,
+          cat: category,
 
-      ...r
+          ...rule
 
-    }))
+        }))
 
-  );
+    );
 
 }
 
 
 /* =========================================================
-   RENDERIZAR CATEGORIA
-========================================================= */
+   CATEGORIA
+   ========================================================= */
 
 function renderCategory(id) {
 
-  const c =
-
+  const category =
     state.data.categories.find(
-      x => x.id === id
+      item => item.id === id
     );
 
 
-  if (!c) {
+  if (!category) {
+
+    route("inicio");
+
     return;
-  }
-
-
-  /* =====================================================
-     TÍTULO
-  ===================================================== */
-
-  if ($("catCode")) {
-
-    $("catCode").textContent =
-      `CÓDIGO ${c.code}`;
 
   }
 
 
-  if ($("catTitle")) {
-
-    $("catTitle").textContent =
-      c.name;
-
-  }
+  $("catCode").textContent =
+    `CÓDIGO ${category.code}`;
 
 
-  if ($("catDesc")) {
-
-    $("catDesc").textContent =
-      c.desc;
-
-  }
+  $("catTitle").textContent =
+    category.name;
 
 
-  /* =====================================================
-     IMAGEM DA CATEGORIA
-  ===================================================== */
-
-  if ($("catImage")) {
-
-    $("catImage").hidden =
-      !c.image;
+  $("catDesc").textContent =
+    category.desc;
 
 
-    if (c.image) {
-
-      $("catImage").src =
-        c.image;
-
-    }
-
-  }
-
-
-  /* =====================================================
+  /*
      REGRAS
-  ===================================================== */
+  */
 
-  if ($("ruleList")) {
+  $("ruleList").innerHTML =
 
-    $("ruleList").innerHTML =
+    (category.rules || [])
 
-      (c.rules || [])
-
-      .map((r, i) => `
+      .map((rule, index) => `
 
         <article
           class="rule"
-          id="rule-${i}"
+          id="rule-${index}"
         >
 
           <div class="rule-top">
 
-
             <div class="rule-num">
 
-              ${r.code}
+              ${rule.code}
 
             </div>
 
 
             <div>
 
-
               <h3>
-                ${r.title}
+                ${rule.title}
               </h3>
 
 
               <p>
-                ${r.text}
+                ${rule.text}
               </p>
 
 
               <span class="tag">
 
-                ${r.tag}
+                ${rule.tag || ""}
 
               </span>
 
 
               ${
-                r.image
+                rule.image
 
                   ? `
 
@@ -830,18 +704,17 @@ function renderCategory(id) {
 
                     <img
                       class="rule-image"
-                      src="${r.image}"
+                      src="${rule.image}"
                       alt=""
                     >
 
                   `
 
                   : ""
+
               }
 
-
             </div>
-
 
           </div>
 
@@ -851,31 +724,27 @@ function renderCategory(id) {
 
       .join("");
 
-  }
 
+  /*
+     ÍNDICE DAS REGRAS
+  */
 
-  /* =====================================================
-     ÍNDICE DA CATEGORIA
-  ===================================================== */
+  $("ruleToc").innerHTML =
 
-  if ($("ruleToc")) {
+    `<strong>NESTA CATEGORIA</strong>` +
 
-    $("ruleToc").innerHTML =
+    (category.rules || [])
 
-      `<strong>NESTA CATEGORIA</strong>` +
-
-      (c.rules || [])
-
-      .map((r, i) => `
+      .map((rule, index) => `
 
         <button
           type="button"
-          data-rule-target="rule-${i}"
+          data-scroll-rule="${index}"
         >
 
-          ${r.code}
+          ${rule.code}
           —
-          ${r.title}
+          ${rule.title}
 
         </button>
 
@@ -883,74 +752,22 @@ function renderCategory(id) {
 
       .join("");
 
-  }
-
 }
 
 
 /* =========================================================
-   CLIQUE NO ÍNDICE DAS REGRAS
-========================================================= */
-
-document.addEventListener(
-  "click",
-  e => {
-
-    const button =
-      e.target.closest(
-        "[data-rule-target]"
-      );
-
-
-    if (!button) {
-      return;
-    }
-
-
-    const target =
-      document.getElementById(
-        button.dataset.ruleTarget
-      );
-
-
-    if (!target) {
-      return;
-    }
-
-
-    e.preventDefault();
-
-
-    target.scrollIntoView({
-
-      behavior: "smooth",
-
-      block: "center"
-
-    });
-
-  }
-);
-
-
-/* =========================================================
    PESQUISA
-========================================================= */
+   ========================================================= */
 
-function search(q, target) {
+function search(query, target) {
 
-  if (!target) {
-    return;
-  }
-
-
-  q =
-    q
+  query =
+    query
       .trim()
       .toLowerCase();
 
 
-  if (!q) {
+  if (!query) {
 
     target.innerHTML =
       "";
@@ -960,256 +777,271 @@ function search(q, target) {
   }
 
 
-  const res =
+  const results =
 
     allRules()
 
-      .filter(r => `
+      .filter(rule =>
 
-        ${r.cat.short}
+        `
 
-        ${r.cat.name}
+        ${rule.cat.short}
 
-        ${r.code}
+        ${rule.cat.name}
 
-        ${r.title}
+        ${rule.code}
 
-        ${r.text}
+        ${rule.title}
 
-        ${r.tag}
+        ${rule.text}
 
-      `
+        ${rule.tag}
 
-      .toLowerCase()
+        `
 
-      .includes(q))
+          .toLowerCase()
+
+          .includes(query)
+
+      )
 
       .slice(0, 30);
 
 
+  if (!results.length) {
+
+    target.innerHTML = `
+
+      <div class="result">
+
+        <h3>
+          Nenhuma regra encontrada.
+        </h3>
+
+        <p>
+          Tente outra palavra.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
   target.innerHTML =
 
-    res.length
+    results
 
-      ? res
+      .map(rule => `
 
-        .map(r => `
+        <div
+          class="result"
+          data-route="${rule.cat.id}"
+        >
 
-          <div
-            class="result"
-            data-route="${r.cat.id}"
-          >
+          <small>
 
-            <small>
+            ${rule.cat.short}
+            ·
+            ${rule.code}
 
-              ${r.cat.short}
-              ·
-              ${r.code}
+          </small>
 
-            </small>
-
-
-            <h3>
-
-              ${r.title}
-
-            </h3>
-
-
-            <p>
-
-              ${r.text}
-
-            </p>
-
-
-          </div>
-
-        `)
-
-        .join("")
-
-
-      : `
-
-        <div class="result">
 
           <h3>
-            Nenhuma regra encontrada.
+            ${rule.title}
           </h3>
 
 
           <p>
-            Tente outra palavra.
+            ${rule.text}
           </p>
 
         </div>
 
-      `;
+      `)
+
+      .join("");
 
 }
 
 
 /* =========================================================
-   ROTAS / ABAS
-========================================================= */
+   ROTA
+   ========================================================= */
 
 function route(id) {
 
   document
-
     .querySelectorAll(".page")
+    .forEach(page => {
 
-    .forEach(p =>
-
-      p.classList.remove(
+      page.classList.remove(
         "active"
-      )
+      );
 
-    );
+    });
 
-
-  /* =====================================================
-     INÍCIO
-  ===================================================== */
 
   if (id === "inicio") {
 
-    if ($("inicio")) {
-
-      $("inicio")
-        .classList.add("active");
-
-    }
+    $("inicio")
+      .classList
+      .add("active");
 
   }
 
-
-  /* =====================================================
-     PESQUISA
-  ===================================================== */
 
   else if (id === "pesquisa") {
 
-    if ($("searchPage")) {
-
-      $("searchPage")
-        .classList.add("active");
-
-    }
-
-
-    if ($("searchInput")) {
-
-      setTimeout(() => {
-
-        $("searchInput").focus();
-
-      }, 50);
-
-    }
+    $("searchPage")
+      .classList
+      .add("active");
 
   }
 
 
-  /* =====================================================
-     CATEGORIA
-  ===================================================== */
-
   else {
 
-    if ($("categoryPage")) {
-
-      $("categoryPage")
-        .classList.add("active");
-
-    }
-
+    $("categoryPage")
+      .classList
+      .add("active");
 
     renderCategory(id);
 
   }
 
 
-  /* =====================================================
+  /*
      MENU ATIVO
-  ===================================================== */
+  */
 
   document
-
     .querySelectorAll(
       ".sidebar nav button"
     )
+    .forEach(button => {
 
-    .forEach(b =>
-
-      b.classList.toggle(
+      button.classList.toggle(
 
         "active",
 
-        b.dataset.route === id
+        button.dataset.route === id
 
-      )
+      );
 
-    );
-
-
-  /* =====================================================
-     FECHAR MENU MOBILE
-  ===================================================== */
-
-  if ($("sidebar")) {
-
-    $("sidebar")
-      .classList.remove("open");
-
-  }
+    });
 
 
-  /* =====================================================
-     VOLTAR AO TOPO
-  ===================================================== */
+  /*
+     FECHA MENU MOBILE
+  */
 
-  window.scrollTo({
+  $("sidebar")
+    .classList
+    .remove("open");
 
-    top: 0,
 
-    behavior: "smooth"
+  /*
+     TOPO
+  */
 
-  });
+  window.scrollTo(
+    0,
+    0
+  );
 
 }
 
 
 /* =========================================================
-   NAVEGAÇÃO DO SITE
-========================================================= */
+   CLIQUES DE ROTA
+   ========================================================= */
 
 document.addEventListener(
   "click",
-  e => {
+  event => {
+
+    /*
+       ÍNDICE DE REGRA
+    */
+
+    const scrollButton =
+      event.target.closest(
+        "[data-scroll-rule]"
+      );
+
+
+    if (scrollButton) {
+
+      const index =
+        scrollButton.dataset.scrollRule;
+
+
+      const rule =
+        document.getElementById(
+          `rule-${index}`
+        );
+
+
+      if (rule) {
+
+        rule.scrollIntoView({
+
+          behavior:
+            "smooth",
+
+          block:
+            "center"
+
+        });
+
+      }
+
+      return;
+
+    }
+
+
+    /*
+       ROTA NORMAL
+    */
 
     const target =
-      e.target.closest(
+      event.target.closest(
         "[data-route]"
       );
 
 
     if (!target) {
+
       return;
+
     }
 
 
-    e.preventDefault();
+    /*
+       Não impedir links externos
+    */
+
+    if (
+      target.tagName === "A" &&
+      target.target === "_blank"
+    ) {
+
+      return;
+
+    }
+
+
+    event.preventDefault();
 
 
     const routeId =
       target.dataset.route;
-
-
-    if (!routeId) {
-      return;
-    }
 
 
     route(routeId);
@@ -1230,26 +1062,23 @@ document.addEventListener(
 
 
 /* =========================================================
-   BOTÃO DE PESQUISA
-========================================================= */
+   PESQUISA DO TOPO
+   ========================================================= */
 
 if ($("searchOpen")) {
 
   $("searchOpen").onclick = () => {
 
-    if ($("searchOverlay")) {
-
-      $("searchOverlay")
-        .classList.add("open");
-
-    }
+    $("searchOverlay")
+      .classList
+      .add("open");
 
 
-    if ($("overlaySearch")) {
+    setTimeout(() => {
 
       $("overlaySearch").focus();
 
-    }
+    }, 50);
 
   };
 
@@ -1258,18 +1087,15 @@ if ($("searchOpen")) {
 
 /* =========================================================
    FECHAR PESQUISA
-========================================================= */
+   ========================================================= */
 
 if ($("searchClose")) {
 
   $("searchClose").onclick = () => {
 
-    if ($("searchOverlay")) {
-
-      $("searchOverlay")
-        .classList.remove("open");
-
-    }
+    $("searchOverlay")
+      .classList
+      .remove("open");
 
   };
 
@@ -1278,60 +1104,59 @@ if ($("searchClose")) {
 
 /* =========================================================
    PESQUISA OVERLAY
-========================================================= */
+   ========================================================= */
 
 if ($("overlaySearch")) {
 
-  $("overlaySearch").oninput = e => {
+  $("overlaySearch").oninput =
+    event => {
 
-    search(
+      search(
 
-      e.target.value,
+        event.target.value,
 
-      $("overlayResults")
+        $("overlayResults")
 
-    );
+      );
 
-  };
+    };
 
 }
 
 
 /* =========================================================
-   PESQUISA NORMAL
-========================================================= */
+   PESQUISA PÁGINA
+   ========================================================= */
 
 if ($("searchInput")) {
 
-  $("searchInput").oninput = e => {
+  $("searchInput").oninput =
+    event => {
 
-    search(
+      search(
 
-      e.target.value,
+        event.target.value,
 
-      $("searchResults")
+        $("searchResults")
 
-    );
+      );
 
-  };
+    };
 
 }
 
 
 /* =========================================================
    MENU MOBILE
-========================================================= */
+   ========================================================= */
 
 if ($("mobileMenu")) {
 
   $("mobileMenu").onclick = () => {
 
-    if ($("sidebar")) {
-
-      $("sidebar")
-        .classList.toggle("open");
-
-    }
+    $("sidebar")
+      .classList
+      .toggle("open");
 
   };
 
@@ -1339,8 +1164,8 @@ if ($("mobileMenu")) {
 
 
 /* =========================================================
-   HASH / ABAS
-========================================================= */
+   HASH
+   ========================================================= */
 
 window.addEventListener(
   "hashchange",
@@ -1351,7 +1176,8 @@ window.addEventListener(
       location.hash.replace(
         "#",
         ""
-      ) || "inicio"
+      ) ||
+      "inicio"
 
     );
 
@@ -1360,33 +1186,146 @@ window.addEventListener(
 
 
 /* =========================================================
-   FECHAR PESQUISA CLICANDO FORA
-========================================================= */
+   ESC FECHA PESQUISA
+   ========================================================= */
 
-if ($("searchOverlay")) {
+document.addEventListener(
+  "keydown",
+  event => {
 
-  $("searchOverlay").addEventListener(
-    "click",
-    e => {
+    if (
+      event.key === "Escape"
+    ) {
 
-      if (
-        e.target ===
-        $("searchOverlay")
-      ) {
-
-        $("searchOverlay")
-          .classList.remove("open");
-
-      }
+      $("searchOverlay")
+        ?.classList
+        .remove("open");
 
     }
+
+  }
+);
+
+
+/* =========================================================
+   CURSOR PERSONALIZADO
+   ========================================================= */
+
+let mouseX = 0;
+let mouseY = 0;
+
+let lastTrail = 0;
+
+
+/*
+   Movimento do mouse
+*/
+
+document.addEventListener(
+  "mousemove",
+  event => {
+
+    mouseX =
+      event.clientX;
+
+    mouseY =
+      event.clientY;
+
+
+    const cursor =
+      $("customCursor");
+
+
+    if (cursor) {
+
+      cursor.style.left =
+        mouseX + "px";
+
+      cursor.style.top =
+        mouseY + "px";
+
+    }
+
+
+    createTrail(
+      mouseX,
+      mouseY
+    );
+
+  }
+);
+
+
+/*
+   Criar rastro
+*/
+
+function createTrail(
+  x,
+  y
+) {
+
+  const now =
+    Date.now();
+
+
+  /*
+     Limita quantidade
+  */
+
+  if (
+    now - lastTrail <
+    35
+  ) {
+
+    return;
+
+  }
+
+
+  lastTrail =
+    now;
+
+
+  const trail =
+    document.createElement(
+      "div"
+    );
+
+
+  trail.className =
+    "cursor-trail";
+
+
+  trail.style.left =
+    x + "px";
+
+
+  trail.style.top =
+    y + "px";
+
+
+  document.body.appendChild(
+    trail
+  );
+
+
+  setTimeout(
+    () => {
+
+      trail.remove();
+
+    },
+
+    600
+
   );
 
 }
 
 
 /* =========================================================
-   INICIAR SITE
-========================================================= */
+   INICIAR
+   ========================================================= */
 
 load();
