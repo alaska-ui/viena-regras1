@@ -32,7 +32,7 @@
     "enabled": true,
     "image": "/uploads/SPRAY PNG.png",
     "size": 34,
-    "trail_enabled": true,
+    "trail_enabled": false,
     "trail_color": "#e50914",
     "trail_count": 10
   }
