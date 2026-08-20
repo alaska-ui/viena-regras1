@@ -1,11 +1,7 @@
-# Editor oficial da Viena RP
-# O painel salva as alterações diretamente no GitHub.
 backend:
   name: github
   repo: alaska-ui/viena-regras1
   branch: main
-  auth_methods:
-    - token
 
 media_folder: uploads
 public_folder: uploads
@@ -52,8 +48,7 @@ collections:
               - { name: show_notice, label: "Mostrar aviso", widget: boolean }
               - { name: show_hero_image, label: "Mostrar imagem da capa", widget: boolean }
               - { name: show_admin_link, label: "Mostrar link admin no site", widget: boolean }
-
-                        - name: cursor
+          - name: cursor
             label: "🖱️ Cursor e rastro"
             widget: object
             fields:
