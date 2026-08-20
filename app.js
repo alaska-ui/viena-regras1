@@ -1,7 +1,3 @@
-/* =========================================================
-   VIENA RP — APP.JS
-========================================================= */
-
 const state = {
   site: null,
   data: null
@@ -11,88 +7,213 @@ const $ = id => document.getElementById(id);
 
 
 /* =========================================================
-   CONVERTER CAMINHOS DO ADMIN PARA GITHUB PAGES
+   CURSOR PERSONALIZADO
 ========================================================= */
 
-function assetUrl(value) {
+const customCursor = document.getElementById("customCursor");
+const cursorDot = document.getElementById("cursorDot");
 
-  if (!value) return "";
+let mouseX = 0;
+let mouseY = 0;
 
-  value = String(value).trim();
+let cursorX = 0;
+let cursorY = 0;
 
-  if (!value) return "";
+let dotX = 0;
+let dotY = 0;
 
-  /*
-    Se o Admin salvou:
 
-    /uploads/imagem.png
+/* Movimento do mouse */
 
-    o GitHub Pages precisa procurar:
+document.addEventListener("mousemove", e => {
 
-    ./uploads/imagem.png
+  mouseX = e.clientX;
+  mouseY = e.clientY;
 
-    dentro do repositório.
-  */
-
-  if (value.startsWith("/uploads/")) {
-    return "./uploads/" + value.substring(9);
+  if (customCursor) {
+    customCursor.style.left = mouseX + "px";
+    customCursor.style.top = mouseY + "px";
   }
 
-  /*
-    Caso o Admin tenha salvo /logo-viena.png
-  */
+});
 
-  if (
-    value.startsWith("/") &&
-    !value.startsWith("//")
-  ) {
-    return "." + value;
+
+/* Animação do cursor */
+
+function animateCursor() {
+
+  cursorX += (mouseX - cursorX) * 0.15;
+  cursorY += (mouseY - cursorY) * 0.15;
+
+  dotX += (mouseX - dotX) * 0.35;
+  dotY += (mouseY - dotY) * 0.35;
+
+
+  if (cursorDot) {
+
+    cursorDot.style.left =
+      dotX + "px";
+
+    cursorDot.style.top =
+      dotY + "px";
+
   }
 
-  return value;
+
+  requestAnimationFrame(animateCursor);
+
 }
+
+animateCursor();
 
 
 /* =========================================================
-   CARREGAR JSON
+   RASTRO DO CURSOR
+========================================================= */
+
+let lastTrailX = 0;
+let lastTrailY = 0;
+
+document.addEventListener("mousemove", e => {
+
+  const distance = Math.hypot(
+    e.clientX - lastTrailX,
+    e.clientY - lastTrailY
+  );
+
+
+  /* Evita criar partículas demais */
+
+  if (distance < 8) {
+    return;
+  }
+
+
+  lastTrailX = e.clientX;
+  lastTrailY = e.clientY;
+
+
+  const trail =
+    document.createElement("span");
+
+
+  trail.className =
+    "cursor-trail";
+
+
+  trail.style.left =
+    e.clientX + "px";
+
+  trail.style.top =
+    e.clientY + "px";
+
+
+  document.body.appendChild(trail);
+
+
+  setTimeout(() => {
+
+    trail.remove();
+
+  }, 600);
+
+});
+
+
+/* =========================================================
+   EFEITO DO CURSOR SOBRE ELEMENTOS CLICÁVEIS
+========================================================= */
+
+document.addEventListener("mouseover", e => {
+
+  const clickable =
+    e.target.closest(
+      "a, button, input, textarea, select, [data-route]"
+    );
+
+
+  if (!customCursor) {
+    return;
+  }
+
+
+  if (clickable) {
+
+    customCursor.classList.add(
+      "cursor-hover"
+    );
+
+  }
+
+});
+
+
+document.addEventListener("mouseout", e => {
+
+  const clickable =
+    e.target.closest(
+      "a, button, input, textarea, select, [data-route]"
+    );
+
+
+  if (!customCursor) {
+    return;
+  }
+
+
+  if (clickable) {
+
+    customCursor.classList.remove(
+      "cursor-hover"
+    );
+
+  }
+
+});
+
+
+/* =========================================================
+   CARREGAR CONTEÚDO
 ========================================================= */
 
 async function load() {
 
   try {
 
-    const [siteResponse, rulesResponse] =
-      await Promise.all([
+    const [s, r] = await Promise.all([
 
-        fetch("./content/site.json", {
-          cache: "no-store"
+      fetch("content/site.json")
+        .then(x => {
+
+          if (!x.ok) {
+            throw new Error(
+              "Não foi possível carregar site.json"
+            );
+          }
+
+          return x.json();
+
         }),
 
-        fetch("./content/rules.json", {
-          cache: "no-store"
+
+      fetch("content/rules.json")
+        .then(x => {
+
+          if (!x.ok) {
+            throw new Error(
+              "Não foi possível carregar rules.json"
+            );
+          }
+
+          return x.json();
+
         })
 
-      ]);
+    ]);
 
 
-    if (!siteResponse.ok) {
-      throw new Error(
-        "content/site.json não encontrado."
-      );
-    }
-
-    if (!rulesResponse.ok) {
-      throw new Error(
-        "content/rules.json não encontrado."
-      );
-    }
-
-
-    state.site =
-      await siteResponse.json();
-
-    state.data =
-      await rulesResponse.json();
+    state.site = s;
+    state.data = r;
 
 
     applySite();
@@ -101,23 +222,51 @@ async function load() {
 
     renderHome();
 
-    setupCursor();
-
-    setupEvents();
-
 
     route(
-      location.hash.replace("#", "")
-      || "inicio"
+      location.hash.replace("#", "") ||
+      "inicio"
     );
 
   }
 
-  catch (error) {
+  catch (err) {
 
-    console.error(error);
+    console.error(err);
 
-    showError(error.message);
+
+    document.body.insertAdjacentHTML(
+
+      "beforeend",
+
+      `
+        <div
+          style="
+            position:fixed;
+            bottom:0;
+            left:0;
+            right:0;
+
+            background:#e50914;
+            color:#fff;
+
+            padding:14px;
+
+            text-align:center;
+
+            font-family:Arial,sans-serif;
+
+            z-index:999999;
+          "
+        >
+          Não foi possível carregar o conteúdo.
+          Verifique se <strong>content/site.json</strong>
+          e <strong>content/rules.json</strong>
+          foram enviados corretamente.
+        </div>
+      `
+
+    );
 
   }
 
@@ -130,47 +279,46 @@ async function load() {
 
 function applySite() {
 
-  const s = state.site || {};
+  const s =
+    state.site || {};
 
-  const theme =
+  const t =
     s.theme || {};
 
 
-  /* CORES */
+  /* Tema */
 
   for (
-    const [key, value]
-    of Object.entries(theme)
+    const [k, v]
+    of Object.entries(t)
   ) {
 
-    document.documentElement
-      .style
-      .setProperty(
-        "--" +
-        (
-          key === "accent_light"
-            ? "accent2"
-            : key
-        ),
-        value
-      );
+    document.documentElement.style.setProperty(
+
+      "--" +
+      (
+        k === "accent_light"
+          ? "accent2"
+          : k
+      ),
+
+      v
+
+    );
 
   }
 
 
-  /* LOGO */
-
-  const logo =
-    assetUrl(
-      s.logo ||
-      s.logo_url ||
-      "logo-viena.png"
-    );
-
+  /* =====================================================
+     LOGO
+  ===================================================== */
 
   if ($("headerLogo")) {
 
-    $("headerLogo").src = logo;
+    $("headerLogo").src =
+      s.logo ||
+      "logo-viena.png";
+
 
     $("headerLogo").alt =
       s.site_name ||
@@ -179,630 +327,205 @@ function applySite() {
   }
 
 
-  /* FAVICON */
+  /* =====================================================
+     FAVICON
+  ===================================================== */
 
   if ($("favicon")) {
 
     $("favicon").href =
-      logo;
+      s.favicon ||
+      s.logo ||
+      "logo-viena.png";
 
   }
 
 
-  /* TÍTULOS */
+  /* =====================================================
+     TÍTULO
+  ===================================================== */
 
-  $("brandTitle").textContent =
-    s.site_title ||
-    "CÓDIGO DA RUA";
+  if ($("brandTitle")) {
 
+    $("brandTitle").textContent =
+      s.site_title ||
+      "CÓDIGO DA RUA";
 
-  $("brandSite").textContent =
-    (
-      s.site_name ||
-      "VIENA ROLEPLAY"
-    ).toUpperCase();
-
-
-  $("heroEyebrow").textContent =
-    s.hero_eyebrow ||
-    "CENTRAL OFICIAL DE REGRAS";
+  }
 
 
-  $("heroTitle").textContent =
-    s.hero_title ||
-    "O CÓDIGO DA RUA.";
+  if ($("brandSite")) {
+
+    $("brandSite").textContent =
+
+      (
+        s.site_name ||
+        "VIENA ROLEPLAY"
+      ).toUpperCase();
+
+  }
 
 
-  $("heroText").textContent =
-    s.hero_text ||
-    "As regras que mantêm Viena viva. Leia, entenda e faça parte da história.";
+  /* =====================================================
+     HERO
+  ===================================================== */
+
+  if ($("heroEyebrow")) {
+
+    $("heroEyebrow").textContent =
+      s.hero_eyebrow ||
+      "";
+
+  }
 
 
-  $("noticeTitle").textContent =
-    s.notice_title ||
-    "LEIA ANTES DE JOGAR";
+  if ($("heroTitle")) {
+
+    $("heroTitle").textContent =
+      s.hero_title ||
+      "";
+
+  }
 
 
-  $("noticeText").textContent =
-    s.notice_text ||
-    "Desconhecer uma regra não isenta o jogador de sua responsabilidade.";
+  if ($("heroText")) {
+
+    $("heroText").textContent =
+      s.hero_text ||
+      "";
+
+  }
 
 
-  $("footerText").textContent =
-    s.footer_text ||
-    "© 2026 Viena Roleplay · Todos os direitos reservados.";
+  /* =====================================================
+     AVISO
+  ===================================================== */
+
+  if ($("noticeTitle")) {
+
+    $("noticeTitle").textContent =
+      s.notice_title ||
+      "";
+
+  }
 
 
-  /* DISCORD */
+  if ($("noticeText")) {
 
-  const discord =
-    s.discord_url ||
-    s.discord ||
-    "#";
+    $("noticeText").textContent =
+      s.notice_text ||
+      "";
 
-
-  $("discordBtn").href =
-    discord;
+  }
 
 
-  $("discordBtn").target =
-    "_blank";
+  /* =====================================================
+     RODAPÉ
+  ===================================================== */
+
+  if ($("footerText")) {
+
+    $("footerText").textContent =
+      s.footer_text ||
+      "";
+
+  }
 
 
-  $("discordBtn").rel =
-    "noopener noreferrer";
+  /* =====================================================
+     DISCORD
+  ===================================================== */
+
+  if ($("discordBtn")) {
+
+    $("discordBtn").href =
+      s.discord_url ||
+      "#";
 
 
-  /*
-    IMPORTANTE:
-
-    Não deixar o Discord ser capturado
-    pelo sistema data-route.
-  */
-
-  $("discordBtn")
-    .removeAttribute("data-route");
+    $("discordBtn").target =
+      "_blank";
 
 
-  /* AVISO */
+    $("discordBtn").rel =
+      "noopener noreferrer";
 
-  $("notice").style.display =
-    s.layout?.show_notice === false
-      ? "none"
-      : "flex";
+  }
 
 
-  /* ATUALIZAÇÕES */
+  /* =====================================================
+     ELEMENTOS OPCIONAIS
+  ===================================================== */
 
-  $("updatesWrap").style.display =
-    s.layout?.show_updates === false
-      ? "none"
-      : "block";
+  if ($("notice")) {
 
+    $("notice").style.display =
 
-  /* PESQUISA */
+      s.layout?.show_notice === false
+        ? "none"
+        : "flex";
 
-  $("searchOpen").style.display =
-    s.layout?.show_search === false
-      ? "none"
-      : "block";
-
-
-  /* =======================================================
-     IMAGEM DA CAPA
-  ======================================================= */
-
-  const heroImage =
-    assetUrl(
-      s.hero_image ||
-      s.heroImage ||
-      s.cover_image ||
-      s.cover ||
-      ""
-    );
+  }
 
 
-  const heroBackground =
-    $("heroBackground");
+  if ($("updatesWrap")) {
 
+    $("updatesWrap").style.display =
+
+      s.layout?.show_updates === false
+        ? "none"
+        : "block";
+
+  }
+
+
+  if ($("searchOpen")) {
+
+    $("searchOpen").style.display =
+
+      s.layout?.show_search === false
+        ? "none"
+        : "block";
+
+  }
+
+
+  /* =====================================================
+     IMAGEM DA CAPA / HERO
+  ===================================================== */
 
   if (
-    heroImage &&
+    s.hero_image &&
     s.layout?.show_hero_image !== false
   ) {
 
-    heroBackground.style.backgroundImage =
-      `url("${heroImage}")`;
+    if ($("heroImage")) {
 
-    heroBackground.style.display =
-      "block";
+      $("heroImage").src =
+        s.hero_image;
+
+    }
+
+
+    if ($("heroArt")) {
+
+      $("heroArt").style.display =
+        "flex";
+
+    }
 
   }
 
   else {
 
-    heroBackground.style.backgroundImage =
-      "none";
+    if ($("heroArt")) {
 
-    heroBackground.style.display =
-      "none";
+      $("heroArt").style.display =
+        "none";
+
+    }
 
   }
-
-
-  /* =======================================================
-     CURSOR
-  ======================================================= */
-
-  setupCursorConfig(s);
-
-}
-
-
-/* =========================================================
-   CONFIGURAR CURSOR
-========================================================= */
-
-function setupCursorConfig(s) {
-
-  const cursor =
-    $("customCursor");
-
-  if (!cursor) return;
-
-
-  const cursorConfig =
-    s.cursor ||
-    s.cursor_settings ||
-    {};
-
-
-  /*
-    Aceita vários nomes para funcionar
-    com diferentes versões do Admin.
-  */
-
-  const enabled =
-    cursorConfig.enabled !== false &&
-    s.cursor_enabled !== false;
-
-
-  const icon =
-    cursorConfig.icon ||
-    cursorConfig.image ||
-    s.cursor_icon ||
-    s.cursor_image ||
-    s.cursor ||
-    "";
-
-
-  const size =
-    Number(
-      cursorConfig.size ||
-      s.cursor_size ||
-      34
-    );
-
-
-  document.documentElement
-    .style
-    .setProperty(
-      "--cursor-size",
-      Math.max(12, Math.min(size, 100))
-      + "px"
-    );
-
-
-  if (!enabled) {
-
-    cursor.style.display =
-      "none";
-
-    document.body.style.cursor =
-      "auto";
-
-    return;
-  }
-
-
-  cursor.style.display =
-    "block";
-
-
-  cursor.classList.remove(
-    "fallback"
-  );
-
-
-  if (icon) {
-
-    const url =
-      assetUrl(icon);
-
-
-    cursor.style.backgroundImage =
-      `url("${url}")`;
-
-  }
-
-  else {
-
-    cursor.classList.add(
-      "fallback"
-    );
-
-  }
-
-
-  /*
-    TRAÇO
-  */
-
-  const trailEnabled =
-    cursorConfig.trail === true ||
-    s.cursor_trail === true;
-
-
-  window.__cursorTrailEnabled =
-    trailEnabled;
-
-}
-
-
-/* =========================================================
-   CURSOR
-========================================================= */
-
-function setupCursor() {
-
-  const cursor =
-    $("customCursor");
-
-  if (!cursor) return;
-
-
-  let mouseX = -100;
-  let mouseY = -100;
-
-  let currentX = -100;
-  let currentY = -100;
-
-
-  document.addEventListener(
-    "mousemove",
-    event => {
-
-      mouseX =
-        event.clientX;
-
-      mouseY =
-        event.clientY;
-
-      /*
-        O cursor funciona no SITE INTEIRO.
-
-        Não está preso à Home.
-      */
-
-      cursor.style.left =
-        mouseX + "px";
-
-      cursor.style.top =
-        mouseY + "px";
-
-    },
-    {
-      passive: true
-    }
-  );
-
-
-  /*
-    Hover global
-
-    Funciona:
-    Home
-    Categorias
-    Pesquisa
-    Menu
-    Botões
-    Links
-    etc.
-  */
-
-  document.addEventListener(
-    "mouseover",
-    event => {
-
-      const target =
-        event.target.closest(
-          "a, button, input, .cat-card, .result"
-        );
-
-
-      if (target) {
-
-        cursor.classList.add(
-          "hover"
-        );
-
-      }
-
-    }
-  );
-
-
-  document.addEventListener(
-    "mouseout",
-    event => {
-
-      const target =
-        event.target.closest(
-          "a, button, input, .cat-card, .result"
-        );
-
-
-      if (target) {
-
-        cursor.classList.remove(
-          "hover"
-        );
-
-      }
-
-    }
-  );
-
-
-  /*
-    ESCONDER QUANDO SAI DA JANELA
-  */
-
-  document.addEventListener(
-    "mouseleave",
-    () => {
-
-      cursor.style.opacity =
-        "0";
-
-    }
-  );
-
-
-  document.addEventListener(
-    "mouseenter",
-    () => {
-
-      cursor.style.opacity =
-        "1";
-
-    }
-  );
-
-
-  /*
-    TRAÇO
-  */
-
-  document.addEventListener(
-    "mousemove",
-    event => {
-
-      if (
-        !window.__cursorTrailEnabled
-      ) return;
-
-
-      createTrailDot(
-        event.clientX,
-        event.clientY
-      );
-
-    },
-    {
-      passive: true
-    }
-  );
-
-}
-
-
-/* =========================================================
-   TRAÇO
-========================================================= */
-
-function createTrailDot(x, y) {
-
-  const dot =
-    document.createElement("div");
-
-  dot.className =
-    "cursor-trail-dot";
-
-
-  dot.style.left =
-    x + "px";
-
-
-  dot.style.top =
-    y + "px";
-
-
-  document.body.appendChild(dot);
-
-
-  setTimeout(() => {
-
-    dot.style.opacity =
-      "0";
-
-    dot.style.transform =
-      "translate(-50%, -50%) scale(.3)";
-
-  }, 20);
-
-
-  setTimeout(() => {
-
-    dot.remove();
-
-  }, 500);
-
-}
-
-
-/* =========================================================
-   MENU
-========================================================= */
-
-function setupEvents() {
-
-  /*
-    BOTÕES DATA-ROUTE
-  */
-
-  document.addEventListener(
-    "click",
-    event => {
-
-      const target =
-        event.target.closest(
-          "[data-route]"
-        );
-
-
-      if (!target) return;
-
-
-      event.preventDefault();
-
-
-      const routeId =
-        target.dataset.route;
-
-
-      route(routeId);
-
-
-      history.replaceState(
-        null,
-        "",
-        "#" + routeId
-      );
-
-    }
-  );
-
-
-  /*
-    PESQUISA
-  */
-
-  $("searchOpen").onclick =
-    () => {
-
-      $("searchOverlay")
-        .classList.add("open");
-
-      setTimeout(() => {
-
-        $("overlaySearch")
-          .focus();
-
-      }, 50);
-
-    };
-
-
-  $("searchClose").onclick =
-    () => {
-
-      $("searchOverlay")
-        .classList.remove("open");
-
-    };
-
-
-  $("overlaySearch").oninput =
-    event => {
-
-      search(
-        event.target.value,
-        $("overlayResults")
-      );
-
-    };
-
-
-  $("searchInput").oninput =
-    event => {
-
-      search(
-        event.target.value,
-        $("searchResults")
-      );
-
-    };
-
-
-  /*
-    ESC
-  */
-
-  document.addEventListener(
-    "keydown",
-    event => {
-
-      if (
-        event.key === "Escape"
-      ) {
-
-        $("searchOverlay")
-          .classList.remove("open");
-
-      }
-
-    }
-  );
-
-
-  /*
-    FECHAR OVERLAY CLICANDO FORA
-  */
-
-  $("searchOverlay").addEventListener(
-    "click",
-    event => {
-
-      if (
-        event.target ===
-        $("searchOverlay")
-      ) {
-
-        $("searchOverlay")
-          .classList.remove("open");
-
-      }
-
-    }
-  );
-
-
-  /*
-    HASH
-  */
-
-  window.addEventListener(
-    "hashchange",
-    () => {
-
-      route(
-        location.hash.replace("#", "")
-        || "inicio"
-      );
-
-    }
-  );
 
 }
 
@@ -813,123 +536,149 @@ function setupEvents() {
 
 function renderNav() {
 
-  const categories =
-    state.data?.categories || [];
+  if (!$("nav")) {
+    return;
+  }
 
 
   $("nav").innerHTML =
-    categories
-      .map(category => `
 
-        <button
-          type="button"
-          data-route="${category.id}"
-        >
+    (
+      state.data.categories ||
+      []
+    )
 
-          <span>
-            ${category.code}
-          </span>
+    .map(c => `
 
-          ${category.short}
+      <button
+        data-route="${c.id}"
+        type="button"
+      >
 
-        </button>
+        <span>
+          ${c.code}
+        </span>
 
-      `)
-      .join("");
+        ${c.short}
+
+      </button>
+
+    `)
+
+    .join("");
 
 }
 
 
 /* =========================================================
-   HOME
+   PÁGINA INICIAL
 ========================================================= */
 
 function renderHome() {
 
-  const categories =
-    state.data?.categories || [];
+  if (!$("homeCategories")) {
+    return;
+  }
 
 
   $("homeCategories").innerHTML =
-    categories
-      .map(category => `
 
-        <article
-          class="cat-card"
-          data-route="${category.id}"
-        >
+    (
+      state.data.categories ||
+      []
+    )
 
-          <div class="num">
+    .map(c => `
 
-            ${category.code}
-            / VIENA
+      <article
+        class="cat-card"
+        data-route="${c.id}"
+      >
 
-          </div>
+        <div class="num">
 
-
-          ${
-            category.image
-
-              ? `
-
-                <img
-                  class="card-image"
-                  src="${assetUrl(category.image)}"
-                  alt=""
-                >
-
-              `
-
-              : ""
-          }
-
-
-          <h3>
-            ${category.short}
-          </h3>
-
-
-          <p>
-            ${category.desc || ""}
-          </p>
-
-        </article>
-
-      `)
-      .join("");
-
-
-  const updates =
-    state.data?.updates || [];
-
-
-  $("updatesList").innerHTML =
-    updates
-      .map(item => `
-
-        <div class="update">
-
-          <time>
-            ${item.date || ""}
-          </time>
-
-          <strong>
-            ${item.title || ""}
-            ${
-              item.text
-                ? " — " + item.text
-                : ""
-            }
-          </strong>
-
-          <span>
-            ${item.tag || ""}
-          </span>
+          ${c.code} / VIENA
 
         </div>
 
-      `)
-      .join("");
+
+        ${
+          c.image
+
+            ? `
+
+              <img
+                class="card-image"
+                src="${c.image}"
+                alt=""
+              >
+
+            `
+
+            : ""
+        }
+
+
+        <h3>
+          ${c.short}
+        </h3>
+
+
+        <p>
+          ${c.desc}
+        </p>
+
+
+      </article>
+
+    `)
+
+    .join("");
+
+
+  /* =====================================================
+     ATUALIZAÇÕES
+  ===================================================== */
+
+  if (!$("updatesList")) {
+    return;
+  }
+
+
+  $("updatesList").innerHTML =
+
+    (
+      state.data.updates ||
+      []
+    )
+
+    .map(x => `
+
+      <div class="update">
+
+        <time>
+          ${x.date}
+        </time>
+
+
+        <strong>
+
+          ${x.title}
+          —
+          ${x.text}
+
+        </strong>
+
+
+        <span>
+          ${x.tag}
+        </span>
+
+      </div>
+
+    `)
+
+    .join("");
 
 }
 
@@ -941,17 +690,18 @@ function renderHome() {
 function allRules() {
 
   return (
-    state.data?.categories || []
-  ).flatMap(category =>
 
-    (category.rules || [])
-      .map(rule => ({
+    state.data.categories || []
 
-        cat: category,
+  ).flatMap(c =>
 
-        ...rule
+    (c.rules || []).map(r => ({
 
-      }))
+      cat: c,
+
+      ...r
+
+    }))
 
   );
 
@@ -959,132 +709,128 @@ function allRules() {
 
 
 /* =========================================================
-   CATEGORIA
+   RENDERIZAR CATEGORIA
 ========================================================= */
 
 function renderCategory(id) {
 
-  const category =
+  const c =
+
     state.data.categories.find(
-      item => item.id === id
+      x => x.id === id
     );
 
 
-  if (!category) {
-
-    route("inicio");
-
+  if (!c) {
     return;
+  }
+
+
+  /* =====================================================
+     TÍTULO
+  ===================================================== */
+
+  if ($("catCode")) {
+
+    $("catCode").textContent =
+      `CÓDIGO ${c.code}`;
 
   }
 
 
-  $("catCode").textContent =
-    `CÓDIGO ${category.code}`;
+  if ($("catTitle")) {
 
-
-  $("catTitle").textContent =
-    category.name;
-
-
-  $("catDesc").textContent =
-    category.desc || "";
-
-
-  /*
-    IMAGEM DA CATEGORIA
-
-    Se existir, usamos como fundo.
-  */
-
-  const categoryHero =
-    $("categoryHero");
-
-
-  if (category.image) {
-
-    categoryHero.style.backgroundImage = `
-      linear-gradient(
-        90deg,
-        rgba(5,5,5,.98),
-        rgba(5,5,5,.70),
-        rgba(5,5,5,.35)
-      ),
-      url("${assetUrl(category.image)}")
-    `;
-
-    categoryHero.style.backgroundSize =
-      "cover";
-
-    categoryHero.style.backgroundPosition =
-      "center";
-
-    categoryHero.style.padding =
-      "70px 0";
-
-  }
-
-  else {
-
-    categoryHero.style.backgroundImage =
-      "none";
+    $("catTitle").textContent =
+      c.name;
 
   }
 
 
-  /*
-    REGRAS
-  */
+  if ($("catDesc")) {
 
-  $("ruleList").innerHTML =
-    (category.rules || [])
-      .map((rule, index) => `
+    $("catDesc").textContent =
+      c.desc;
+
+  }
+
+
+  /* =====================================================
+     IMAGEM DA CATEGORIA
+  ===================================================== */
+
+  if ($("catImage")) {
+
+    $("catImage").hidden =
+      !c.image;
+
+
+    if (c.image) {
+
+      $("catImage").src =
+        c.image;
+
+    }
+
+  }
+
+
+  /* =====================================================
+     REGRAS
+  ===================================================== */
+
+  if ($("ruleList")) {
+
+    $("ruleList").innerHTML =
+
+      (c.rules || [])
+
+      .map((r, i) => `
 
         <article
           class="rule"
-          id="rule-${index}"
+          id="rule-${i}"
         >
 
           <div class="rule-top">
 
+
             <div class="rule-num">
-              ${rule.code}
+
+              ${r.code}
+
             </div>
+
 
             <div>
 
+
               <h3>
-                ${rule.title}
+                ${r.title}
               </h3>
 
+
               <p>
-                ${rule.text || ""}
+                ${r.text}
               </p>
 
 
-              ${
-                rule.tag
+              <span class="tag">
 
-                  ? `
+                ${r.tag}
 
-                    <span class="tag">
-                      ${rule.tag}
-                    </span>
-
-                  `
-
-                  : ""
-              }
+              </span>
 
 
               ${
-                rule.image
+                r.image
 
                   ? `
+
+                    <br>
 
                     <img
                       class="rule-image"
-                      src="${assetUrl(rule.image)}"
+                      src="${r.image}"
                       alt=""
                     >
 
@@ -1093,104 +839,118 @@ function renderCategory(id) {
                   : ""
               }
 
+
             </div>
+
 
           </div>
 
         </article>
 
       `)
+
       .join("");
 
+  }
 
-  /*
-    TOC
-  */
 
-  $("ruleToc").innerHTML = `
+  /* =====================================================
+     ÍNDICE DA CATEGORIA
+  ===================================================== */
 
-    <strong>
-      NESTA CATEGORIA
-    </strong>
+  if ($("ruleToc")) {
 
-    ${
-      (category.rules || [])
-        .map(
-          (rule, index) => `
+    $("ruleToc").innerHTML =
 
-            <button
-              type="button"
-              data-rule-index="${index}"
-            >
+      `<strong>NESTA CATEGORIA</strong>` +
 
-              ${rule.code}
-              —
-              ${rule.title}
+      (c.rules || [])
 
-            </button>
+      .map((r, i) => `
 
-          `
-        )
-        .join("")
+        <button
+          type="button"
+          data-rule-target="rule-${i}"
+        >
+
+          ${r.code}
+          —
+          ${r.title}
+
+        </button>
+
+      `)
+
+      .join("");
+
+  }
+
+}
+
+
+/* =========================================================
+   CLIQUE NO ÍNDICE DAS REGRAS
+========================================================= */
+
+document.addEventListener(
+  "click",
+  e => {
+
+    const button =
+      e.target.closest(
+        "[data-rule-target]"
+      );
+
+
+    if (!button) {
+      return;
     }
 
-  `;
 
-
-  /*
-    TOC FUNCIONAL
-  */
-
-  $("ruleToc")
-    .querySelectorAll(
-      "[data-rule-index]"
-    )
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          const index =
-            button.dataset.ruleIndex;
-
-
-          const element =
-            document.getElementById(
-              "rule-" + index
-            );
-
-
-          if (element) {
-
-            element.scrollIntoView({
-              behavior: "smooth",
-              block: "center"
-            });
-
-          }
-
-        }
+    const target =
+      document.getElementById(
+        button.dataset.ruleTarget
       );
+
+
+    if (!target) {
+      return;
+    }
+
+
+    e.preventDefault();
+
+
+    target.scrollIntoView({
+
+      behavior: "smooth",
+
+      block: "center"
 
     });
 
-}
+  }
+);
 
 
 /* =========================================================
    PESQUISA
 ========================================================= */
 
-function search(query, target) {
+function search(q, target) {
 
-  query =
-    query
+  if (!target) {
+    return;
+  }
+
+
+  q =
+    q
       .trim()
       .toLowerCase();
 
 
-  if (!query) {
+  if (!q) {
 
     target.innerHTML =
       "";
@@ -1200,230 +960,433 @@ function search(query, target) {
   }
 
 
-  const results =
+  const res =
+
     allRules()
-      .filter(rule => `
 
-        ${rule.cat.short}
+      .filter(r => `
 
-        ${rule.cat.name}
+        ${r.cat.short}
 
-        ${rule.cat.code}
+        ${r.cat.name}
 
-        ${rule.title}
+        ${r.code}
 
-        ${rule.text}
+        ${r.title}
 
-        ${rule.tag}
+        ${r.text}
+
+        ${r.tag}
 
       `
-        .toLowerCase()
-        .includes(query)
-      )
+
+      .toLowerCase()
+
+      .includes(q))
+
       .slice(0, 30);
 
 
-  if (!results.length) {
-
-    target.innerHTML = `
-
-      <div class="result">
-
-        <h3>
-          Nenhuma regra encontrada.
-        </h3>
-
-        <p>
-          Tente outra palavra.
-        </p>
-
-      </div>
-
-    `;
-
-    return;
-
-  }
-
-
   target.innerHTML =
-    results
-      .map(rule => `
 
-        <div
-          class="result"
-          data-route="${rule.cat.id}"
-        >
+    res.length
 
-          <small>
+      ? res
 
-            ${rule.cat.short}
-            ·
-            ${rule.cat.code}
+        .map(r => `
 
-          </small>
+          <div
+            class="result"
+            data-route="${r.cat.id}"
+          >
 
+            <small>
+
+              ${r.cat.short}
+              ·
+              ${r.code}
+
+            </small>
+
+
+            <h3>
+
+              ${r.title}
+
+            </h3>
+
+
+            <p>
+
+              ${r.text}
+
+            </p>
+
+
+          </div>
+
+        `)
+
+        .join("")
+
+
+      : `
+
+        <div class="result">
 
           <h3>
-            ${rule.title}
+            Nenhuma regra encontrada.
           </h3>
 
 
           <p>
-            ${rule.text || ""}
+            Tente outra palavra.
           </p>
 
         </div>
 
-      `)
-      .join("");
+      `;
 
 }
 
 
 /* =========================================================
-   ROTAS
+   ROTAS / ABAS
 ========================================================= */
 
 function route(id) {
 
-  const pages =
-    document.querySelectorAll(
-      ".page"
+  document
+
+    .querySelectorAll(".page")
+
+    .forEach(p =>
+
+      p.classList.remove(
+        "active"
+      )
+
     );
 
 
-  pages.forEach(page => {
-
-    page.classList.remove(
-      "active"
-    );
-
-  });
-
+  /* =====================================================
+     INÍCIO
+  ===================================================== */
 
   if (id === "inicio") {
 
-    $("inicio")
-      .classList.add("active");
-
-  }
-
-  else if (id === "pesquisa") {
-
-    $("searchPage")
-      .classList.add("active");
-
-  }
-
-  else {
-
-    const exists =
-      state.data?.categories?.some(
-        category =>
-          category.id === id
-      );
-
-
-    if (!exists) {
+    if ($("inicio")) {
 
       $("inicio")
         .classList.add("active");
 
-      id = "inicio";
+    }
+
+  }
+
+
+  /* =====================================================
+     PESQUISA
+  ===================================================== */
+
+  else if (id === "pesquisa") {
+
+    if ($("searchPage")) {
+
+      $("searchPage")
+        .classList.add("active");
 
     }
 
-    else {
 
-      $("categoryPage")
-        .classList.add("active");
+    if ($("searchInput")) {
 
-      renderCategory(id);
+      setTimeout(() => {
+
+        $("searchInput").focus();
+
+      }, 50);
 
     }
 
   }
 
 
-  /*
-    ATUALIZAR MENU
-  */
+  /* =====================================================
+     CATEGORIA
+  ===================================================== */
+
+  else {
+
+    if ($("categoryPage")) {
+
+      $("categoryPage")
+        .classList.add("active");
+
+    }
+
+
+    renderCategory(id);
+
+  }
+
+
+  /* =====================================================
+     MENU ATIVO
+  ===================================================== */
 
   document
+
     .querySelectorAll(
       ".sidebar nav button"
     )
-    .forEach(button => {
 
-      button.classList.toggle(
+    .forEach(b =>
+
+      b.classList.toggle(
+
         "active",
-        button.dataset.route === id
-      );
 
-    });
+        b.dataset.route === id
 
+      )
+
+    );
+
+
+  /* =====================================================
+     FECHAR MENU MOBILE
+  ===================================================== */
+
+  if ($("sidebar")) {
+
+    $("sidebar")
+      .classList.remove("open");
+
+  }
+
+
+  /* =====================================================
+     VOLTAR AO TOPO
+  ===================================================== */
 
   window.scrollTo({
+
     top: 0,
-    behavior: "instant"
+
+    behavior: "smooth"
+
   });
 
 }
 
 
 /* =========================================================
-   ERRO
+   NAVEGAÇÃO DO SITE
 ========================================================= */
 
-function showError(message) {
+document.addEventListener(
+  "click",
+  e => {
 
-  document.body.insertAdjacentHTML(
-    "beforeend",
+    const target =
+      e.target.closest(
+        "[data-route]"
+      );
 
-    `
 
-      <div
-        style="
-          position:fixed;
-          left:20px;
-          right:20px;
-          bottom:20px;
-          z-index:999999;
-          padding:20px;
-          background:#120000;
-          color:#fff;
-          border:1px solid #ff1018;
-          font-family:Arial,sans-serif;
-        "
-      >
+    if (!target) {
+      return;
+    }
 
-        <strong>
-          ERRO AO CARREGAR O SITE
-        </strong>
 
-        <br><br>
+    e.preventDefault();
 
-        ${message}
 
-        <br><br>
+    const routeId =
+      target.dataset.route;
 
-        Verifique se
-        <b>content/site.json</b>
-        e
-        <b>content/rules.json</b>
-        existem.
 
-      </div>
+    if (!routeId) {
+      return;
+    }
 
-    `
+
+    route(routeId);
+
+
+    history.replaceState(
+
+      null,
+
+      "",
+
+      "#" + routeId
+
+    );
+
+  }
+);
+
+
+/* =========================================================
+   BOTÃO DE PESQUISA
+========================================================= */
+
+if ($("searchOpen")) {
+
+  $("searchOpen").onclick = () => {
+
+    if ($("searchOverlay")) {
+
+      $("searchOverlay")
+        .classList.add("open");
+
+    }
+
+
+    if ($("overlaySearch")) {
+
+      $("overlaySearch").focus();
+
+    }
+
+  };
+
+}
+
+
+/* =========================================================
+   FECHAR PESQUISA
+========================================================= */
+
+if ($("searchClose")) {
+
+  $("searchClose").onclick = () => {
+
+    if ($("searchOverlay")) {
+
+      $("searchOverlay")
+        .classList.remove("open");
+
+    }
+
+  };
+
+}
+
+
+/* =========================================================
+   PESQUISA OVERLAY
+========================================================= */
+
+if ($("overlaySearch")) {
+
+  $("overlaySearch").oninput = e => {
+
+    search(
+
+      e.target.value,
+
+      $("overlayResults")
+
+    );
+
+  };
+
+}
+
+
+/* =========================================================
+   PESQUISA NORMAL
+========================================================= */
+
+if ($("searchInput")) {
+
+  $("searchInput").oninput = e => {
+
+    search(
+
+      e.target.value,
+
+      $("searchResults")
+
+    );
+
+  };
+
+}
+
+
+/* =========================================================
+   MENU MOBILE
+========================================================= */
+
+if ($("mobileMenu")) {
+
+  $("mobileMenu").onclick = () => {
+
+    if ($("sidebar")) {
+
+      $("sidebar")
+        .classList.toggle("open");
+
+    }
+
+  };
+
+}
+
+
+/* =========================================================
+   HASH / ABAS
+========================================================= */
+
+window.addEventListener(
+  "hashchange",
+  () => {
+
+    route(
+
+      location.hash.replace(
+        "#",
+        ""
+      ) || "inicio"
+
+    );
+
+  }
+);
+
+
+/* =========================================================
+   FECHAR PESQUISA CLICANDO FORA
+========================================================= */
+
+if ($("searchOverlay")) {
+
+  $("searchOverlay").addEventListener(
+    "click",
+    e => {
+
+      if (
+        e.target ===
+        $("searchOverlay")
+      ) {
+
+        $("searchOverlay")
+          .classList.remove("open");
+
+      }
+
+    }
   );
 
 }
 
 
 /* =========================================================
-   INICIAR
+   INICIAR SITE
 ========================================================= */
 
 load();
