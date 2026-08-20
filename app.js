@@ -1,319 +1,1088 @@
-const state = { site: null, data: null };
+const state = {
+  site: null,
+  data: null
+};
+
 const $ = id => document.getElementById(id);
 
-function assetUrl(value) {
-  if (!value) return "";
-  if (/^(https?:|data:|blob:|#)/i.test(value)) return value;
 
-  // Corrige caminhos /uploads, /logo-viena.png etc. quando o site está
-  // hospedado em um GitHub Pages de projeto, por exemplo /viena-regras1/.
-  if (value.startsWith("/")) {
-    const base = location.pathname.split("/").filter(Boolean)[0];
-    if (base && location.hostname.endsWith("github.io")) {
-      return `/${base}${value}`;
-    }
-    return value;
-  }
-
-  return value;
-}
+/* =========================================================
+   CARREGAMENTO
+   ========================================================= */
 
 async function load() {
-  const [s, r] = await Promise.all([
-    fetch("content/site.json", { cache: "no-store" }).then(x => x.json()),
-    fetch("content/rules.json", { cache: "no-store" }).then(x => x.json())
-  ]);
 
-  state.site = s;
-  state.data = r;
+  try {
 
-  applySite();
-  renderNav();
-  renderHome();
-  route(location.hash.replace("#", "") || "inicio");
+    const [siteResponse, rulesResponse] =
+      await Promise.all([
+        fetch("content/site.json"),
+        fetch("content/rules.json")
+      ]);
+
+    if (!siteResponse.ok) {
+      throw new Error("Não foi possível carregar site.json");
+    }
+
+    if (!rulesResponse.ok) {
+      throw new Error("Não foi possível carregar rules.json");
+    }
+
+    state.site = await siteResponse.json();
+    state.data = await rulesResponse.json();
+
+    applySite();
+    renderNav();
+    renderHome();
+
+    route(
+      location.hash.replace("#", "") || "inicio"
+    );
+
+  } catch (err) {
+
+    console.error(err);
+
+    document.body.insertAdjacentHTML(
+      "beforeend",
+      `
+        <div
+          style="
+            position:fixed;
+            bottom:0;
+            left:0;
+            right:0;
+            background:#e50914;
+            color:#fff;
+            padding:14px;
+            text-align:center;
+            z-index:99999;
+            font-family:Arial,sans-serif;
+          "
+        >
+          Não foi possível carregar o conteúdo.
+          Verifique se content/site.json e
+          content/rules.json existem.
+        </div>
+      `
+    );
+  }
 }
 
+
+/* =========================================================
+   CONFIGURAÇÕES DO SITE
+   ========================================================= */
+
 function applySite() {
+
   const s = state.site;
   const t = s.theme || {};
 
-  for (const [k, v] of Object.entries(t)) {
+
+  /* -------------------------------------------------------
+     CORES
+     ------------------------------------------------------- */
+
+  for (const [key, value] of Object.entries(t)) {
+
     document.documentElement.style.setProperty(
-      "--" + (k === "accent_light" ? "accent2" : k),
-      v
+      "--" +
+        (
+          key === "accent_light"
+            ? "accent2"
+            : key
+        ),
+      value
     );
   }
 
-  $("headerLogo").src = assetUrl(s.logo || "logo-viena.png");
-  $("headerLogo").alt = s.site_name || "Viena Roleplay";
-  $("favicon").href = assetUrl(s.favicon || s.logo || "logo-viena.png");
 
-  $("brandTitle").textContent = s.site_title || "CÓDIGO DA RUA";
-  $("brandSite").textContent = (s.site_name || "VIENA ROLEPLAY").toUpperCase();
+  /* -------------------------------------------------------
+     LOGO
+     ------------------------------------------------------- */
 
-  $("heroEyebrow").textContent = s.hero_eyebrow || "";
-  $("heroTitle").textContent = s.hero_title || "";
-  $("heroText").textContent = s.hero_text || "";
-  $("noticeTitle").textContent = s.notice_title || "";
-  $("noticeText").textContent = s.notice_text || "";
-  $("footerText").textContent = s.footer_text || "";
+  if ($("headerLogo")) {
 
-  $("discordBtn").href = s.discord_url || "#";
-  $("discordBtn").target = "_blank";
-  $("discordBtn").rel = "noopener noreferrer";
+    $("headerLogo").src =
+      s.logo || "logo-viena.png";
 
-  $("notice").style.display = s.layout?.show_notice === false ? "none" : "flex";
-  $("updatesWrap").style.display = s.layout?.show_updates === false ? "none" : "block";
-  $("searchOpen").style.display = s.layout?.show_search === false ? "none" : "block";
+    $("headerLogo").alt =
+      s.site_name || "Viena Roleplay";
+  }
 
-  if (s.hero_image && s.layout?.show_hero_image !== false) {
-    $("heroImage").src = assetUrl(s.hero_image);
-    $("heroArt").style.display = "flex";
-  } else {
-    $("heroArt").style.display = "none";
+
+  /* -------------------------------------------------------
+     FAVICON
+     ------------------------------------------------------- */
+
+  if ($("favicon")) {
+
+    $("favicon").href =
+      s.favicon ||
+      s.logo ||
+      "logo-viena.png";
+  }
+
+
+  /* -------------------------------------------------------
+     MARCA
+     ------------------------------------------------------- */
+
+  if ($("brandTitle")) {
+
+    $("brandTitle").textContent =
+      s.site_title ||
+      "CÓDIGO DA RUA";
+  }
+
+
+  if ($("brandSite")) {
+
+    $("brandSite").textContent =
+      (
+        s.site_name ||
+        "VIENA ROLEPLAY"
+      ).toUpperCase();
+  }
+
+
+  /* -------------------------------------------------------
+     HERO
+     ------------------------------------------------------- */
+
+  if ($("heroEyebrow")) {
+
+    $("heroEyebrow").textContent =
+      s.hero_eyebrow || "";
+  }
+
+
+  if ($("heroTitle")) {
+
+    $("heroTitle").textContent =
+      s.hero_title || "";
+  }
+
+
+  if ($("heroText")) {
+
+    $("heroText").textContent =
+      s.hero_text || "";
+  }
+
+
+  /*
+   * IMAGEM DO HERO
+   *
+   * A imagem cadastrada no ADMIN agora vira
+   * o FUNDO INTEIRO do Hero.
+   */
+
+  const hero =
+    document.querySelector(".hero");
+
+
+  if (hero) {
+
+    if (
+      s.hero_image &&
+      s.layout?.show_hero_image !== false
+    ) {
+
+      hero.style.backgroundImage =
+        `url("${s.hero_image}")`;
+
+      hero.classList.add(
+        "has-hero-background"
+      );
+
+    } else {
+
+      hero.style.backgroundImage =
+        "none";
+
+      hero.classList.remove(
+        "has-hero-background"
+      );
+    }
+  }
+
+
+  /*
+   * Remove a imagem lateral antiga.
+   */
+
+  if ($("heroArt")) {
+
+    $("heroArt").style.display =
+      "none";
+  }
+
+
+  if ($("heroImage")) {
+
+    $("heroImage").style.display =
+      "none";
+  }
+
+
+  /* -------------------------------------------------------
+     AVISO
+     ------------------------------------------------------- */
+
+  if ($("noticeTitle")) {
+
+    $("noticeTitle").textContent =
+      s.notice_title || "";
+  }
+
+
+  if ($("noticeText")) {
+
+    $("noticeText").textContent =
+      s.notice_text || "";
+  }
+
+
+  if ($("notice")) {
+
+    $("notice").style.display =
+      s.layout?.show_notice === false
+        ? "none"
+        : "flex";
+  }
+
+
+  /* -------------------------------------------------------
+     ATUALIZAÇÕES
+     ------------------------------------------------------- */
+
+  if ($("updatesWrap")) {
+
+    $("updatesWrap").style.display =
+      s.layout?.show_updates === false
+        ? "none"
+        : "block";
+  }
+
+
+  /* -------------------------------------------------------
+     PESQUISA
+     ------------------------------------------------------- */
+
+  if ($("searchOpen")) {
+
+    $("searchOpen").style.display =
+      s.layout?.show_search === false
+        ? "none"
+        : "block";
+  }
+
+
+  /* -------------------------------------------------------
+     DISCORD
+     ------------------------------------------------------- */
+
+  if ($("discordBtn")) {
+
+    $("discordBtn").href =
+      s.discord_url || "#";
+
+    $("discordBtn").target =
+      "_blank";
+
+    $("discordBtn").rel =
+      "noopener noreferrer";
+  }
+
+
+  /* -------------------------------------------------------
+     RODAPÉ
+     ------------------------------------------------------- */
+
+  if ($("footerText")) {
+
+    $("footerText").textContent =
+      s.footer_text || "";
+  }
+
+
+  /* -------------------------------------------------------
+     REMOVE MENU MOBILE ANTIGO
+     ------------------------------------------------------- */
+
+  if ($("mobileMenu")) {
+
+    $("mobileMenu").style.display =
+      "none";
   }
 }
+
+
+/* =========================================================
+   MENU / NAVEGAÇÃO
+   ========================================================= */
 
 function renderNav() {
-  $("nav").innerHTML = (state.data.categories || [])
-    .map(c => `
-      <button data-route="${escapeAttr(c.id)}" type="button">
-        <span>${escapeHtml(c.code)}</span>${escapeHtml(c.short)}
-      </button>
-    `)
-    .join("");
-}
 
-function renderHome() {
-  $("homeCategories").innerHTML = (state.data.categories || [])
-    .map(c => `
-      <article class="cat-card" data-route="${escapeAttr(c.id)}">
-        <div class="num">${escapeHtml(c.code)} / VIENA</div>
-        ${c.image ? `<div class="card-image-wrap"><img class="card-image" src="${escapeAttr(assetUrl(c.image))}" alt=""></div>` : ""}
-        <h3>${escapeHtml(c.short)}</h3>
-        <p>${escapeHtml(c.desc)}</p>
-      </article>
-    `)
-    .join("");
+  if (!$("nav")) return;
 
-  $("updatesList").innerHTML = (state.data.updates || [])
-    .map(x => `
-      <div class="update">
-        <time>${escapeHtml(x.date)}</time>
-        <strong>${escapeHtml(x.title)} — ${escapeHtml(x.text)}</strong>
-        <span>${escapeHtml(x.tag)}</span>
-      </div>
-    `)
-    .join("");
-}
+  $("nav").innerHTML =
+    state.data.categories
+      .map(category => `
+        <button
+          type="button"
+          data-route="${category.id}"
+        >
+          <span>
+            ${category.code}
+          </span>
 
-function allRules() {
-  return (state.data.categories || []).flatMap(c =>
-    (c.rules || []).map(r => ({ cat: c, ...r }))
-  );
-}
-
-function renderCategory(id) {
-  const c = state.data.categories.find(x => x.id === id);
-  if (!c) return;
-
-  $("catCode").textContent = `CÓDIGO ${c.code}`;
-  $("catTitle").textContent = c.name;
-  $("catDesc").textContent = c.desc || "";
-
-  const hero = $("categoryHero");
-
-  if (c.image) {
-    hero.style.setProperty("--category-image", `url("${cssUrl(assetUrl(c.image))}")`);
-    hero.classList.add("has-image");
-  } else {
-    hero.style.removeProperty("--category-image");
-    hero.classList.remove("has-image");
-  }
-
-  $("ruleList").innerHTML = (c.rules || [])
-    .map((r, i) => `
-      <article class="rule" id="rule-${i}">
-        <div class="rule-top">
-          <div class="rule-num">${escapeHtml(r.code)}</div>
-          <div>
-            <h3>${escapeHtml(r.title)}</h3>
-            <p>${escapeHtml(r.text)}</p>
-            <span class="tag">${escapeHtml(r.tag || "REGRA")}</span>
-            ${r.image ? `<br><img class="rule-image" src="${escapeAttr(assetUrl(r.image))}" alt="">` : ""}
-          </div>
-        </div>
-      </article>
-    `)
-    .join("");
-
-  $("ruleToc").innerHTML =
-    `<strong>NESTA CATEGORIA</strong>` +
-    (c.rules || [])
-      .map((r, i) => `
-        <button data-scroll-rule="rule-${i}" type="button">
-          ${escapeHtml(r.code)} — ${escapeHtml(r.title)}
+          ${category.short}
         </button>
       `)
       .join("");
 }
 
-function search(q, target) {
-  q = q.trim().toLowerCase();
 
-  if (!q) {
+/* =========================================================
+   HOME
+   ========================================================= */
+
+function renderHome() {
+
+  if ($("homeCategories")) {
+
+    $("homeCategories").innerHTML =
+      state.data.categories
+        .map(category => `
+
+          <article
+            class="cat-card"
+            data-route="${category.id}"
+          >
+
+            <div class="num">
+              ${category.code} / VIENA
+            </div>
+
+            ${
+              category.image
+                ? `
+                  <img
+                    class="card-image"
+                    src="${category.image}"
+                    alt=""
+                  >
+                `
+                : ""
+            }
+
+            <h3>
+              ${category.short}
+            </h3>
+
+            <p>
+              ${category.desc}
+            </p>
+
+          </article>
+
+        `)
+        .join("");
+  }
+
+
+  /* -------------------------------------------------------
+     ATUALIZAÇÕES
+     ------------------------------------------------------- */
+
+  if ($("updatesList")) {
+
+    $("updatesList").innerHTML =
+      (state.data.updates || [])
+        .map(update => `
+
+          <div class="update">
+
+            <time>
+              ${update.date}
+            </time>
+
+            <strong>
+              ${update.title}
+              — ${update.text}
+            </strong>
+
+            <span>
+              ${update.tag}
+            </span>
+
+          </div>
+
+        `)
+        .join("");
+  }
+}
+
+
+/* =========================================================
+   TODAS AS REGRAS
+   ========================================================= */
+
+function allRules() {
+
+  return state.data.categories.flatMap(
+    category =>
+      category.rules.map(rule => ({
+        cat: category,
+        ...rule
+      }))
+  );
+}
+
+
+/* =========================================================
+   CATEGORIA
+   ========================================================= */
+
+function renderCategory(id) {
+
+  const category =
+    state.data.categories.find(
+      x => x.id === id
+    );
+
+
+  if (!category) return;
+
+
+  /* -------------------------------------------------------
+     CABEÇALHO
+     ------------------------------------------------------- */
+
+  if ($("catCode")) {
+
+    $("catCode").textContent =
+      `CÓDIGO ${category.code}`;
+  }
+
+
+  if ($("catTitle")) {
+
+    $("catTitle").textContent =
+      category.name;
+  }
+
+
+  if ($("catDesc")) {
+
+    $("catDesc").textContent =
+      category.desc;
+  }
+
+
+  /* -------------------------------------------------------
+     IMAGEM DA CATEGORIA
+     ------------------------------------------------------- */
+
+  if ($("catImage")) {
+
+    $("catImage").hidden =
+      !category.image;
+
+    if (category.image) {
+
+      $("catImage").src =
+        category.image;
+    }
+  }
+
+
+  /* -------------------------------------------------------
+     REGRAS
+     ------------------------------------------------------- */
+
+  if ($("ruleList")) {
+
+    $("ruleList").innerHTML =
+      category.rules
+        .map((rule, index) => `
+
+          <article
+            class="rule"
+            id="rule-${index}"
+          >
+
+            <div class="rule-top">
+
+              <div class="rule-num">
+                ${rule.code}
+              </div>
+
+              <div>
+
+                <h3>
+                  ${rule.title}
+                </h3>
+
+                <p>
+                  ${rule.text}
+                </p>
+
+                ${
+                  rule.tag
+                    ? `
+                      <span class="tag">
+                        ${rule.tag}
+                      </span>
+                    `
+                    : ""
+                }
+
+                ${
+                  rule.image
+                    ? `
+                      <br>
+
+                      <img
+                        class="rule-image"
+                        src="${rule.image}"
+                        alt=""
+                      >
+                    `
+                    : ""
+                }
+
+              </div>
+
+            </div>
+
+          </article>
+
+        `)
+        .join("");
+  }
+
+
+  /* -------------------------------------------------------
+     TOC
+     ------------------------------------------------------- */
+
+  if ($("ruleToc")) {
+
+    $("ruleToc").innerHTML =
+
+      `<strong>NESTA CATEGORIA</strong>` +
+
+      category.rules
+        .map((rule, index) => `
+
+          <button
+            type="button"
+            data-rule-target="${index}"
+          >
+            ${rule.code}
+            —
+            ${rule.title}
+          </button>
+
+        `)
+        .join("");
+  }
+}
+
+
+/* =========================================================
+   PESQUISA
+   ========================================================= */
+
+function search(query, target) {
+
+  if (!target) return;
+
+  query =
+    query
+      .trim()
+      .toLowerCase();
+
+
+  if (!query) {
+
     target.innerHTML = "";
+
     return;
   }
 
-  const res = allRules()
-    .filter(r => `
-      ${r.cat.short} ${r.cat.name} ${r.code}
-      ${r.title} ${r.text} ${r.tag}
-    `.toLowerCase().includes(q))
-    .slice(0, 30);
 
-  target.innerHTML = res.length
-    ? res.map(r => `
-      <div class="result" data-route="${escapeAttr(r.cat.id)}">
-        <small>${escapeHtml(r.cat.short)} · ${escapeHtml(r.code)}</small>
-        <h3>${escapeHtml(r.title)}</h3>
-        <p>${escapeHtml(r.text)}</p>
-      </div>
-    `).join("")
-    : `
-      <div class="result">
-        <h3>Nenhuma regra encontrada.</h3>
-        <p>Tente outra palavra.</p>
-      </div>
-    `;
+  const results =
+    allRules()
+      .filter(rule => {
+
+        const content = `
+          ${rule.cat.short}
+          ${rule.cat.name}
+          ${rule.cat.code}
+          ${rule.code}
+          ${rule.title}
+          ${rule.text}
+          ${rule.tag || ""}
+        `;
+
+        return content
+          .toLowerCase()
+          .includes(query);
+      })
+      .slice(0, 30);
+
+
+  target.innerHTML =
+    results.length
+
+      ? results
+          .map(rule => `
+
+            <div
+              class="result"
+              data-route="${rule.cat.id}"
+            >
+
+              <small>
+                ${rule.cat.short}
+                ·
+                ${rule.code}
+              </small>
+
+              <h3>
+                ${rule.title}
+              </h3>
+
+              <p>
+                ${rule.text}
+              </p>
+
+            </div>
+
+          `)
+          .join("")
+
+      : `
+
+        <div class="result">
+
+          <h3>
+            Nenhuma regra encontrada.
+          </h3>
+
+          <p>
+            Tente outra palavra.
+          </p>
+
+        </div>
+
+      `;
 }
+
+
+/* =========================================================
+   ROTAS
+   ========================================================= */
 
 function route(id) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+
+  document
+    .querySelectorAll(".page")
+    .forEach(page => {
+
+      page.classList.remove(
+        "active"
+      );
+
+    });
+
 
   if (id === "inicio") {
-    $("inicio").classList.add("active");
+
+    if ($("inicio")) {
+
+      $("inicio")
+        .classList.add("active");
+    }
+
   } else if (id === "pesquisa") {
-    $("searchPage").classList.add("active");
-    setTimeout(() => $("searchInput").focus(), 0);
-  } else if (state.data.categories.some(c => c.id === id)) {
-    $("categoryPage").classList.add("active");
-    renderCategory(id);
+
+    if ($("searchPage")) {
+
+      $("searchPage")
+        .classList.add("active");
+    }
+
+    setTimeout(() => {
+
+      if ($("searchInput")) {
+
+        $("searchInput").focus();
+      }
+
+    }, 50);
+
   } else {
-    $("inicio").classList.add("active");
-    id = "inicio";
+
+    if ($("categoryPage")) {
+
+      $("categoryPage")
+        .classList.add("active");
+    }
+
+    renderCategory(id);
   }
 
-  document.querySelectorAll(".sidebar nav button").forEach(b =>
-    b.classList.toggle("active", b.dataset.route === id)
-  );
 
-  $("sidebar").classList.remove("open");
-  window.scrollTo({ top: 0, behavior: "instant" });
-}
+  /* -------------------------------------------------------
+     MENU ATIVO
+     ------------------------------------------------------- */
 
-// Navegação: funciona em todas as abas, cards, resultados e botões.
-document.addEventListener("click", e => {
-  const scrollTarget = e.target.closest("[data-scroll-rule]");
-  if (scrollTarget) {
-    const el = document.getElementById(scrollTarget.dataset.scrollRule);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-    return;
+  document
+    .querySelectorAll(
+      ".sidebar nav button"
+    )
+    .forEach(button => {
+
+      button.classList.toggle(
+        "active",
+        button.dataset.route === id
+      );
+
+    });
+
+
+  /* -------------------------------------------------------
+     FECHA SIDEBAR
+     ------------------------------------------------------- */
+
+  if ($("sidebar")) {
+
+    $("sidebar")
+      .classList.remove("open");
   }
 
-  const t = e.target.closest("[data-route]");
-  if (!t) return;
 
-  e.preventDefault();
-  const id = t.dataset.route;
-  route(id);
-  history.replaceState(null, "", "#" + id);
-});
-
-$("searchOpen").onclick = () => {
-  $("searchOverlay").classList.add("open");
-  $("overlaySearch").focus();
-};
-
-$("searchClose").onclick = () => {
-  $("searchOverlay").classList.remove("open");
-};
-
-$("searchOverlay").addEventListener("click", e => {
-  if (e.target === $("searchOverlay")) $("searchOverlay").classList.remove("open");
-});
-
-$("overlaySearch").oninput = e => search(e.target.value, $("overlayResults"));
-$("searchInput").oninput = e => search(e.target.value, $("searchResults"));
-
-$("mobileMenu").onclick = () => $("sidebar").classList.toggle("open");
-
-window.addEventListener("hashchange", () =>
-  route(location.hash.replace("#", "") || "inicio")
-);
-
-// Cursor personalizado em todas as áreas da central.
-function setupCursor() {
-  const cursor = $("customCursor");
-  const dot = $("cursorDot");
-  if (!cursor || !dot) return;
-
-  if (window.matchMedia("(pointer: coarse)").matches) {
-    cursor.remove();
-    dot.remove();
-    document.documentElement.classList.add("touch-device");
-    return;
-  }
-
-  let x = -100, y = -100;
-  let tx = x, ty = y;
-
-  window.addEventListener("pointermove", e => {
-    tx = e.clientX;
-    ty = e.clientY;
-    dot.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
-  }, { passive: true });
-
-  function animate() {
-    x += (tx - x) * 0.18;
-    y += (ty - y) * 0.18;
-    cursor.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-    requestAnimationFrame(animate);
-  }
-  animate();
-
-  document.addEventListener("pointerover", e => {
-    const interactive = e.target.closest("a, button, input, textarea, [data-route], [data-scroll-rule], .cat-card, .result");
-    cursor.classList.toggle("hover", !!interactive);
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
   });
 }
 
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+
+/* =========================================================
+   CLIQUES DE NAVEGAÇÃO
+   ========================================================= */
+
+document.addEventListener(
+  "click",
+  event => {
+
+    /* ---------------------------------------------
+       BOTÕES DE ROTA
+       --------------------------------------------- */
+
+    const routeElement =
+      event.target.closest(
+        "[data-route]"
+      );
+
+
+    if (routeElement) {
+
+      event.preventDefault();
+
+      const routeId =
+        routeElement.dataset.route;
+
+      route(routeId);
+
+      history.replaceState(
+        null,
+        "",
+        "#" + routeId
+      );
+
+      return;
+    }
+
+
+    /* ---------------------------------------------
+       TOC DAS REGRAS
+       --------------------------------------------- */
+
+    const ruleButton =
+      event.target.closest(
+        "[data-rule-target]"
+      );
+
+
+    if (ruleButton) {
+
+      const index =
+        ruleButton.dataset.ruleTarget;
+
+      const rule =
+        document.getElementById(
+          `rule-${index}`
+        );
+
+
+      if (rule) {
+
+        rule.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
+
+      return;
+    }
+
+  }
+);
+
+
+/* =========================================================
+   PESQUISA
+   ========================================================= */
+
+if ($("searchOpen")) {
+
+  $("searchOpen").onclick = () => {
+
+    if ($("searchOverlay")) {
+
+      $("searchOverlay")
+        .classList.add("open");
+    }
+
+    if ($("overlaySearch")) {
+
+      $("overlaySearch").focus();
+    }
+  };
 }
 
-function escapeAttr(value) {
-  return escapeHtml(value);
+
+if ($("searchClose")) {
+
+  $("searchClose").onclick = () => {
+
+    if ($("searchOverlay")) {
+
+      $("searchOverlay")
+        .classList.remove("open");
+    }
+  };
 }
 
-function cssUrl(value) {
-  return String(value).replaceAll('\\', "\\\\").replaceAll('"', '\\"').replaceAll("\n", "");
+
+if ($("overlaySearch")) {
+
+  $("overlaySearch").oninput =
+    event => {
+
+      search(
+        event.target.value,
+        $("overlayResults")
+      );
+
+    };
 }
 
-setupCursor();
 
-load().catch(err => {
-  console.error(err);
-  document.body.insertAdjacentHTML("beforeend", `
-    <div class="load-error">
-      Não foi possível carregar o conteúdo.<br>
-      Verifique se <strong>content/site.json</strong> e <strong>content/rules.json</strong> foram enviados.
-    </div>
-  `);
+if ($("searchInput")) {
+
+  $("searchInput").oninput =
+    event => {
+
+      search(
+        event.target.value,
+        $("searchResults")
+      );
+
+    };
+}
+
+
+/* =========================================================
+   HASH / NAVEGAÇÃO
+   ========================================================= */
+
+window.addEventListener(
+  "hashchange",
+  () => {
+
+    route(
+      location.hash.replace("#", "") ||
+      "inicio"
+    );
+
+  }
+);
+
+
+/* =========================================================
+   CURSOR PERSONALIZADO
+   ========================================================= */
+
+function setupCursor() {
+
+  /*
+   * Se o cursor personalizado estiver configurado
+   * no site.json, usamos ele.
+   */
+
+  const cursorImage =
+    state.site?.cursor_icon;
+
+
+  /*
+   * Cria o cursor apenas uma vez.
+   */
+
+  let cursor =
+    document.getElementById(
+      "customCursor"
+    );
+
+
+  if (!cursor) {
+
+    cursor =
+      document.createElement("div");
+
+    cursor.id =
+      "customCursor";
+
+    document.body.appendChild(
+      cursor
+    );
+  }
+
+
+  /*
+   * Sem imagem configurada:
+   * usa o cursor normal.
+   */
+
+  if (!cursorImage) {
+
+    cursor.style.display =
+      "none";
+
+    document.body.classList.remove(
+      "custom-cursor-enabled"
+    );
+
+    return;
+  }
+
+
+  /*
+   * Ativa cursor.
+   */
+
+  document.body.classList.add(
+    "custom-cursor-enabled"
+  );
+
+
+  cursor.style.backgroundImage =
+    `url("${cursorImage}")`;
+
+  cursor.style.display =
+    "block";
+
+
+  /*
+   * Movimento.
+   *
+   * Usamos fixed + transform para
+   * funcionar em todas as páginas.
+   */
+
+  document.addEventListener(
+    "mousemove",
+    event => {
+
+      cursor.style.left =
+        `${event.clientX}px`;
+
+      cursor.style.top =
+        `${event.clientY}px`;
+
+    },
+    {
+      passive: true
+    }
+  );
+
+
+  /*
+   * Efeito ao clicar.
+   */
+
+  document.addEventListener(
+    "mousedown",
+    () => {
+
+      cursor.classList.add(
+        "click"
+      );
+
+    }
+  );
+
+
+  document.addEventListener(
+    "mouseup",
+    () => {
+
+      cursor.classList.remove(
+        "click"
+      );
+
+    }
+  );
+
+
+  /*
+   * Quando passar em botão/link.
+   */
+
+  document.addEventListener(
+    "mouseover",
+    event => {
+
+      const interactive =
+        event.target.closest(
+          "a, button, [data-route], .cat-card, .result, input, textarea, select"
+        );
+
+
+      cursor.classList.toggle(
+        "hover",
+        !!interactive
+      );
+
+    }
+  );
+}
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+   ========================================================= */
+
+load().then(() => {
+
+  setupCursor();
+
 });
