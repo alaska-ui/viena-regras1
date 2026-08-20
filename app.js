@@ -1,515 +1,626 @@
 const state = {
-  site: null,
-  data: null
+  site: {},
+  data: {
+    categories: [],
+    updates: []
+  }
 };
 
 const $ = id => document.getElementById(id);
 
 
-/* =========================================================
+/* =========================
+   CURSOR
+========================= */
+
+const customCursor = $("customCursor");
+const cursorDot = $("cursorDot");
+
+let mouseX = 0;
+let mouseY = 0;
+
+document.addEventListener("mousemove", e => {
+
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+
+  if (customCursor) {
+    customCursor.style.left = mouseX + "px";
+    customCursor.style.top = mouseY + "px";
+  }
+
+  if (cursorDot) {
+    cursorDot.style.left = mouseX + "px";
+    cursorDot.style.top = mouseY + "px";
+  }
+
+});
+
+
+document.addEventListener(
+  "mouseover",
+  e => {
+
+    const target =
+      e.target.closest(
+        "a, button, input, textarea, select, [data-route], .cat-card, .result"
+      );
+
+    if (
+      target &&
+      customCursor
+    ) {
+      customCursor.classList.add(
+        "cursor-hover"
+      );
+    }
+
+  }
+);
+
+
+document.addEventListener(
+  "mouseout",
+  e => {
+
+    const target =
+      e.target.closest(
+        "a, button, input, textarea, select, [data-route], .cat-card, .result"
+      );
+
+    if (
+      target &&
+      customCursor
+    ) {
+      customCursor.classList.remove(
+        "cursor-hover"
+      );
+    }
+
+  }
+);
+
+
+/* =========================
    CARREGAMENTO
-   ========================================================= */
+========================= */
 
 async function load() {
 
   try {
 
-    const [siteResponse, rulesResponse] =
-      await Promise.all([
-        fetch("content/site.json"),
-        fetch("content/rules.json")
-      ]);
+    const siteResponse =
+      await fetch(
+        "content/site.json",
+        {
+          cache: "no-store"
+        }
+      );
+
+    const rulesResponse =
+      await fetch(
+        "content/rules.json",
+        {
+          cache: "no-store"
+        }
+      );
+
 
     if (!siteResponse.ok) {
-      throw new Error("Não foi possível carregar site.json");
+      throw new Error(
+        "content/site.json não encontrado."
+      );
     }
 
     if (!rulesResponse.ok) {
-      throw new Error("Não foi possível carregar rules.json");
+      throw new Error(
+        "content/rules.json não encontrado."
+      );
     }
 
-    state.site = await siteResponse.json();
-    state.data = await rulesResponse.json();
+
+    state.site =
+      await siteResponse.json();
+
+    state.data =
+      await rulesResponse.json();
+
+
+    if (
+      !Array.isArray(
+        state.data.categories
+      )
+    ) {
+      state.data.categories = [];
+    }
+
+
+    if (
+      !Array.isArray(
+        state.data.updates
+      )
+    ) {
+      state.data.updates = [];
+    }
+
 
     applySite();
+
     renderNav();
+
     renderHome();
 
-    route(
-      location.hash.replace("#", "") || "inicio"
-    );
 
-  } catch (err) {
+    const current =
+      location.hash
+        .replace("#", "")
+        .trim() || "inicio";
 
-    console.error(err);
+    route(current);
 
-    document.body.insertAdjacentHTML(
-      "beforeend",
-      `
-        <div
-          style="
-            position:fixed;
-            bottom:0;
-            left:0;
-            right:0;
-            background:#e50914;
-            color:#fff;
-            padding:14px;
-            text-align:center;
-            z-index:99999;
-            font-family:Arial,sans-serif;
-          "
-        >
-          Não foi possível carregar o conteúdo.
-          Verifique se content/site.json e
-          content/rules.json existem.
-        </div>
-      `
-    );
   }
+
+  catch (error) {
+
+    console.error(
+      "ERRO AO CARREGAR:",
+      error
+    );
+
+    showError(error);
+
+  }
+
 }
 
 
-/* =========================================================
+/* =========================
    CONFIGURAÇÕES DO SITE
-   ========================================================= */
+========================= */
 
 function applySite() {
 
-  const s = state.site;
-  const t = s.theme || {};
+  const s =
+    state.site || {};
+
+  const theme =
+    s.theme || {};
 
 
-  /* -------------------------------------------------------
-     CORES
-     ------------------------------------------------------- */
+  /* CORES */
 
-  for (const [key, value] of Object.entries(t)) {
+  for (
+    const [key, value]
+    of Object.entries(theme)
+  ) {
 
-    document.documentElement.style.setProperty(
-      "--" +
-        (
+    document.documentElement
+      .style
+      .setProperty(
+        "--" + (
           key === "accent_light"
             ? "accent2"
             : key
         ),
-      value
-    );
+        value
+      );
+
   }
 
 
-  /* -------------------------------------------------------
-     LOGO
-     ------------------------------------------------------- */
+  /* LOGO */
+
+  const logo =
+    s.logo ||
+    "logo-viena.png";
+
 
   if ($("headerLogo")) {
 
-    $("headerLogo").src =
-      s.logo || "logo-viena.png";
+    $("headerLogo").src = logo;
 
     $("headerLogo").alt =
-      s.site_name || "Viena Roleplay";
+      s.site_name ||
+      "Viena Roleplay";
+
   }
 
 
-  /* -------------------------------------------------------
-     FAVICON
-     ------------------------------------------------------- */
+  /* FAVICON */
 
   if ($("favicon")) {
 
     $("favicon").href =
       s.favicon ||
-      s.logo ||
-      "logo-viena.png";
+      logo;
+
   }
 
 
-  /* -------------------------------------------------------
-     MARCA
-     ------------------------------------------------------- */
+  /* NOME */
 
-  if ($("brandTitle")) {
-
-    $("brandTitle").textContent =
-      s.site_title ||
-      "CÓDIGO DA RUA";
-  }
+  $("brandTitle").textContent =
+    s.site_title ||
+    "CÓDIGO DA RUA";
 
 
-  if ($("brandSite")) {
-
-    $("brandSite").textContent =
-      (
-        s.site_name ||
-        "VIENA ROLEPLAY"
-      ).toUpperCase();
-  }
+  $("brandSite").textContent =
+    (
+      s.site_name ||
+      "VIENA ROLEPLAY"
+    ).toUpperCase();
 
 
-  /* -------------------------------------------------------
-     HERO
-     ------------------------------------------------------- */
+  /* HERO */
 
-  if ($("heroEyebrow")) {
-
-    $("heroEyebrow").textContent =
-      s.hero_eyebrow || "";
-  }
+  $("heroEyebrow").textContent =
+    s.hero_eyebrow ||
+    "CENTRAL OFICIAL DE REGRAS";
 
 
-  if ($("heroTitle")) {
-
-    $("heroTitle").textContent =
-      s.hero_title || "";
-  }
+  $("heroTitle").textContent =
+    s.hero_title ||
+    "O CÓDIGO DA RUA.";
 
 
-  if ($("heroText")) {
-
-    $("heroText").textContent =
-      s.hero_text || "";
-  }
+  $("heroText").textContent =
+    s.hero_text ||
+    "As regras que mantêm Viena viva. Leia, entenda e faça parte da história.";
 
 
-  /*
-   * IMAGEM DO HERO
-   *
-   * A imagem cadastrada no ADMIN agora vira
-   * o FUNDO INTEIRO do Hero.
-   */
+  /* IMAGEM DO HERO */
 
-  const hero =
-    document.querySelector(".hero");
+  if (
+    s.hero_image &&
+    s.hero_image.trim() !== ""
+  ) {
 
-
-  if (hero) {
-
-    if (
-      s.hero_image &&
-      s.layout?.show_hero_image !== false
-    ) {
-
-      hero.style.backgroundImage =
-        `url("${s.hero_image}")`;
-
-      hero.classList.add(
-        "has-hero-background"
+    document.documentElement
+      .style
+      .setProperty(
+        "--hero-image",
+        `url("${s.hero_image}")`
       );
 
-    } else {
+  } else {
 
-      hero.style.backgroundImage =
-        "none";
-
-      hero.classList.remove(
-        "has-hero-background"
+    document.documentElement
+      .style
+      .setProperty(
+        "--hero-image",
+        "none"
       );
-    }
+
   }
 
 
-  /*
-   * Remove a imagem lateral antiga.
-   */
+  /* AVISO */
 
-  if ($("heroArt")) {
-
-    $("heroArt").style.display =
-      "none";
-  }
+  $("noticeTitle").textContent =
+    s.notice_title ||
+    "LEIA ANTES DE JOGAR";
 
 
-  if ($("heroImage")) {
-
-    $("heroImage").style.display =
-      "none";
-  }
+  $("noticeText").textContent =
+    s.notice_text ||
+    "Desconhecer uma regra não isenta o jogador de sua responsabilidade.";
 
 
-  /* -------------------------------------------------------
-     AVISO
-     ------------------------------------------------------- */
+  /* RODAPÉ */
 
-  if ($("noticeTitle")) {
-
-    $("noticeTitle").textContent =
-      s.notice_title || "";
-  }
+  $("footerText").textContent =
+    s.footer_text ||
+    "© 2026 Viena Roleplay · Todos os direitos reservados.";
 
 
-  if ($("noticeText")) {
+  /* DISCORD */
 
-    $("noticeText").textContent =
-      s.notice_text || "";
-  }
+  const discord =
+    s.discord_url ||
+    "#";
 
 
-  if ($("notice")) {
+  $("discordBtn").href =
+    discord;
+
+
+  $("discordBtn").target =
+    "_blank";
+
+
+  $("discordBtn").rel =
+    "noopener noreferrer";
+
+
+  /* ELEMENTOS OPCIONAIS */
+
+  if (
+    s.layout &&
+    s.layout.show_notice === false
+  ) {
 
     $("notice").style.display =
-      s.layout?.show_notice === false
-        ? "none"
-        : "flex";
+      "none";
+
   }
 
 
-  /* -------------------------------------------------------
-     ATUALIZAÇÕES
-     ------------------------------------------------------- */
-
-  if ($("updatesWrap")) {
+  if (
+    s.layout &&
+    s.layout.show_updates === false
+  ) {
 
     $("updatesWrap").style.display =
-      s.layout?.show_updates === false
-        ? "none"
-        : "block";
-  }
-
-
-  /* -------------------------------------------------------
-     PESQUISA
-     ------------------------------------------------------- */
-
-  if ($("searchOpen")) {
-
-    $("searchOpen").style.display =
-      s.layout?.show_search === false
-        ? "none"
-        : "block";
-  }
-
-
-  /* -------------------------------------------------------
-     DISCORD
-     ------------------------------------------------------- */
-
-  if ($("discordBtn")) {
-
-    $("discordBtn").href =
-      s.discord_url || "#";
-
-    $("discordBtn").target =
-      "_blank";
-
-    $("discordBtn").rel =
-      "noopener noreferrer";
-  }
-
-
-  /* -------------------------------------------------------
-     RODAPÉ
-     ------------------------------------------------------- */
-
-  if ($("footerText")) {
-
-    $("footerText").textContent =
-      s.footer_text || "";
-  }
-
-
-  /* -------------------------------------------------------
-     REMOVE MENU MOBILE ANTIGO
-     ------------------------------------------------------- */
-
-  if ($("mobileMenu")) {
-
-    $("mobileMenu").style.display =
       "none";
+
   }
+
+
 }
 
 
-/* =========================================================
-   MENU / NAVEGAÇÃO
-   ========================================================= */
+/* =========================
+   MENU
+========================= */
 
 function renderNav() {
 
-  if (!$("nav")) return;
+  const nav =
+    $("nav");
 
-  $("nav").innerHTML =
+  if (!nav) return;
+
+
+  nav.innerHTML =
     state.data.categories
-      .map(category => `
-        <button
-          type="button"
-          data-route="${category.id}"
-        >
-          <span>
-            ${category.code}
-          </span>
+      .map(category => {
 
-          ${category.short}
-        </button>
-      `)
+        return `
+          <button
+            type="button"
+            data-route="${escapeHtml(category.id)}"
+          >
+            <span>
+              ${escapeHtml(category.code || "")}
+            </span>
+
+            ${escapeHtml(
+              category.short ||
+              category.name ||
+              ""
+            )}
+          </button>
+        `;
+
+      })
       .join("");
+
 }
 
 
-/* =========================================================
+/* =========================
    HOME
-   ========================================================= */
+========================= */
 
 function renderHome() {
 
-  if ($("homeCategories")) {
+  const container =
+    $("homeCategories");
 
-    $("homeCategories").innerHTML =
-      state.data.categories
-        .map(category => `
 
+  if (!container) return;
+
+
+  container.innerHTML =
+    state.data.categories
+      .map(category => {
+
+        const image =
+          category.image ||
+          "";
+
+
+        return `
           <article
             class="cat-card"
-            data-route="${category.id}"
+            data-route="${escapeHtml(category.id)}"
           >
 
-            <div class="num">
-              ${category.code} / VIENA
-            </div>
-
             ${
-              category.image
+              image
                 ? `
                   <img
                     class="card-image"
-                    src="${category.image}"
+                    src="${escapeHtml(image)}"
                     alt=""
+                    loading="lazy"
                   >
                 `
                 : ""
             }
 
+
+            <div class="num">
+              ${escapeHtml(
+                category.code || ""
+              )}
+              / VIENA
+            </div>
+
+
             <h3>
-              ${category.short}
+              ${escapeHtml(
+                category.short ||
+                category.name ||
+                ""
+              )}
             </h3>
 
+
             <p>
-              ${category.desc}
+              ${escapeHtml(
+                category.desc ||
+                ""
+              )}
             </p>
 
           </article>
+        `;
 
-        `)
-        .join("");
-  }
+      })
+      .join("");
 
 
-  /* -------------------------------------------------------
-     ATUALIZAÇÕES
-     ------------------------------------------------------- */
+  const updates =
+    $("updatesList");
 
-  if ($("updatesList")) {
 
-    $("updatesList").innerHTML =
-      (state.data.updates || [])
-        .map(update => `
+  if (!updates) return;
 
+
+  updates.innerHTML =
+    state.data.updates
+      .map(update => {
+
+        return `
           <div class="update">
 
             <time>
-              ${update.date}
+              ${escapeHtml(
+                update.date || ""
+              )}
             </time>
 
             <strong>
-              ${update.title}
-              — ${update.text}
+              ${escapeHtml(
+                update.title || ""
+              )}
+              ${
+                update.text
+                  ? " — " +
+                    escapeHtml(
+                      update.text
+                    )
+                  : ""
+              }
             </strong>
 
             <span>
-              ${update.tag}
+              ${escapeHtml(
+                update.tag || ""
+              )}
             </span>
 
           </div>
+        `;
 
-        `)
-        .join("");
-  }
+      })
+      .join("");
+
 }
 
 
-/* =========================================================
+/* =========================
    TODAS AS REGRAS
-   ========================================================= */
+========================= */
 
 function allRules() {
 
-  return state.data.categories.flatMap(
-    category =>
-      category.rules.map(rule => ({
+  return state.data.categories
+    .flatMap(category => {
+
+      const rules =
+        Array.isArray(category.rules)
+          ? category.rules
+          : [];
+
+      return rules.map(rule => ({
         cat: category,
         ...rule
-      }))
-  );
+      }));
+
+    });
+
 }
 
 
-/* =========================================================
+/* =========================
    CATEGORIA
-   ========================================================= */
+========================= */
 
 function renderCategory(id) {
 
   const category =
     state.data.categories.find(
-      x => x.id === id
+      item =>
+        String(item.id) === String(id)
     );
 
 
-  if (!category) return;
+  if (!category) {
 
+    route("inicio");
 
-  /* -------------------------------------------------------
-     CABEÇALHO
-     ------------------------------------------------------- */
+    return;
 
-  if ($("catCode")) {
-
-    $("catCode").textContent =
-      `CÓDIGO ${category.code}`;
   }
 
 
-  if ($("catTitle")) {
+  $("catCode").textContent =
+    "CÓDIGO " +
+    (category.code || "");
 
-    $("catTitle").textContent =
-      category.name;
+
+  $("catTitle").textContent =
+    category.name ||
+    category.short ||
+    "";
+
+
+  $("catDesc").textContent =
+    category.desc ||
+    "";
+
+
+  /* IMAGEM DA CATEGORIA */
+
+  const categoryHero =
+    $("categoryHero");
+
+
+  if (
+    category.image &&
+    category.image.trim() !== ""
+  ) {
+
+    categoryHero.style
+      .setProperty(
+        "--category-image",
+        `url("${category.image}")`
+      );
+
+  } else {
+
+    categoryHero.style
+      .setProperty(
+        "--category-image",
+        "none"
+      );
+
   }
 
 
-  if ($("catDesc")) {
-
-    $("catDesc").textContent =
-      category.desc;
-  }
-
-
-  /* -------------------------------------------------------
-     IMAGEM DA CATEGORIA
-     ------------------------------------------------------- */
-
-  if ($("catImage")) {
-
-    $("catImage").hidden =
-      !category.image;
-
-    if (category.image) {
-
-      $("catImage").src =
-        category.image;
-    }
-  }
+  const rules =
+    Array.isArray(category.rules)
+      ? category.rules
+      : [];
 
 
-  /* -------------------------------------------------------
-     REGRAS
-     ------------------------------------------------------- */
+  $("ruleList").innerHTML =
+    rules
+      .map((rule, index) => {
 
-  if ($("ruleList")) {
-
-    $("ruleList").innerHTML =
-      category.rules
-        .map((rule, index) => `
-
+        return `
           <article
             class="rule"
             id="rule-${index}"
@@ -518,38 +629,52 @@ function renderCategory(id) {
             <div class="rule-top">
 
               <div class="rule-num">
-                ${rule.code}
+                ${escapeHtml(
+                  rule.code ||
+                  `${category.code}.${index + 1}`
+                )}
               </div>
 
               <div>
 
                 <h3>
-                  ${rule.title}
+                  ${escapeHtml(
+                    rule.title ||
+                    ""
+                  )}
                 </h3>
 
                 <p>
-                  ${rule.text}
+                  ${escapeHtml(
+                    rule.text ||
+                    ""
+                  )}
                 </p>
+
 
                 ${
                   rule.tag
                     ? `
                       <span class="tag">
-                        ${rule.tag}
+                        ${escapeHtml(
+                          rule.tag
+                        )}
                       </span>
                     `
                     : ""
                 }
 
+
                 ${
                   rule.image
                     ? `
-                      <br>
-
                       <img
                         class="rule-image"
-                        src="${rule.image}"
+                        src="${escapeHtml(
+                          rule.image
+                        )}"
                         alt=""
+                        loading="lazy"
                       >
                     `
                     : ""
@@ -560,59 +685,100 @@ function renderCategory(id) {
             </div>
 
           </article>
+        `;
 
-        `)
-        .join("");
-  }
+      })
+      .join("");
 
 
-  /* -------------------------------------------------------
-     TOC
-     ------------------------------------------------------- */
+  $("ruleToc").innerHTML =
+    `
+      <strong>
+        NESTA CATEGORIA
+      </strong>
+    ` +
 
-  if ($("ruleToc")) {
+    rules
+      .map((rule, index) => {
 
-    $("ruleToc").innerHTML =
-
-      `<strong>NESTA CATEGORIA</strong>` +
-
-      category.rules
-        .map((rule, index) => `
-
+        return `
           <button
             type="button"
-            data-rule-target="${index}"
+            data-scroll-rule="${index}"
           >
-            ${rule.code}
+            ${escapeHtml(
+              rule.code ||
+              ""
+            )}
             —
-            ${rule.title}
+            ${escapeHtml(
+              rule.title ||
+              ""
+            )}
           </button>
+        `;
 
-        `)
-        .join("");
-  }
+      })
+      .join("");
+
+
+  document
+    .querySelectorAll(
+      "[data-scroll-rule]"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const index =
+            button.dataset.scrollRule;
+
+          const target =
+            document.getElementById(
+              "rule-" + index
+            );
+
+          if (target) {
+
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "center"
+            });
+
+          }
+
+        }
+      );
+
+    });
+
 }
 
 
-/* =========================================================
+/* =========================
    PESQUISA
-   ========================================================= */
+========================= */
 
 function search(query, target) {
 
-  if (!target) return;
-
   query =
-    query
+    String(query || "")
       .trim()
       .toLowerCase();
 
 
+  if (!target) return;
+
+
   if (!query) {
 
-    target.innerHTML = "";
+    target.innerHTML =
+      "";
 
     return;
+
   }
 
 
@@ -620,128 +786,146 @@ function search(query, target) {
     allRules()
       .filter(rule => {
 
-        const content = `
-          ${rule.cat.short}
-          ${rule.cat.name}
-          ${rule.cat.code}
-          ${rule.code}
-          ${rule.title}
-          ${rule.text}
-          ${rule.tag || ""}
-        `;
+        const text = `
 
-        return content
-          .toLowerCase()
-          .includes(query);
+          ${rule.cat.short || ""}
+
+          ${rule.cat.name || ""}
+
+          ${rule.cat.code || ""}
+
+          ${rule.title || ""}
+
+          ${rule.text || ""}
+
+          ${rule.tag || ""}
+
+        `.toLowerCase();
+
+
+        return text.includes(query);
+
       })
       .slice(0, 30);
 
 
+  if (!results.length) {
+
+    target.innerHTML = `
+      <div class="result">
+
+        <h3>
+          Nenhuma regra encontrada.
+        </h3>
+
+        <p>
+          Tente outra palavra.
+        </p>
+
+      </div>
+    `;
+
+    return;
+
+  }
+
+
   target.innerHTML =
-    results.length
+    results
+      .map(rule => {
 
-      ? results
-          .map(rule => `
+        return `
+          <div
+            class="result"
+            data-route="${escapeHtml(
+              rule.cat.id
+            )}"
+          >
 
-            <div
-              class="result"
-              data-route="${rule.cat.id}"
-            >
+            <small>
+              ${escapeHtml(
+                rule.cat.short || ""
+              )}
+              ·
+              ${escapeHtml(
+                rule.code || ""
+              )}
+            </small>
 
-              <small>
-                ${rule.cat.short}
-                ·
-                ${rule.code}
-              </small>
+            <h3>
+              ${escapeHtml(
+                rule.title || ""
+              )}
+            </h3>
 
-              <h3>
-                ${rule.title}
-              </h3>
+            <p>
+              ${escapeHtml(
+                rule.text || ""
+              )}
+            </p>
 
-              <p>
-                ${rule.text}
-              </p>
+          </div>
+        `;
 
-            </div>
+      })
+      .join("");
 
-          `)
-          .join("")
-
-      : `
-
-        <div class="result">
-
-          <h3>
-            Nenhuma regra encontrada.
-          </h3>
-
-          <p>
-            Tente outra palavra.
-          </p>
-
-        </div>
-
-      `;
 }
 
 
-/* =========================================================
+/* =========================
    ROTAS
-   ========================================================= */
+========================= */
 
 function route(id) {
 
-  document
-    .querySelectorAll(".page")
-    .forEach(page => {
+  const pages =
+    document.querySelectorAll(
+      ".page"
+    );
 
-      page.classList.remove(
-        "active"
-      );
 
-    });
+  pages.forEach(page => {
+
+    page.classList.remove(
+      "active"
+    );
+
+  });
 
 
   if (id === "inicio") {
 
-    if ($("inicio")) {
+    $("inicio")
+      .classList
+      .add("active");
 
-      $("inicio")
-        .classList.add("active");
-    }
+  }
 
-  } else if (id === "pesquisa") {
+  else if (id === "pesquisa") {
 
-    if ($("searchPage")) {
-
-      $("searchPage")
-        .classList.add("active");
-    }
+    $("searchPage")
+      .classList
+      .add("active");
 
     setTimeout(() => {
 
-      if ($("searchInput")) {
+      $("searchInput")?.focus();
 
-        $("searchInput").focus();
-      }
+    }, 100);
 
-    }, 50);
-
-  } else {
-
-    if ($("categoryPage")) {
-
-      $("categoryPage")
-        .classList.add("active");
-    }
-
-    renderCategory(id);
   }
 
+  else {
 
-  /* -------------------------------------------------------
-     MENU ATIVO
-     ------------------------------------------------------- */
+    $("categoryPage")
+      .classList
+      .add("active");
+
+    renderCategory(id);
+
+  }
+
 
   document
     .querySelectorAll(
@@ -757,135 +941,94 @@ function route(id) {
     });
 
 
-  /* -------------------------------------------------------
-     FECHA SIDEBAR
-     ------------------------------------------------------- */
-
-  if ($("sidebar")) {
-
-    $("sidebar")
-      .classList.remove("open");
-  }
-
-
   window.scrollTo({
     top: 0,
-    behavior: "smooth"
+    behavior: "instant"
   });
+
 }
 
 
-/* =========================================================
-   CLIQUES DE NAVEGAÇÃO
-   ========================================================= */
+/* =========================
+   CLIQUES
+========================= */
 
 document.addEventListener(
   "click",
   event => {
 
-    /* ---------------------------------------------
-       BOTÕES DE ROTA
-       --------------------------------------------- */
-
-    const routeElement =
+    const target =
       event.target.closest(
         "[data-route]"
       );
 
 
-    if (routeElement) {
-
-      event.preventDefault();
-
-      const routeId =
-        routeElement.dataset.route;
-
-      route(routeId);
-
-      history.replaceState(
-        null,
-        "",
-        "#" + routeId
-      );
-
-      return;
-    }
+    if (!target) return;
 
 
-    /* ---------------------------------------------
-       TOC DAS REGRAS
-       --------------------------------------------- */
-
-    const ruleButton =
-      event.target.closest(
-        "[data-rule-target]"
-      );
+    const id =
+      target.dataset.route;
 
 
-    if (ruleButton) {
-
-      const index =
-        ruleButton.dataset.ruleTarget;
-
-      const rule =
-        document.getElementById(
-          `rule-${index}`
-        );
+    if (!id) return;
 
 
-      if (rule) {
+    event.preventDefault();
 
-        rule.scrollIntoView({
-          behavior: "smooth",
-          block: "center"
-        });
-      }
 
-      return;
-    }
+    route(id);
+
+
+    history.replaceState(
+      null,
+      "",
+      "#" + id
+    );
 
   }
 );
 
 
-/* =========================================================
+/* =========================
    PESQUISA
-   ========================================================= */
+========================= */
 
-if ($("searchOpen")) {
-
-  $("searchOpen").onclick = () => {
-
-    if ($("searchOverlay")) {
-
-      $("searchOverlay")
-        .classList.add("open");
-    }
-
-    if ($("overlaySearch")) {
-
-      $("overlaySearch").focus();
-    }
-  };
-}
-
-
-if ($("searchClose")) {
-
-  $("searchClose").onclick = () => {
-
-    if ($("searchOverlay")) {
+$("searchOpen")
+  ?.addEventListener(
+    "click",
+    () => {
 
       $("searchOverlay")
-        .classList.remove("open");
+        .classList
+        .add("open");
+
+      setTimeout(() => {
+
+        $("overlaySearch")
+          ?.focus();
+
+      }, 100);
+
     }
-  };
-}
+  );
 
 
-if ($("overlaySearch")) {
+$("searchClose")
+  ?.addEventListener(
+    "click",
+    () => {
 
-  $("overlaySearch").oninput =
+      $("searchOverlay")
+        .classList
+        .remove("open");
+
+    }
+  );
+
+
+$("overlaySearch")
+  ?.addEventListener(
+    "input",
     event => {
 
       search(
@@ -893,13 +1036,13 @@ if ($("overlaySearch")) {
         $("overlayResults")
       );
 
-    };
-}
+    }
+  );
 
 
-if ($("searchInput")) {
-
-  $("searchInput").oninput =
+$("searchInput")
+  ?.addEventListener(
+    "input",
     event => {
 
       search(
@@ -907,182 +1050,152 @@ if ($("searchInput")) {
         $("searchResults")
       );
 
-    };
-}
+    }
+  );
 
 
-/* =========================================================
-   HASH / NAVEGAÇÃO
-   ========================================================= */
+/* ESC FECHA PESQUISA */
 
-window.addEventListener(
-  "hashchange",
-  () => {
+document.addEventListener(
+  "keydown",
+  event => {
 
-    route(
-      location.hash.replace("#", "") ||
-      "inicio"
-    );
+    if (
+      event.key === "Escape"
+    ) {
+
+      $("searchOverlay")
+        ?.classList
+        .remove("open");
+
+    }
 
   }
 );
 
 
-/* =========================================================
-   CURSOR PERSONALIZADO
-   ========================================================= */
+/* =========================
+   HASH
+========================= */
 
-function setupCursor() {
+window.addEventListener(
+  "hashchange",
+  () => {
 
-  /*
-   * Se o cursor personalizado estiver configurado
-   * no site.json, usamos ele.
-   */
+    const id =
+      location.hash
+        .replace("#", "")
+        .trim() || "inicio";
 
-  const cursorImage =
-    state.site?.cursor_icon;
+    route(id);
 
-
-  /*
-   * Cria o cursor apenas uma vez.
-   */
-
-  let cursor =
-    document.getElementById(
-      "customCursor"
-    );
-
-
-  if (!cursor) {
-
-    cursor =
-      document.createElement("div");
-
-    cursor.id =
-      "customCursor";
-
-    document.body.appendChild(
-      cursor
-    );
   }
+);
 
 
-  /*
-   * Sem imagem configurada:
-   * usa o cursor normal.
-   */
+/* =========================
+   ERRO
+========================= */
 
-  if (!cursorImage) {
+function showError(error) {
 
-    cursor.style.display =
-      "none";
-
-    document.body.classList.remove(
-      "custom-cursor-enabled"
+  const box =
+    document.createElement(
+      "div"
     );
 
-    return;
-  }
+
+  box.style.position =
+    "fixed";
+
+  box.style.left =
+    "20px";
+
+  box.style.right =
+    "20px";
+
+  box.style.bottom =
+    "20px";
+
+  box.style.zIndex =
+    "9999999";
+
+  box.style.padding =
+    "20px";
+
+  box.style.background =
+    "#120000";
+
+  box.style.border =
+    "1px solid #ff1018";
+
+  box.style.color =
+    "white";
+
+  box.innerHTML = `
+
+    <strong>
+      ERRO AO CARREGAR O SITE
+    </strong>
+
+    <br><br>
+
+    ${escapeHtml(
+      error.message ||
+      String(error)
+    )}
+
+    <br><br>
+
+    Verifique se existem:
+
+    <br>
+
+    <b>
+      content/site.json
+    </b>
+
+    <br>
+
+    <b>
+      content/rules.json
+    </b>
+
+  `;
 
 
-  /*
-   * Ativa cursor.
-   */
-
-  document.body.classList.add(
-    "custom-cursor-enabled"
+  document.body.appendChild(
+    box
   );
 
-
-  cursor.style.backgroundImage =
-    `url("${cursorImage}")`;
-
-  cursor.style.display =
-    "block";
-
-
-  /*
-   * Movimento.
-   *
-   * Usamos fixed + transform para
-   * funcionar em todas as páginas.
-   */
-
-  document.addEventListener(
-    "mousemove",
-    event => {
-
-      cursor.style.left =
-        `${event.clientX}px`;
-
-      cursor.style.top =
-        `${event.clientY}px`;
-
-    },
-    {
-      passive: true
-    }
-  );
-
-
-  /*
-   * Efeito ao clicar.
-   */
-
-  document.addEventListener(
-    "mousedown",
-    () => {
-
-      cursor.classList.add(
-        "click"
-      );
-
-    }
-  );
-
-
-  document.addEventListener(
-    "mouseup",
-    () => {
-
-      cursor.classList.remove(
-        "click"
-      );
-
-    }
-  );
-
-
-  /*
-   * Quando passar em botão/link.
-   */
-
-  document.addEventListener(
-    "mouseover",
-    event => {
-
-      const interactive =
-        event.target.closest(
-          "a, button, [data-route], .cat-card, .result, input, textarea, select"
-        );
-
-
-      cursor.classList.toggle(
-        "hover",
-        !!interactive
-      );
-
-    }
-  );
 }
 
 
-/* =========================================================
-   INICIALIZAÇÃO
-   ========================================================= */
+/* =========================
+   SEGURANÇA
+========================= */
 
-load().then(() => {
+function escapeHtml(value) {
 
-  setupCursor();
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 
-});
+}
+
+
+/* =========================
+   MENU MOBILE
+========================= */
+
+/*
+   Não existe mais aquele botão
+   de 3 riscos no desktop.
+
+   O menu lateral permanece normal.
+*/
+
+load();
