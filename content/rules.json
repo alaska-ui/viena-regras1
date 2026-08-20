@@ -1,6 +1,23 @@
 {
   "categories": [
     {
+      "id": "viena",
+      "code": "0",
+      "name": "VIENA ROLEPLAY",
+      "short": "Conheça Viena",
+      "desc": "Historia de Viena...",
+      "image": "/uploads/COM GOTEJAMENTOS E CONTORNO SEM SPLASH.png",
+      "rules": [
+        {
+          "code": ".",
+          "title": "Sejam bem-vindos",
+          "text": "....",
+          "tag": "Viena",
+          "image": ""
+        }
+      ]
+    },
+    {
       "id": "gerais",
       "code": "01",
       "name": "CÓDIGO DA RUA",
