@@ -2,18 +2,16 @@
   "categories": [
     {
       "id": "viena",
-      "code": "0",
+      "code": "🔴| VIENA ROLEPLAY",
       "name": "VIENA ROLEPLAY",
       "short": "Conheça Viena",
       "desc": "Historia de Viena...",
       "image": "/uploads/COM GOTEJAMENTOS E CONTORNO SEM SPLASH.png",
       "rules": [
         {
-          "code": ".",
           "title": "Sejam bem-vindos",
           "text": "....",
-          "tag": "Viena",
-          "image": ""
+          "tag": "Viena"
         }
       ]
     },
@@ -23,63 +21,54 @@
       "name": "CÓDIGO DA RUA",
       "short": "Regras Gerais",
       "desc": "A base de convivência de Viena. Tudo começa aqui.",
-      "image": "",
       "rules": [
         {
           "code": "01.01",
           "title": "Respeito e convivência",
           "text": "Todos os jogadores devem manter respeito entre si. Ofensas, preconceito, perseguição ou comportamento tóxico que prejudique a experiência podem resultar em punição.",
-          "tag": "GERAL",
-          "image": ""
+          "tag": "GERAL"
         },
         {
           "code": "01.02",
           "title": "Valorização da vida",
           "text": "Seu personagem deve agir de forma coerente diante de situações de risco. A vida deve ser tratada como um bem relevante dentro do RP.",
-          "tag": "ROLEPLAY",
-          "image": ""
+          "tag": "ROLEPLAY"
         },
         {
           "code": "01.03",
           "title": "RDM — Random Deathmatch",
           "text": "É proibido matar ou tentar matar outro jogador sem contexto ou motivação de RP que justifique a ação.",
-          "tag": "COMBATE",
-          "image": ""
+          "tag": "COMBATE"
         },
         {
           "code": "01.04",
           "title": "VDM — Vehicle Deathmatch",
           "text": "É proibido utilizar veículos propositalmente para atropelar ou causar dano a jogadores sem contexto válido.",
-          "tag": "COMBATE",
-          "image": ""
+          "tag": "COMBATE"
         },
         {
           "code": "01.05",
           "title": "Metagaming",
           "text": "É proibido utilizar informações obtidas fora do personagem para tomar decisões dentro do RP.",
-          "tag": "IMERSÃO",
-          "image": ""
+          "tag": "IMERSÃO"
         },
         {
           "code": "01.06",
           "title": "Powergaming",
           "text": "É proibido forçar ações impossíveis ou retirar do outro jogador a possibilidade de reagir ao RP.",
-          "tag": "IMERSÃO",
-          "image": ""
+          "tag": "IMERSÃO"
         },
         {
           "code": "01.07",
           "title": "Combat Log",
           "text": "Desconectar, sair do jogo ou utilizar meios para evitar uma situação de RP ativa é proibido.",
-          "tag": "CONDUTA",
-          "image": ""
+          "tag": "CONDUTA"
         },
         {
           "code": "01.08",
           "title": "Retorno ao combate",
           "text": "Após ser incapacitado, o personagem não deve retornar imediatamente à mesma situação para interferir no confronto.",
-          "tag": "COMBATE",
-          "image": ""
+          "tag": "COMBATE"
         }
       ]
     },
@@ -89,77 +78,66 @@
       "name": "CÓDIGO VERMELHO",
       "short": "Corridas Ilegais",
       "desc": "As ruas pertencem a quem tem coragem. Corridas clandestinas, apostas e perseguições seguem este código.",
-      "image": "",
       "rules": [
         {
           "code": "02.01",
           "title": "Organização da largada",
           "text": "A corrida deve possuir uma largada clara. Sair antes da contagem ou sinal oficial caracteriza queima de largada e pode gerar desclassificação.",
-          "tag": "CORRIDA",
-          "image": ""
+          "tag": "CORRIDA"
         },
         {
           "code": "02.02",
           "title": "Interferência externa",
           "text": "É proibido utilizar jogadores ou veículos externos para bloquear, empurrar ou destruir propositalmente um competidor durante a corrida.",
-          "tag": "CORRIDA",
-          "image": ""
+          "tag": "CORRIDA"
         },
         {
           "code": "02.03",
           "title": "Cortar caminho",
           "text": "Cortar trechos do percurso somente é permitido quando a organização da corrida definir previamente que atalhos fazem parte da rota.",
-          "tag": "CORRIDA",
-          "image": ""
+          "tag": "CORRIDA"
         },
         {
           "code": "02.04",
           "title": "Sabotagem",
           "text": "Sabotagem pode existir quando houver contexto de RP e for realizada por meios permitidos. Exploits, bugs ou métodos externos são proibidos.",
-          "tag": "UNDERGROUND",
-          "image": ""
+          "tag": "UNDERGROUND"
         },
         {
           "code": "02.05",
           "title": "Aposta e palavra",
           "text": "Ao aceitar uma aposta ou desafio, o jogador deve respeitar o acordo firmado em RP. Golpes e fraudes podem gerar punição conforme o contexto.",
-          "tag": "UNDERGROUND",
-          "image": ""
+          "tag": "UNDERGROUND"
         },
         {
           "code": "02.06",
           "title": "Corrida fantasma",
           "text": "Um piloto eliminado não pode retornar à área para informar posições, bloquear adversários ou interferir na disputa.",
-          "tag": "CORRIDA",
-          "image": ""
+          "tag": "CORRIDA"
         },
         {
           "code": "02.07",
           "title": "Polícia e perseguição",
           "text": "Fugir de uma abordagem policial durante uma corrida é permitido quando houver contexto, mas o piloto deve respeitar as regras gerais de perseguição e direção.",
-          "tag": "HEAT",
-          "image": ""
+          "tag": "HEAT"
         },
         {
           "code": "02.08",
           "title": "Direção irresponsável",
           "text": "Velocidade alta faz parte das corridas, mas não autoriza abuso de mecânicas, colisões intencionais sem contexto ou condução impossível.",
-          "tag": "DIREÇÃO",
-          "image": ""
+          "tag": "DIREÇÃO"
         },
         {
           "code": "02.09",
           "title": "Corrida oficial",
           "text": "Corridas oficiais da cidade podem possuir regras específicas de percurso, classes, largada, premiação e desclassificação. Essas regras prevalecem para aquela competição.",
-          "tag": "EVENTO",
-          "image": ""
+          "tag": "EVENTO"
         },
         {
           "code": "02.10",
           "title": "Duelo de rua",
           "text": "Desafios 1x1 podem ser realizados em locais apropriados, desde que ambos os participantes tenham aceitado o desafio e não haja interferência indevida.",
-          "tag": "STREET",
-          "image": ""
+          "tag": "STREET"
         }
       ]
     },
@@ -169,42 +147,36 @@
       "name": "CÓDIGO AZUL",
       "short": "Polícia & Perseguições",
       "desc": "Procedimentos para abordagens, perseguições e operações contra o submundo das corridas.",
-      "image": "",
       "rules": [
         {
           "code": "03.01",
           "title": "Abordagem",
           "text": "A abordagem deve possuir motivo de RP. A autoridade deve, sempre que possível, comunicar a ordem de parada e permitir reação compatível.",
-          "tag": "POLÍCIA",
-          "image": ""
+          "tag": "POLÍCIA"
         },
         {
           "code": "03.02",
           "title": "Perseguição",
           "text": "Perseguições devem ser conduzidas com coerência e sem transformar qualquer abordagem em combate letal automaticamente.",
-          "tag": "POLÍCIA",
-          "image": ""
+          "tag": "POLÍCIA"
         },
         {
           "code": "03.03",
           "title": "PIT",
           "text": "O PIT deve ser utilizado de maneira proporcional e em condições que não caracterizem abuso deliberado da mecânica.",
-          "tag": "POLÍCIA",
-          "image": ""
+          "tag": "POLÍCIA"
         },
         {
           "code": "03.04",
           "title": "Uso da força",
           "text": "O uso de força letal deve ser justificado pelo contexto e pela ameaça apresentada, respeitando a escalada da ocorrência.",
-          "tag": "POLÍCIA",
-          "image": ""
+          "tag": "POLÍCIA"
         },
         {
           "code": "03.05",
           "title": "Operações contra corridas",
           "text": "Operações podem ser planejadas para interromper eventos clandestinos, realizar cercos, identificar organizadores e apreender veículos conforme o RP.",
-          "tag": "OPERAÇÃO",
-          "image": ""
+          "tag": "OPERAÇÃO"
         }
       ]
     },
@@ -214,35 +186,30 @@
       "name": "CÓDIGO SOMBRIO",
       "short": "Facções & Crime",
       "desc": "Regras para organizações criminosas, oficinas, contrabando e disputas territoriais.",
-      "image": "",
       "rules": [
         {
           "code": "04.01",
           "title": "Hierarquia",
           "text": "Organizações devem possuir liderança e funções coerentes com sua proposta, mantendo atividade e RP compatíveis.",
-          "tag": "FACÇÃO",
-          "image": ""
+          "tag": "FACÇÃO"
         },
         {
           "code": "04.02",
           "title": "Conflitos",
           "text": "Conflitos entre organizações devem possuir motivo e escalada de RP. Matar por motivo banal não é justificativa automática.",
-          "tag": "FACÇÃO",
-          "image": ""
+          "tag": "FACÇÃO"
         },
         {
           "code": "04.03",
           "title": "Oficinas clandestinas",
           "text": "Oficinas podem atuar como pontos de preparação, modificação e manutenção de veículos, desde que respeitem as regras de economia e RP.",
-          "tag": "CRIME",
-          "image": ""
+          "tag": "CRIME"
         },
         {
           "code": "04.04",
           "title": "Contrabando",
           "text": "Peças, veículos e itens ilegais podem integrar o RP criminoso quando houver sistemas ou autorização específicos para isso.",
-          "tag": "CRIME",
-          "image": ""
+          "tag": "CRIME"
         }
       ]
     },
@@ -252,28 +219,24 @@
       "name": "CÓDIGO OURO",
       "short": "Economia & Veículos",
       "desc": "Regras para dinheiro, comércio, veículos e o mercado de Viena.",
-      "image": "",
       "rules": [
         {
           "code": "05.01",
           "title": "Fraudes",
           "text": "Golpes que explorem bugs, duplicações ou falhas técnicas são proibidos. Golpes de RP podem existir quando o sistema permitir e houver contexto.",
-          "tag": "ECONOMIA",
-          "image": ""
+          "tag": "ECONOMIA"
         },
         {
           "code": "05.02",
           "title": "Veículos",
           "text": "Cada veículo deve ser utilizado de acordo com sua finalidade e características. Explorar física ou mecânica de forma impossível pode ser punido.",
-          "tag": "VEÍCULOS",
-          "image": ""
+          "tag": "VEÍCULOS"
         },
         {
           "code": "05.03",
           "title": "Mercado",
           "text": "Comércios e negociações devem respeitar preços, sistemas e limitações estabelecidas pela administração.",
-          "tag": "ECONOMIA",
-          "image": ""
+          "tag": "ECONOMIA"
         }
       ]
     },
@@ -283,42 +246,36 @@
       "name": "CÓDIGO DE PISTA",
       "short": "Eventos & Competições",
       "desc": "Regras para campeonatos, classes, grids, premiações e competições oficiais.",
-      "image": "",
       "rules": [
         {
           "code": "06.01",
           "title": "Classes",
           "text": "Cada evento deve informar previamente as classes e limitações de veículos aceitas.",
-          "tag": "EVENTO",
-          "image": ""
+          "tag": "EVENTO"
         },
         {
           "code": "06.02",
           "title": "Grid e largada",
           "text": "O grid deve ser definido pela organização. A largada antecipada ou mudança proposital de posição pode gerar punição ou desclassificação.",
-          "tag": "EVENTO",
-          "image": ""
+          "tag": "EVENTO"
         },
         {
           "code": "06.03",
           "title": "Desclassificação",
           "text": "A organização pode desclassificar participantes que violem regras específicas do evento, desde que a decisão seja fundamentada.",
-          "tag": "EVENTO",
-          "image": ""
+          "tag": "EVENTO"
         },
         {
           "code": "06.04",
           "title": "Premiação",
           "text": "A premiação deve ser divulgada antes do evento e entregue conforme os critérios anunciados.",
-          "tag": "EVENTO",
-          "image": ""
+          "tag": "EVENTO"
         },
         {
           "code": "06.05",
           "title": "Campeonato",
           "text": "Campeonatos podem utilizar pontuação, ranking, etapas e penalidades acumulativas definidos previamente pela organização.",
-          "tag": "COMPETIÇÃO",
-          "image": ""
+          "tag": "COMPETIÇÃO"
         }
       ]
     },
@@ -328,49 +285,42 @@
       "name": "TRIBUNAL DA RUA",
       "short": "Denúncias & Punições",
       "desc": "Como reportar situações e como a administração classifica infrações.",
-      "image": "",
       "rules": [
         {
           "code": "07.01",
           "title": "Denúncia objetiva",
           "text": "A denúncia deve informar o que aconteceu, quem está envolvido e qual regra o denunciante entende ter sido violada.",
-          "tag": "DENÚNCIA",
-          "image": ""
+          "tag": "DENÚNCIA"
         },
         {
           "code": "07.02",
           "title": "Provas",
           "text": "Clipes, vídeos, prints e demais provas devem apresentar contexto suficiente para a análise. Edição que esconda o contexto pode prejudicar a denúncia.",
-          "tag": "DENÚNCIA",
-          "image": ""
+          "tag": "DENÚNCIA"
         },
         {
           "code": "07.03",
           "title": "Boa-fé",
           "text": "Denúncias devem ser abertas de forma honesta. Manipulação de provas, acusações falsas ou omissão proposital de contexto podem gerar punição.",
-          "tag": "CONDUTA",
-          "image": ""
+          "tag": "CONDUTA"
         },
         {
           "code": "07.04",
           "title": "Bandeira Amarela",
           "text": "Advertência formal aplicada em infrações leves ou como registro administrativo.",
-          "tag": "PUNIÇÃO",
-          "image": ""
+          "tag": "PUNIÇÃO"
         },
         {
           "code": "07.05",
           "title": "Bandeira Vermelha",
           "text": "Suspensão temporária de determinadas atividades ou acesso, conforme a gravidade da infração.",
-          "tag": "PUNIÇÃO",
-          "image": ""
+          "tag": "PUNIÇÃO"
         },
         {
           "code": "07.06",
           "title": "Bandeira Preta",
           "text": "Banimento aplicado em infrações graves, reincidência ou situações previstas pela administração.",
-          "tag": "PUNIÇÃO",
-          "image": ""
+          "tag": "PUNIÇÃO"
         }
       ]
     }
