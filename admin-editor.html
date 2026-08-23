@@ -34,7 +34,10 @@ let site={},data={};
 const defaults={theme:{accent:'#e50914',accent_light:'#ff4650',background:'#090909',surface:'#121212',text:'#f5f5f5',muted:'#9b9b9b'},layout:{show_search:true,show_updates:true,show_notice:true,show_hero_image:true,show_admin_link:false},cursor:{enabled:true,size:34,trail_enabled:true,trail_type:'paint',trail_color:'#e50914',trail_count:10,falling_particles:{enabled:true,type:'letters',color:'#e50914',count:34,size:14}}};
 function merge(a,b){return {...b,...a,theme:{...b.theme,...(a.theme||{})},layout:{...b.layout,...(a.layout||{})},cursor:{...b.cursor,...(a.cursor||{}),falling_particles:{...b.cursor.falling_particles,...(a.cursor?.falling_particles||{})}}}}
 async function load(){
- try{const [s,r]=await Promise.all([fetch('content/site.json?x='+Date.now()).then(x=>x.json()),fetch('content/rules.json?x='+Date.now()).then(x=>x.json())]);site=merge(s,defaults);data=r||{categories:[],updates:[]};
+ try{const [s,r]=await Promise.all([fetch('content/site.json?x='+Date.now()).then(x=>x.json()),fetch('content/rules.json?x='+Date.now()).then(x=>x.json())]);site=merge(s,defaults);
+    /* Pesquisa fica ativa por padrão. Se ela tinha sido desativada no JSON, o editor restaura para o estado visível. */
+    site.layout={...(site.layout||{}),show_search:true};
+    data=r||{categories:[],updates:[]};
  const saved=localStorage.getItem('viena-editor-draft');if(saved){const d=JSON.parse(saved);site=d.site||site;data=d.data||data;notice('Rascunho carregado.');}
  render();send();}catch(e){console.error(e);notice('Não consegui carregar os JSONs.');}}
 function esc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
@@ -64,7 +67,7 @@ function set(path,val){let p=path.split('.'),o=site;for(let i=0;i<p.length-1;i++
 function render(){
  $('#panel-site').innerHTML=`<details class="group" open><summary>🏠 Capa e identidade</summary><div class="fields">${field('Nome da cidade','site_name')}${field('Título principal','site_title')}${field('Bordão','tagline')}${field('Descrição','description','textarea')}${field('Logo','logo')}${field('Favicon','favicon')}${field('Discord','discord_url')}${field('Texto pequeno','hero_eyebrow')}${field('Título da capa','hero_title')}${field('Texto da capa','hero_text','textarea')}${field('Imagem da capa','hero_image')}${field('Título do aviso','notice_title')}${field('Texto do aviso','notice_text','textarea')}${field('Rodapé','footer_text')}</div></details>
  <details class="group"><summary>🎨 Cores</summary><div class="fields">${[['accent','Cor principal'],['accent_light','Cor secundária'],['background','Fundo'],['surface','Cards'],['text','Texto'],['muted','Texto secundário']].map(([x,l])=>colorField(l,'theme.'+x)).join('')}</div></details>
- <details class="group"><summary>👁️ Elementos</summary><div class="fields">${['show_search','show_updates','show_notice','show_hero_image','show_admin_link'].map(x=>field(x,'layout.'+x,'check')).join('')}</div></details>
+ <details class="group"><summary>👁️ Elementos</summary><div class="fields"><div style="font-size:11px;color:#888;margin-bottom:8px">🔎 A pesquisa foi restaurada e fica visível na prévia.</div>${['show_search','show_updates','show_notice','show_hero_image','show_admin_link'].map(x=>field(x,'layout.'+x,'check')).join('')}</div></details>
  <details class="group"><summary>🖱️ Cursor e rastro</summary><div class="fields">${field('Cursor ativo','cursor.enabled','check')}${field('Imagem do cursor','cursor.image')}${field('Tamanho','cursor.size')}${field('Rastro ativo','cursor.trail_enabled','check')}${field('Tipo do rastro','cursor.trail_type','select','paint:Pincelada|spray:Spray|glow:Glow')}${colorField('Cor do rastro','cursor.trail_color')}${field('Partículas do rastro','cursor.trail_count')}</div></details>
  <details class="group"><summary>✨ Partículas caindo</summary><div class="fields">${field('Ativar','cursor.falling_particles.enabled','check')}${field('Tipo','cursor.falling_particles.type','select','letters:Letras|logo:Logo|mixed:Misto|spark:Brilhos')}${field('Logo','cursor.falling_particles.image')}${colorField('Cor das partículas','cursor.falling_particles.color')}${field('Quantidade','cursor.falling_particles.count')}${field('Tamanho','cursor.falling_particles.size')}</div></details>`;
  renderRules();bind();}
@@ -165,7 +168,11 @@ async function publishToGithub(){
   }catch(error){
     console.error(error);
     notice('❌ Não foi possível publicar. Confira o token e as permissões do repositório.');
-    alert('Não foi possível publicar no GitHub.\n\n'+error.message+'\n\nO token precisa ter permissão para gravar no repositório alaska-ui/viena-regras1.');
+    alert('Não foi possível publicar no GitHub.
+
+'+error.message+'
+
+O token precisa ter permissão para gravar no repositório alaska-ui/viena-regras1.');
   }finally{
     btn.disabled=false;
     btn.textContent=oldText;

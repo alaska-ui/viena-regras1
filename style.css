@@ -244,6 +244,32 @@ html.viena-cursor-active [role="button"]{
   line-height:1;
 }
 
+.search-button{
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-width:48px;
+  cursor:pointer;
+}
+
+.search-symbol{
+  font-size:22px;
+  line-height:1;
+}
+
+.search-label{
+  display:none;
+  font-size:10px;
+  letter-spacing:1.5px;
+}
+
+@media(max-width:600px){
+  .search-label{
+    display:inline;
+  }
+}
+
 .discord-btn{
   background:var(--accent);
   border-color:var(--accent);

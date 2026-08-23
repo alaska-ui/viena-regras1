@@ -25,3 +25,12 @@ EDITOR VISUAL
 Abra /admin-editor.html para usar o editor visual da Viena.
 Ele mostra o próprio site em uma prévia real e atualiza enquanto você edita.
 O botão Rascunho salva no navegador. Baixar JSON gera site.json e rules.json para enviar pelo Admin/GitHub.
+
+
+CORREÇÃO DESTA VERSÃO
+- A barra/ícone de pesquisa foi restaurada como visível no editor e na prévia.
+- O editor continua carregando content/site.json e content/rules.json atuais.
+- A prévia usa o mesmo index.html, style.css e app.js incluídos no pacote.
+- Alterações só vão para o GitHub quando você clicar em Publicar no site.
+- O botão Publicar atualiza somente content/site.json e content/rules.json.
+- Não substitua esses arquivos manualmente por versões antigas.

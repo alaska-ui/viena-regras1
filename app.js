@@ -355,7 +355,11 @@ function applySite(){
     $("discordBtn").href = s.discord_url || "#";
   }
 
-  const layout = s.layout || {};
+  /* PESQUISA: fica sempre disponível no site.
+     O botão não pode desaparecer por causa de um valor antigo
+     ou ausente no site.json. */
+  const layout = { show_search:true, ...(s.layout || {}) };
+  layout.show_search = true;
 
   if($("notice")){
     $("notice").style.display =
