@@ -327,13 +327,102 @@
     {
       "name": "MANTENHA A CONDUTA",
       "short": "Regras Básicas",
-      "desc": "As regras da Viena existem para preservar a qualidade do RP, a imersão e, principalmente, uma experiência justa para todos os cidadãos.\nToda situação será analisada considerando contexto, intenção, gravidade e impacto no RP. A ausência de uma situação específica neste documento não significa que ela esteja automaticamente permitida.",
+      "desc": "As regras da Viena existem para preservar a qualidade do RP, a imersão e, principalmente, uma experiência justa para todos os cidadãos.\nToda situação será analisada considerando **contexto, intenção, gravidade e impacto no RP**. A ausência de uma situação específica neste documento não significa que ela esteja automaticamente permitida.",
       "rules": [
         {
           "code": "RDM",
           "title": "Random Death Match",
           "text": "Consiste em matar ou tentar matar outro cidadão **sem uma justificativa válida ou construção de RP que sustente a ação**.\n\n**É considerado RDM:**\n - Realizar disparos ou ataques sem contexto;\n- Executar um cidadão sem construção prévia de RP;\n- Matar alguém sem possuir uma justificativa válida dentro da situação;\n- Iniciar uma ação letal apenas por conveniência ou diversão.\n\n> ⚠️ ATENÇÃO \n> Possuir uma discussão ou desentendimento não significa, por si só, que exista justificativa para uma ação letal. A Staff poderá analisar todo o contexto da situação.",
-          "tag": "REGRA"
+          "tag": "COMBATE"
+        },
+        {
+          "code": "VDM",
+          "title": "Vehicle Death Match",
+          "text": "Consiste em utilizar qualquer veículo **intencionalmente** para atingir, ferir ou matar outro cidadão.\n\n**Aplica-se a:**\n- Carros;\n- Motos;\n- Helicópteros;\n- Aviões;\n- Bicicletas;\n- Qualquer outro veículo disponível na cidade.\n\n> 💡 OBSERVAÇÃO\n> Colisões decorrentes do desenvolvimento natural de uma perseguição ou situação de RP serão analisadas de acordo com o contexto.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "PG",
+          "title": "Power Gaming",
+          "text": "É proibido utilizar mecânicas, comandos, animações ou recursos do jogo para realizar ações **impossíveis, incoerentes ou incompatíveis com a realidade do RP**.\n\n**Exemplos:**\n- Abusar de exploits ou mecânicas;\n- Utilizar animações para obter vantagem;\n- Realizar ações incompatíveis com a situação;\n- Explorar limitações do jogo para obter vantagem;\n- Utilizar mecânicas de forma diferente de sua finalidade para beneficiar o personagem.",
+          "tag": "IMERSÃO"
+        },
+        {
+          "code": "AAV",
+          "title": "ANTI-AMOR A VIDA",
+          "text": "O personagem deve valorizar a própria vida e reagir a situações de perigo de maneira **coerente e compatível com o risco apresentado**.\n\n**Não é permitido:**\n- Entrar propositalmente em tiroteios sem necessidade;\n- Colocar a própria vida em risco gratuitamente;\n- Ignorar ameaças reais;\n- Enfrentar situações claramente letais sem justificativa;\n- Realizar ações equivalentes a um suicídio sem contexto de RP.\n\n> ⚠️ ATENÇÃO\n> Coragem não significa ignorar o risco. A Staff avaliará se a atitude do personagem era compatível com a ameaça apresentada.",
+          "tag": "IMERSÃO"
+        },
+        {
+          "code": "CL",
+          "title": "Combat Logging",
+          "text": "Consiste em sair da cidade ou desconectar **durante uma situação ativa** com o objetivo de evitar suas consequências.\n\n**É considerado CL:**\n- Sair durante uma abordagem;\n- Desconectar durante uma perseguição;\n- Sair durante uma prisão;\n- Desconectar durante um sequestro;\n- Sair durante conflitos ou ações;\n- Utilizar o quit para evitar uma punição ou consequência do RP.\n\n> ⚠️ ATENÇÃO\n> Em caso de crash, o jogador deverá retornar à cidade assim que possível, afastar-se da situação e comunicar o ocorrido à Staff, apresentando uma captura de tela que permita verificar a data e o horário.",
+          "tag": "SISTEMA"
+        },
+        {
+          "code": "MG",
+          "title": "Metagaming / Ghosting",
+          "text": "Consiste em utilizar informações obtidas **fora do RP** para interferir em situações dentro da cidade ou obter vantagem.\n\n**Exemplos:**\n- Descobrir a localização de alguém através de uma live;\n- Utilizar informações recebidas pelo Discord;\n- Receber informações de terceiros fora do RP;\n- Combinar ações externas para interferir em uma situação;\n- Utilizar uma transmissão para localizar ou acompanhar um jogador.\n\n> ❌ PROIBIDO\n> Informações obtidas através de lives, clipes, Discord ou qualquer outro meio externo não fazem parte do conhecimento do personagem.",
+          "tag": "INFORMAÇÃO"
+        },
+        {
+          "code": "SK",
+          "title": "Spawn Kill",
+          "text": "É proibido iniciar ações contra cidadãos que acabaram de entrar na cidade **com o objetivo de obter vantagem pela condição de recém-conexão**.\n\n**Inclui:**\n- Ataques;\n- Assaltos;\n- Sequestros;\n- Emboscadas próximas a locais de respawn;\n- Abordagens abusivas contra jogadores recém-conectados.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "RK",
+          "title": "Revenge Kill",
+          "text": "Após a morte do personagem, é proibido retornar à situação anterior com o objetivo de buscar vingança.\n\n**Também é proibido:**\n- Retornar ao local da morte para retaliar;\n- Enviar terceiros para realizar a vingança;\n- Continuar uma perseguição iniciada antes da morte;\n- Utilizar informações da situação anterior para provocar uma nova ação.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "SZ",
+          "title": "Safe Zone",
+          "text": "Dentro de uma Safe Zone, não é permitido **iniciar ações criminosas ou hostis**.\n\n**É proibido:**\n- Assaltar;\n- Sequestrar;\n- Roubar;\n- Sacar armas com intenção hostil;\n- Matar;\n- Iniciar abordagens criminosas.\n\n> ℹ️ OBSERVAÇÃO\n> Situações especificamente autorizadas pelas regras da cidade poderão possuir tratamento diferente.",
+          "tag": "ZONAS"
+        },
+        {
+          "code": "DRP",
+          "title": "Dark RP",
+          "text": "Dark RP compreende interpretações que ultrapassam os limites estabelecidos pela Viena, envolvendo conteúdos **extremamente ofensivos, discriminatórios, abusivos ou sensíveis**.\n\n**Exemplos:**\n- Racismo;\n- LGBTfobia;\n- Xenofobia;\n- Assédio;\n- Misoginia;\n- Intolerância religiosa;\n- Bullying;\n- Conteúdo sexual envolvendo abuso;\n- Necrofilia;\n- Outras interpretações que ultrapassem os limites aceitáveis do RP.\n\n> ❌ PROIBIDO\n> Casos graves ou que envolvam condutas extremamente abusivas poderão resultar em banimento permanente, independentemente de outras punições anteriores.",
+          "tag": "CONDUTA"
+        },
+        {
+          "code": "FRP",
+          "title": "Forçar RP",
+          "text": "É proibido obrigar outro cidadão a participar de uma situação de RP contra sua vontade ou criar situações artificiais exclusivamente para provocar uma reação.\n\n**Também se enquadra:**\n- Provocações constantes;\n- Insultos utilizados para forçar uma reação;\n- Criar situações sem contexto;\n- Insistir em uma interação apenas para gerar uma reação específica;\n- Manipular situações para obrigar outro jogador a participar de um RP.",
+          "tag": "IMERSÃO"
+        },
+        {
+          "code": "CF",
+          "title": "Cop Fear / Gang Fear",
+          "text": "O personagem deve respeitar situações de ameaça, bem como a hierarquia e o nível de risco apresentados dentro do RP.\n\nNão é permitido agir de maneira incompatível com uma situação de perigo apenas para **provocar, desafiar ou desmoralizar** autoridades ou grupos armados.\n\n> ℹ️ OBSERVAÇÃO\n> A reação do personagem deve ser compatível com o risco real apresentado na situação.",
+          "tag": "POLÍCIA"
+        },
+        {
+          "code": "CB",
+          "title": "Cop Bait",
+          "text": "É proibido criar situações artificiais com o único objetivo **de atrair policiais para iniciar ou provocar um confronto**.\n\n**Exemplos:**\n- Provocar viaturas propositalmente;\n- Criar falsas ocorrências;\n- Simular acidentes;\n- Realizar denúncias falsas;\n- Criar situações artificiais para forçar uma perseguição ou confronto.",
+          "tag": "POLÍCIA"
+        },
+        {
+          "code": "OD",
+          "title": "Ofensas no Discord",
+          "text": "O Discord oficial da Viena também faz parte da comunidade e está sujeito às regras de convivência.\n\n**Não serão tolerados:**\n- Ofensas;\n- Farpas direcionadas;\n- Perseguições;\n- Marcações abusivas;\n- Tentativas de constranger outros membros;\n- Utilização de clipes ou conteúdos para atacar membros da comunidade.\n\n> ⚠️ ATENÇÃO\n> A punição poderá ocorrer mesmo que a conduta tenha acontecido fora da cidade, quando estiver relacionada à comunidade Viena.",
+          "tag": "COMUNIDADE"
+        },
+        {
+          "code": "FSP",
+          "title": "Flood / Spam",
+          "text": "É proibido enviar mensagens, sons ou realizar ações repetitivas de maneira excessiva com o objetivo de **incomodar, atrapalhar ou poluir a experiência dos demais jogadores**.\n\n**Aplica-se a:**\n- Chat;\n- Voz;\n- Gestos;\n- Mensagens repetitivas;\n- Sons excessivos;\n- Qualquer outra forma de spam.",
+          "tag": "COMUNIDADE"
+        },
+        {
+          "code": "PI",
+          "text": "Não é permitida a divulgação de outros servidores, comunidades, marcas, links ou conteúdos externos **sem autorização da Administração**.\n\n> ❌ PROIBIDO\n> A divulgação de servidores ou comunidades concorrentes sem autorização poderá resultar em punição.",
+          "tag": "COMUNIDADE"
         }
       ]
     }
