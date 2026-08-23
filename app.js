@@ -1119,3 +1119,29 @@ load().catch(error => {
     `
   );
 });
+
+/* =========================================================
+   EDITOR VISUAL — PRÉVIA AO VIVO
+   Permite ao editor enviar dados não salvos para esta mesma página.
+========================================================= */
+window.addEventListener("message", event => {
+  const payload = event.data;
+  if (!payload || payload.type !== "viena-preview") return;
+  if (!payload.site || !payload.data) return;
+
+  state.site = payload.site;
+  state.data = payload.data;
+
+  try {
+    applySite();
+    renderNav();
+    renderHome();
+
+    const current = location.hash.replace("#", "") || "inicio";
+    if (current !== "inicio" && current !== "pesquisa") {
+      renderCategory(current);
+    }
+  } catch (error) {
+    console.error("Erro ao atualizar prévia:", error);
+  }
+});

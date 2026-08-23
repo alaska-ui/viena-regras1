@@ -20,3 +20,8 @@ Correções:
 - letrinhas continuam caindo.
 
 Depois do commit/push, use Ctrl+F5 para forçar a atualização.
+
+EDITOR VISUAL
+Abra /admin-editor.html para usar o editor visual da Viena.
+Ele mostra o próprio site em uma prévia real e atualiza enquanto você edita.
+O botão Rascunho salva no navegador. Baixar JSON gera site.json e rules.json para enviar pelo Admin/GitHub.
