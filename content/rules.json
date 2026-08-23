@@ -212,7 +212,63 @@
     {
       "code": "03",
       "name": "A RUA",
-      "short": "Combate & Conflito"
+      "short": "Combate & Conflito",
+      "rules": [
+        {
+          "code": "03.01",
+          "title": "Início de Confronto",
+          "text": "Toda ação que envolva confronto armado deve possuir **contexto e construção de RP** antes que o combate seja iniciado.\n\nNão é permitido iniciar uma situação de confronto apenas para provocar uma troca de tiros ou criar uma situação de PVP sem desenvolvimento prévio.\n\n**Regras:**\n- Deve existir contexto de RP antes de iniciar um confronto.\n- Não é permitido iniciar uma ação letal sem uma justificativa válida.\n- Discussões, provocações ou desentendimentos isolados não autorizam automaticamente o início de um confronto.\n- A situação deve possuir um desenvolvimento coerente dentro do RP.\n- Situações consideradas forçadas ou criadas exclusivamente para gerar PVP poderão ser analisadas pela Staff.\n\n> ⚠️ ATENÇÃO\n> O fato de existir uma discussão ou conflito entre personagens não significa que o confronto armado esteja automaticamente autorizado. Todo o contexto da situação será considerado em uma eventual análise.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "03.02",
+          "title": "Furto de Veículos",
+          "text": "O furto de veículos deve acontecer de maneira coerente com o RP e **não pode ser utilizado como justificativa para iniciar um confronto de forma forçada**.\n\n**É permitido:**\n- Furtar veículos que estejam abandonados ou destrancados.\n- Realizar o furto sem utilização de violência.\n- Utilizar o veículo furtado dentro das limitações previstas pelas demais regras da cidade.\n\n**É proibido:**\n- Criar um RP forçado apenas para furtar um veículo.\n- Utilizar o furto como pretexto para iniciar um PVP.\n- Furtar veículos com o objetivo de utilizá-los em ações de rua quando houver proibição específica para esse tipo de veículo.\n\n> ⚠️ ATENÇÃO\n> Caso exista uma situação de “desce e quebra” sem construção de RP prévia, a situação poderá ser caracterizada como RDM.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "03.03",
+          "title": "Retorno à Ação",
+          "text": "Após ser morto ou finalizado durante uma ação, o jogador **não poderá retornar à mesma ação**.\n\n**É proibido:**\n- Retornar ao local da ação após morrer.\n- Voltar para auxiliar aliados.\n- Retornar para participar novamente do confronto.\n- Retornar exclusivamente para recuperar o próprio corpo.\n- Utilizar outro personagem ou recurso para interferir na mesma ação.\n\n> ❌ PROIBIDO\n> Morrer durante uma ação e retornar posteriormente ao local para continuar participando dela caracteriza quebra de regra.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "03.04",
+          "title": "Marcação de Corpos",
+          "text": "É proibido utilizar um corpo como forma de criar uma situação de combate contínuo ou atrair jogadores para uma emboscada.\n\n**É proibido:**\n- Marcar um corpo com a intenção de esperar jogadores que tentem realizar o resgate.\n- Utilizar um corpo como isca para iniciar novos confrontos.\n- Permanecer no local exclusivamente aguardando pessoas para gerar PVP.\n- Criar uma situação de combate sem novo contexto de RP.\n\n> ⚠️ ATENÇÃO\n> Utilizar um corpo propositalmente como isca para gerar novos confrontos poderá ser enquadrado como **Anti-RP**.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "03.05",
+          "title": "Resgate de Corpos",
+          "text": "O resgate de um corpo deve respeitar o estado da ação e o perímetro estabelecido pela polícia.\n\n**Perímetro fechado**\n- O resgate de corpos é proibido enquanto o perímetro estiver fechado.\n- É proibido matar oficiais para possibilitar o resgate.\n- O resgate somente poderá ocorrer após o encerramento da ação e a saída da polícia do local.\n\n**Perímetro aberto**\n- O resgate poderá ser realizado, desde que o jogador esteja ciente de que o local permanece hostil.\n- Caso o corpo esteja dentro de uma área policial, a tentativa de recuperação poderá resultar em **Código 5**.\n- Caso o corpo não pertença à mesma facção, a situação poderá ser caracterizada como **RDM**, conforme o contexto.\n\n> ⚠️ ATENÇÃO\n> A abertura do perímetro **não significa que a área deixou de ser perigosa**. O jogador assume os riscos ao entrar no local.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "03.06",
+          "title": "PERÍMETRO FECHADO",
+          "text": "O perímetro fechado representa uma área sob controle da polícia durante uma ocorrência.\n\n**Enquanto o perímetro estiver fechado:**\n- É proibido resgatar corpos.\n- É proibido retornar à ação após ser abatido.\n- É proibido eliminar oficiais exclusivamente para possibilitar um resgate.\n- Jogadores que entrarem na área devem estar cientes dos riscos envolvidos.\n\nO resgate de corpos somente poderá ocorrer **após a polícia finalizar os procedimentos e deixar o local**.\n\n> 🚨 REGRA DE PERÍMETRO\n> Enquanto o perímetro estiver fechado, **a prioridade é a ocorrência em andamento**. Interferências externas poderão ser tratadas como uma nova situação de risco.",
+          "tag": "AÇÃO"
+        },
+        {
+          "code": "03.07",
+          "title": "PERÍMETRO ABERTO",
+          "text": "Após a polícia anunciar a abertura do perímetro, a região passa a ser considerada **área de risco**.\n\n**Regras:**\n- O resgate de corpos passa a ser permitido, respeitando os riscos do local.\n- Jogadores abatidos durante a ação não podem retornar imediatamente à ocorrência.\n- Caso a polícia ainda esteja realizando procedimentos no local, o resgate deverá aguardar a finalização.\n- A abertura do perímetro não autoriza automaticamente novos confrontos.\n\n> ⚠️ OBSERVAÇÃO\n> Em comunidades ou áreas consideradas de risco, a abertura do perímetro será válida para toda a área correspondente, respeitando as determinações da ocorrência.",
+          "tag": "AÇÃO"
+        },
+        {
+          "code": "03.08",
+          "title": "Fuga Real",
+          "text": "Uma fuga deve representar uma **tentativa real de escapar da polícia** e não pode ser utilizada apenas para criar uma oportunidade de confronto.\n\n**Regras:**\n- A fuga deve possuir continuidade e intenção real de escapar.\n- Não é permitido simplesmente virar uma esquina e abandonar a perseguição.\n- A fuga deverá possuir duração mínima de 5 minutos quando a regra exigir uma fuga prolongada.\n- O jogador deve utilizar o veículo ou os meios disponíveis de maneira coerente.\nCaso a fuga termine e o jogador se renda, o RP deverá prosseguir normalmente.\n\n> ⚠️ ATENÇÃO\n> Uma fuga não é considerada válida apenas porque o jogador **virou uma esquina ou saiu do campo de visão da polícia**. Deve existir uma tentativa real de evasão.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "03.09",
+          "title": "Drop Policial",
+          "text": "O chamado **drop** contra policiais somente poderá ocorrer dentro das condições permitidas para a situação.\n\n**Regra:**\n- O drop contra policiais somente poderá ser realizado **3 minutos após a voz de parada**.\n- A situação deverá possuir contexto de RP.\n- O início do confronto não poderá ocorrer apenas com o objetivo de forçar um PVP.\n\n> 🚨 ATENÇÃO\n> O tempo é contado a partir do momento em que a **voz de parada é realizada**, respeitando as demais regras de abordagem e confronto.",
+          "tag": "POLÍCIA"
+        }
+      ]
     },
     {
       "id": "corridas",
