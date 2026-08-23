@@ -423,6 +423,76 @@
           "code": "PI",
           "text": "Não é permitida a divulgação de outros servidores, comunidades, marcas, links ou conteúdos externos **sem autorização da Administração**.\n\n> ❌ PROIBIDO\n> A divulgação de servidores ou comunidades concorrentes sem autorização poderá resultar em punição.",
           "tag": "COMUNIDADE"
+        },
+        {
+          "code": "AFO",
+          "title": "Assalto Fora de Horário",
+          "text": "Assaltos devem respeitar os horários definidos pela cidade.\n\n⏰ **HORÁRIOS PERMITIDOS**\n**SUL:** 02:00 às 10:00;\n**NORTE:** 18:00 às 02:00.\n\n> ⚠️ ATENÇÃO\n> Fora dos horários estabelecidos, a ação de assalto não poderá ser iniciada.",
+          "tag": "AÇÕES"
+        },
+        {
+          "code": "AB",
+          "title": "Abuso de Bugs",
+          "text": "É proibido utilizar falhas, bugs ou vulnerabilidades do servidor para obter **qualquer tipo de vantagem**.\n\n**Exemplos:**\n- Duplicação de itens;\n- Burlar animações;\n- Gerar veículos indevidamente;\n- Atravessar paredes;\n- Acessar locais inacessíveis;\n- Explorar falhas de textura;\n- Utilizar vulnerabilidades do servidor.\n\n> ❌ PROIBIDO\n> Encontrou um bug? Não utilize. Informe a Administração para que a falha possa ser corrigida.",
+          "tag": "SISTEMA"
+        },
+        {
+          "code": "ARP",
+          "title": "Anti-RP",
+          "text": "Qualquer comportamento que quebre a imersão ou seja incompatível com o contexto da situação poderá ser considerado Anti-RP.\n\n**Exemplos:**\n- Ignorar ferimentos;\n- Rir ou agir de maneira incompatível em situações graves;\n- Utilizar termos claramente OOC durante o RP;\n- Recusar-se propositalmente a interpretar;\n- Agir como se o personagem soubesse que está dentro de um jogo.\n\n> ❌ PROIBIDO\n> **Corrupção na Polícia ou Hospital é proibida**, salvo quando houver autorização prévia da Administração para um projeto ou RP específico.",
+          "tag": "IMERSÃO"
+        },
+        {
+          "code": "FLM",
+          "title": "Flaming",
+          "text": "Ofensas, provocações ou comportamentos utilizados com a intenção de **atacar, humilhar ou constranger outro jogador** não serão tolerados.\n\n**Também se enquadram:**\n- Ofensas direcionadas;\n- Desrespeito a cidadãos;\n- Utilização de corpos para provocar outros jogadores;\n- Atitudes ofensivas após a morte de um personagem;\n- Provocações realizadas com o objetivo de gerar conflito pessoal.",
+          "tag": "CONDUTA"
+        },
+        {
+          "code": "RAT",
+          "title": "Ratão",
+          "text": "Durante uma ação, é proibido utilizar um veículo propositalmente para capotar, travar ou prejudicar outro veículo que esteja participando de uma fuga.\n\n> ℹ️ OBSERVAÇÃO\n> Colisões decorrentes do desenvolvimento natural de uma perseguição serão analisadas conforme o contexto e a intenção do jogador.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "FI",
+          "title": "Falsa Identidade",
+          "text": "É proibido se passar por outra pessoa, membro da Staff, policial ou qualquer outro cargo ou personagem com o objetivo de **enganar, manipular ou obter vantagem**.",
+          "tag": "CONDUTA"
+        },
+        {
+          "code": "AE",
+          "title": "Abuso da Economia",
+          "text": "É proibido manipular sistemas econômicos da cidade ou explorar outros jogadores para obter vantagem indevida.\n\n**Inclui:**\n- Manipulação abusiva de valores;\n- Exploração de jogadores iniciantes;\n- Transferências financeiras incompatíveis com o RP;\n- Abuso de sistemas de venda ou negociação;\n- Qualquer exploração deliberada de falhas econômicas.",
+          "tag": "ECONOMIA"
+        },
+        {
+          "code": "SAR",
+          "title": "Sequestro / Abordagem Irreal",
+          "text": "Toda abordagem ou sequestro deve possuir **contexto, coerência e construção de RP**.\n\nNão é permitido criar situações evidentemente artificiais apenas para realizar uma ação.\n\n**A Staff poderá considerar:**\n- Local;\n- Quantidade de envolvidos;\n- Contexto;\n- Preparação da ação;\n- Motivação;\n- Coerência da abordagem;\n- Desenvolvimento do RP.\n\n> ⚠️ ATENÇÃO\n> Ter a possibilidade mecânica de realizar uma ação não significa que ela seja automaticamente válida dentro do RP.",
+          "tag": "AÇÕES"
+        },
+        {
+          "code": "CI",
+          "title": "Condutas Inadequadas",
+          "text": "Qualquer comportamento abusivo, invasivo ou que ultrapasse os limites estabelecidos pela comunidade poderá ser punido.\n\n**Inclui:**\n- Insistir após uma negativa;\n- Perseguir ou intimidar jogadores;\n- Simular atos sexuais;\n- Tortura ou mutilação sem contexto permitido;\n- Desrespeitar um personagem morto;\n- Utilizar situações sensíveis para constranger outro jogador;\n- Ultrapassar deliberadamente os limites estabelecidos pela comunidade.\n\n> ℹ️ OBSERVAÇÃO\n> Em situações sensíveis ou duvidosas, procure a Staff antes de prosseguir.",
+          "tag": "CONDUTA"
+        },
+        {
+          "code": "MAP",
+          "title": "Memória Após a Morte",
+          "text": "Após a morte em uma ação ou situação de RP, o personagem não poderá utilizar informações relacionadas às **3 horas anteriores à sua morte** para continuar ou interferir naquela situação.\n\n**A regra inclui:**\n- Pessoas;\n- Veículos;\n- Roupas;\n- Vozes;\n- Locais;\n- Rotas;\n- Participantes;\n- Qualquer outro elemento diretamente relacionado ao RP anterior.\n\n> ⚠️ ATENÇÃO\n> Após retornar do “**E**”, o personagem não poderá reconhecer ou continuar a situação anterior, mesmo que o jogador possua essas informações fora do RP.\n\n🚗 **Veículos roubados**\n\nCaso um veículo seja roubado durante uma ação, o jogador poderá posteriormente encontrá-lo e iniciar um **novo RP de recuperação**, desde que não utilize a memória da ação anterior para identificá-lo ou localizá-lo.",
+          "tag": "INFORMAÇÃO"
+        },
+        {
+          "code": "OUT",
+          "title": "Outros",
+          "text": "Nem todas as situações possíveis podem ser descritas individualmente neste documento.\n\nComportamentos que não estejam expressamente previstos poderão ser avaliados pela Administração considerando:\n\n- Contexto;\n- Intenção;\n- Gravidade;\n- Impacto no RP;\n- Conduta dos envolvidos;\n- Histórico da situação.\n\n> ⚠️ ATENÇÃO\n> Uma situação não estar escrita literalmente neste documento não significa que esteja automaticamente permitida.",
+          "tag": "ADMINISTRAÇÃO"
+        },
+        {
+          "title": "Considerações Finais",
+          "text": "A Viena busca proporcionar um ambiente onde o RP seja construído de forma **justa, coerente e divertida para todos**.\n\nConhecer as regras é responsabilidade de cada cidadão.\n\nJogue com bom senso, respeite os demais jogadores e, principalmente, construa RP.\n\n> ✅ PERMITIDO\n> Criatividade, intensidade e boas histórias são sempre bem-vindas quando respeitam os limites da cidade e proporcionam uma experiência positiva para todos.\n\n🌸 **VIENA**\n**Sua história começa aqui.**"
         }
       ]
     }
