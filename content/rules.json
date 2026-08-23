@@ -327,52 +327,13 @@
     {
       "name": "MANTENHA A CONDUTA",
       "short": "Regras Básicas",
-      "desc": "Saiba o significado e as consequências de suas ações.",
+      "desc": "As regras da Viena existem para preservar a qualidade do RP, a imersão e, principalmente, uma experiência justa para todos os cidadãos.\nToda situação será analisada considerando contexto, intenção, gravidade e impacto no RP. A ausência de uma situação específica neste documento não significa que ela esteja automaticamente permitida.",
       "rules": [
         {
-          "title": "RDM — Random Deathmatch",
-          "text": "É proibido matar ou tentar matar outro jogador sem contexto ou motivação de RP que justifique a ação.",
-          "tag": "PROIBIDO"
-        },
-        {
-          "title": "VDM — Vehicle Deathmatch",
-          "text": "É proibido utilizar veículos propositalmente para atropelar ou causar dano a jogadores sem contexto válido.",
-          "tag": "PROIBIDO"
-        },
-        {
-          "code": "Metagaming",
-          "text": "É proibido utilizar informações obtidas fora do personagem para tomar decisões dentro do RP.",
-          "tag": "PROIBIDO"
-        },
-        {
-          "code": "Powergaming",
-          "text": "É proibido forçar ações impossíveis ou retirar do outro jogador a possibilidade de reagir ao RP.",
-          "tag": "PROIBIDO"
-        },
-        {
-          "title": "Combat Log",
-          "text": "Desconectar, sair do jogo ou utilizar meios para evitar uma situação de RP ativa é proibido.",
-          "tag": "PROIBIDO"
-        },
-        {
-          "title": "Retorno ao combate",
-          "text": "Após ser incapacitado, o personagem não deve retornar imediatamente à mesma situação para interferir no confronto.",
-          "tag": "PROIBIDO"
-        },
-        {
-          "title": "FLAMING",
-          "text": "Flaming consiste em realizar interações hostis ou ofensivas com o objetivo de provocar, humilhar, incitar ódio ou ameaçar outro jogador fora do RP.\n\nExemplo: publicar fotos ou informações de outro jogador no Discord ou na cidade com o objetivo de humilhá-lo.",
-          "tag": "PROIBIDO"
-        },
-        {
-          "title": "COP BAIT",
-          "text": "É proibido realizar chamados para serviços públicos com a intenção de sequestrar, matar, roubar ou prejudicar o profissional que atender à ocorrência.\n\nTambém é proibido atrair policiais propositalmente para locais onde já existam pessoas preparadas para iniciar um confronto.\n\nCaso uma organização criminosa solicite apoio durante uma ocorrência, o apoio deverá participar da situação antes de descer ou interferir diretamente na ação.",
-          "tag": "PROIBIDO"
-        },
-        {
-          "title": "DARK RP",
-          "text": "Dark RP consiste em interpretações pesadas, criminosas, ofensivas ou sensíveis que ultrapassam os limites estabelecidos para o roleplay da Viena.\n\nSão exemplos:\n\nAssédio;\nLGBTQIAPN+fobia;\nRacismo;\nTerrorismo;\nSuicídio;\nDiscriminação;\nInterpretações abusivas ou degradantes;\nOutras práticas graves incompatíveis com os limites da cidade.\n\nQualquer envolvimento com Dark RP poderá resultar em **banimento permanente**.",
-          "tag": "PROIBIDO"
+          "code": "RDM",
+          "title": "Random Death Match",
+          "text": "Consiste em matar ou tentar matar outro cidadão **sem uma justificativa válida ou construção de RP que sustente a ação**.\n\n**É considerado RDM:**\n - Realizar disparos ou ataques sem contexto;\n- Executar um cidadão sem construção prévia de RP;\n- Matar alguém sem possuir uma justificativa válida dentro da situação;\n- Iniciar uma ação letal apenas por conveniência ou diversão.\n\n> ⚠️ ATENÇÃO\nPossuir uma discussão ou desentendimento não significa, por si só, que exista justificativa para uma ação letal. A Staff poderá analisar todo o contexto da situação.",
+          "tag": "REGRA"
         }
       ]
     }
