@@ -79,9 +79,23 @@ collections:
               - { name: enabled, label: "Ativar cursor personalizado", widget: boolean, required: false, default: true }
               - { name: image, label: "Logo/ícone do cursor", widget: image, required: false }
               - { name: size, label: "Tamanho do cursor", widget: number, value_type: int, min: 12, max: 96, required: false, default: 34 }
-              - { name: trail_enabled, label: "Ativar rastro de tinta", widget: boolean, required: false, default: true }
+              - { name: trail_enabled, label: "Ativar rastro", widget: boolean, required: false, default: true }
+              - { name: trail_type, label: "Tipo de rastro", widget: select, required: false, default: "paint", options: ["paint", "spray", "glow"] }
               - { name: trail_color, label: "Cor do rastro", widget: color, required: false, default: "#e50914" }
-              - { name: trail_count, label: "Quantidade de pinceladas", widget: number, value_type: int, min: 2, max: 30, required: false, default: 10 }
+              - { name: trail_count, label: "Quantidade de partículas do rastro", widget: number, value_type: int, min: 2, max: 30, required: false, default: 10 }
+
+              - name: falling_particles
+                label: "✨ Partículas caindo"
+                widget: object
+                collapsed: true
+                required: false
+                fields:
+                  - { name: enabled, label: "Ativar partículas caindo", widget: boolean, required: false, default: true }
+                  - { name: type, label: "Tipo de partícula", widget: select, required: false, default: "letters", options: ["letters", "logo", "mixed", "spark"] }
+                  - { name: image, label: "Logo das partículas", widget: image, required: false, hint: "Usada quando o tipo for Logo ou Misto." }
+                  - { name: color, label: "Cor das partículas", widget: color, required: false, default: "#e50914" }
+                  - { name: count, label: "Quantidade", widget: number, value_type: int, min: 5, max: 80, required: false, default: 34 }
+                  - { name: size, label: "Tamanho", widget: number, value_type: int, min: 6, max: 40, required: false, default: 14 }
 
   - name: rules
     label: "📕 Regras"

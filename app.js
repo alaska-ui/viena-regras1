@@ -931,10 +931,8 @@ window.addEventListener("hashchange",() => {
 function setupCursor(){
   const config = state.site?.cursor || {};
   const cursor = $("customCursor");
-
   if(!cursor) return;
 
-  /* Evita listeners duplicados se setupCursor for chamado novamente */
   if(window.__vienaCursorCleanup){
     window.__vienaCursorCleanup();
   }
@@ -953,55 +951,35 @@ function setupCursor(){
     assetUrl(state.site?.logo) ||
     "./logo-viena.png";
 
-  const size = Math.max(
-    12,
-    Math.min(96,Number(config.size) || 34)
-  );
-
+  const size = Math.max(12,Math.min(96,Number(config.size) || 34));
   cursor.style.width = `${size}px`;
   cursor.style.height = `${size}px`;
-  cursor.style.backgroundImage =
-    `url("${cursorImage}")`;
+  cursor.style.backgroundImage = `url("${cursorImage}")`;
 
-  const trailEnabled =
-    config.trail_enabled !== false;
-
-  const trailColor =
-    config.trail_color || "#e50914";
-
-  const trailCount = Math.max(
-    2,
-    Math.min(30,Number(config.trail_count) || 10)
-  );
+  const trailEnabled = config.trail_enabled !== false;
+  const trailType = config.trail_type || "paint";
+  const trailColor = config.trail_color || "#e50914";
+  const trailCount = Math.max(2,Math.min(30,Number(config.trail_count) || 10));
 
   let mouseX = window.innerWidth / 2;
   let mouseY = window.innerHeight / 2;
   let cursorX = mouseX;
   let cursorY = mouseY;
   let lastTrail = 0;
-  let trailIndex = 0;
 
   const moveHandler = event => {
     mouseX = event.clientX;
     mouseY = event.clientY;
 
-    if(!trailEnabled) return;
+    if(!trailEnabled || trailType === "none") return;
 
     const now = performance.now();
-    const interval = Math.max(
-      10,
-      48 - trailCount * 1.25
-    );
-
+    const interval = Math.max(10,48 - trailCount * 1.25);
     if(now - lastTrail < interval) return;
-
     lastTrail = now;
 
-    /* Faz o rastro parecer uma pincelada,
-       não uma bolinha. */
     const previousX = window.__vienaLastX ?? mouseX;
     const previousY = window.__vienaLastY ?? mouseY;
-
     const dx = mouseX - previousX;
     const dy = mouseY - previousY;
     const distance = Math.max(1,Math.hypot(dx,dy));
@@ -1011,44 +989,27 @@ function setupCursor(){
     window.__vienaLastY = mouseY;
 
     const paint = document.createElement("span");
-    paint.className = "cursor-paint";
+    paint.className = `cursor-paint cursor-paint-${trailType}`;
     paint.style.left = `${mouseX}px`;
     paint.style.top = `${mouseY}px`;
     paint.style.background = trailColor;
     paint.style.setProperty("--angle",`${angle}deg`);
 
-    const width =
-      10 +
-      Math.min(22,distance * .45) +
-      Math.random() * 9;
-
-    const height =
-      4 +
-      Math.random() * 5;
-
+    const width = 10 + Math.min(22,distance * .45) + Math.random() * 9;
+    const height = 4 + Math.random() * 5;
     paint.style.width = `${width}px`;
     paint.style.height = `${height}px`;
     paint.style.marginLeft = `${-width/2}px`;
     paint.style.marginTop = `${-height/2}px`;
-    paint.style.opacity =
-      `${Math.min(.85,.38 + trailCount/35)}`;
-
-    /* Pequena variação para parecer tinta */
-    paint.style.transform =
-      `rotate(${angle + (Math.random()*24-12)}deg)`;
+    paint.style.opacity = `${Math.min(.85,.38 + trailCount/35)}`;
+    paint.style.transform = `rotate(${angle + (Math.random()*24-12)}deg)`;
 
     document.body.appendChild(paint);
 
-    trailIndex++;
-
-    /* Mantém o número de manchas sob controle */
     const maxPaint = trailCount * 2 + 8;
     const paints = document.querySelectorAll(".cursor-paint");
-
     if(paints.length > maxPaint){
-      for(let i=0;i<paints.length-maxPaint;i++){
-        paints[i].remove();
-      }
+      for(let i=0;i<paints.length-maxPaint;i++) paints[i].remove();
     }
 
     setTimeout(() => paint.remove(),760);
@@ -1059,16 +1020,8 @@ function setupCursor(){
   function animateCursor(){
     cursorX += (mouseX - cursorX) * .28;
     cursorY += (mouseY - cursorY) * .28;
-
-    cursor.style.transform =
-      `translate3d(
-        ${cursorX - size/2}px,
-        ${cursorY - size/2}px,
-        0
-      )`;
-
-    window.__vienaCursorFrame =
-      requestAnimationFrame(animateCursor);
+    cursor.style.transform = `translate3d(${cursorX - size/2}px,${cursorY - size/2}px,0)`;
+    window.__vienaCursorFrame = requestAnimationFrame(animateCursor);
   }
 
   animateCursor();
@@ -1077,6 +1030,8 @@ function setupCursor(){
     document.removeEventListener("mousemove",moveHandler);
     cancelAnimationFrame(window.__vienaCursorFrame);
     document.querySelectorAll(".cursor-paint").forEach(el => el.remove());
+    window.__vienaLastX = null;
+    window.__vienaLastY = null;
   };
 }
 
@@ -1088,36 +1043,52 @@ function setupFallingLetters(){
   const container = $("fallingLetters");
   if(!container) return;
 
-  const letters =
-    "VIENA • CÓDIGO DA RUA • RP • 01 • 02 • 03 •";
-
-  const amount =
-    window.innerWidth < 700 ? 18 : 34;
+  const config = state.site?.cursor?.falling_particles || {};
+  const enabled = config.enabled !== false;
 
   container.innerHTML = "";
+  if(!enabled) return;
+
+  const type = config.type || "letters";
+  const amount = Math.max(5,Math.min(80,Number(config.count) || (window.innerWidth < 700 ? 18 : 34)));
+  const size = Math.max(6,Math.min(40,Number(config.size) || 14));
+  const color = config.color || "#e50914";
+  const image = assetUrl(config.image) || assetUrl(state.site?.logo) || "./logo-viena.png";
+  const letters = "VIENA • CÓDIGO DA RUA • RP • 01 • 02 • 03 •";
 
   for(let i=0;i<amount;i++){
     const span = document.createElement("span");
+    span.className = "falling-particle";
 
-    span.className = "falling-letter";
-    span.textContent =
-      letters[Math.floor(Math.random()*letters.length)];
+    let particleType = type;
+    if(type === "mixed"){
+      particleType = Math.random() < .5 ? "letters" : "logo";
+    }
 
-    span.style.left =
-      `${Math.random()*100}%`;
+    if(particleType === "logo"){
+      const img = document.createElement("img");
+      img.src = image;
+      img.alt = "";
+      img.draggable = false;
+      img.style.width = `${size + Math.random()*size}px`;
+      img.style.height = "auto";
+      span.classList.add("falling-logo");
+      span.appendChild(img);
+    }else if(particleType === "spark"){
+      span.classList.add("falling-spark");
+      span.textContent = Math.random() < .5 ? "✦" : "•";
+      span.style.fontSize = `${size + Math.random()*size/2}px`;
+    }else{
+      span.classList.add("falling-letter");
+      span.textContent = letters[Math.floor(Math.random()*letters.length)];
+      span.style.fontSize = `${size + Math.random()*size/2}px`;
+    }
 
-    span.style.animationDuration =
-      `${8 + Math.random()*15}s`;
-
-    span.style.animationDelay =
-      `${-Math.random()*18}s`;
-
-    span.style.fontSize =
-      `${9 + Math.random()*13}px`;
-
-    span.style.opacity =
-      `${.04 + Math.random()*.09}`;
-
+    span.style.left = `${Math.random()*100}%`;
+    span.style.animationDuration = `${8 + Math.random()*15}s`;
+    span.style.animationDelay = `${-Math.random()*18}s`;
+    span.style.setProperty("--particle-color",color);
+    span.style.opacity = `${.04 + Math.random()*.10}`;
     container.appendChild(span);
   }
 }

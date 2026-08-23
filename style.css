@@ -78,11 +78,7 @@ html.viena-cursor-active [role="button"]{
   transform-origin:center;
   filter:blur(.25px);
   will-change:transform,opacity;
-  background:var(--accent);
-  box-shadow:
-    0 0 5px rgba(229,9,20,.55),
-    5px 2px 0 rgba(229,9,20,.20),
-    -5px -1px 0 rgba(229,9,20,.16);
+  background:var(--particle-color,var(--accent));
   animation:paintFade .72s ease-out forwards;
 }
 
@@ -96,6 +92,22 @@ html.viena-cursor-active [role="button"]{
   border-radius:50%;
   background:rgba(255,255,255,.16);
   filter:blur(1px);
+}
+
+/* Tipos de rastro escolhidos no Admin */
+.cursor-paint-spray{
+  border-radius:35% 65% 50% 45%;
+  filter:blur(.6px);
+  box-shadow:
+    7px -3px 0 -2px var(--particle-color,var(--accent)),
+    -7px 3px 0 -3px var(--particle-color,var(--accent)),
+    3px 6px 0 -3px var(--particle-color,var(--accent));
+}
+
+.cursor-paint-glow{
+  border-radius:999px;
+  filter:blur(2px);
+  box-shadow:0 0 10px var(--particle-color,var(--accent)),0 0 20px var(--particle-color,var(--accent));
 }
 
 @keyframes paintFade{
@@ -126,14 +138,36 @@ html.viena-cursor-active [role="button"]{
   z-index:90;
 }
 
-.falling-letter{
+.falling-particle{
   position:absolute;
-  top:-30px;
-  color:var(--accent);
+  top:-50px;
+  color:var(--particle-color,var(--accent));
+  pointer-events:none;
+  animation:fallingLetter linear infinite;
+  text-shadow:0 0 10px color-mix(in srgb,var(--particle-color,var(--accent)) 45%,transparent);
+  will-change:transform,opacity;
+}
+
+.falling-letter{
   font-weight:900;
   letter-spacing:2px;
-  animation:fallingLetter linear infinite;
-  text-shadow:0 0 10px rgba(229,9,20,.35);
+}
+
+.falling-logo{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  filter:drop-shadow(0 0 7px color-mix(in srgb,var(--particle-color,var(--accent)) 45%,transparent));
+}
+
+.falling-logo img{
+  display:block;
+  max-width:70px;
+  object-fit:contain;
+}
+
+.falling-spark{
+  font-weight:900;
 }
 
 @keyframes fallingLetter{
