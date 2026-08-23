@@ -29,7 +29,7 @@
     "show_admin_link": false
   },
   "cursor": {
-    "enabled": false,
+    "enabled": true,
     "image": "/uploads/SPRAY PNG.png",
     "size": 25,
     "trail_enabled": true,
