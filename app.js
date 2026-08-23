@@ -1136,6 +1136,8 @@ window.addEventListener("message", event => {
     applySite();
     renderNav();
     renderHome();
+    setupCursor();
+    setupFallingLetters();
 
     const current = location.hash.replace("#", "") || "inicio";
     if (current !== "inicio" && current !== "pesquisa") {
