@@ -1,1694 +1,1150 @@
-/* =========================================================
-   VIENA ROLEPLAY — APP.JS
-   Cursor + rastro spray/pichação
-   ========================================================= */
-
-let siteData = {};
-let rulesData = {};
-
-let mouseX = window.innerWidth / 2;
-let mouseY = window.innerHeight / 2;
-
-let lastX = mouseX;
-let lastY = mouseY;
-
-let cursorElement = null;
-let paintCanvas = null;
-let paintCtx = null;
-
-let cursorImage = null;
-let cursorSize = 34;
-let trailEnabled = true;
-let trailColor = "#e50914";
-
-let particles = [];
-
+const state = {
+  site: null,
+  data: null
+};
 
 /* =========================================================
-   INICIALIZAÇÃO
-   ========================================================= */
+   UTILIDADES
+========================================================= */
 
-document.addEventListener("DOMContentLoaded", async () => {
+const $ = id => document.getElementById(id);
 
-  await loadData();
-
-  initSite();
-
-  initNavigation();
-
-  initSearch();
-
-  initMobileMenu();
-
-  initCursor();
-
-  initPaintTrail();
-
-});
-
-
-/* =========================================================
-   CARREGAR JSON
-   ========================================================= */
-
-async function loadData() {
-
-  try {
-
-    const siteResponse = await fetch("content/site.json");
-
-    if (siteResponse.ok) {
-      siteData = await siteResponse.json();
-    }
-
-  } catch (error) {
-
-    console.error("Erro carregando site.json:", error);
-
-  }
-
-
-  try {
-
-    const rulesResponse = await fetch("content/rules.json");
-
-    if (rulesResponse.ok) {
-      rulesData = await rulesResponse.json();
-    }
-
-  } catch (error) {
-
-    console.error("Erro carregando rules.json:", error);
-
-  }
-
+function escapeHtml(value){
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 
-
-/* =========================================================
-   INICIALIZAR SITE
-   ========================================================= */
-
-function initSite() {
-
-  const get = (id) => document.getElementById(id);
-
-
-  /* -----------------------------------------
-     IDENTIDADE
-     ----------------------------------------- */
-
-  if (get("brandTitle")) {
-
-    get("brandTitle").textContent =
-      siteData.site_title || "CÓDIGO DA RUA";
-
-  }
-
-  if (get("brandSite")) {
-
-    get("brandSite").textContent =
-      siteData.site_name || "VIENA ROLEPLAY";
-
-  }
-
-
-  /* -----------------------------------------
-     LOGO
-     ----------------------------------------- */
-
-  if (siteData.logo && get("headerLogo")) {
-
-    get("headerLogo").src = siteData.logo;
-
-  }
-
-
-  /* -----------------------------------------
-     FAVICON
-     ----------------------------------------- */
-
-  if (siteData.favicon) {
-
-    const favicon =
-      document.getElementById("favicon");
-
-    if (favicon) {
-
-      favicon.href = siteData.favicon;
-
-    }
-
-  }
-
-
-  /* -----------------------------------------
-     DISCORD
-     ----------------------------------------- */
-
-  if (
-    siteData.discord_url &&
-    get("discordBtn")
-  ) {
-
-    get("discordBtn").href =
-      siteData.discord_url;
-
-  }
-
-
-  /* -----------------------------------------
-     HERO
-     ----------------------------------------- */
-
-  if (get("heroEyebrow")) {
-
-    get("heroEyebrow").textContent =
-      siteData.hero_eyebrow || "";
-
-  }
-
-  if (get("heroTitle")) {
-
-    get("heroTitle").textContent =
-      siteData.hero_title || "";
-
-  }
-
-  if (get("heroText")) {
-
-    get("heroText").textContent =
-      siteData.hero_text || "";
-
-  }
-
-
-  /* -----------------------------------------
-     IMAGEM HERO
-     ----------------------------------------- */
-
-  const heroImage =
-    get("heroImage");
-
-  const heroArt =
-    get("heroArt");
-
-  if (
-    heroImage &&
-    siteData.hero_image &&
-    siteData.layout?.show_hero_image !== false
-  ) {
-
-    heroImage.src =
-      siteData.hero_image;
-
-    heroImage.style.display =
-      "block";
-
-  } else if (heroArt) {
-
-    heroArt.style.display =
-      "none";
-
-  }
-
-
-  /* -----------------------------------------
-     AVISO
-     ----------------------------------------- */
-
-  if (
-    siteData.layout?.show_notice !== false
-  ) {
-
-    if (get("noticeTitle")) {
-
-      get("noticeTitle").textContent =
-        siteData.notice_title ||
-        "LEIA ANTES DE JOGAR";
-
-    }
-
-    if (get("noticeText")) {
-
-      get("noticeText").textContent =
-        siteData.notice_text ||
-        "Desconhecer uma regra não isenta o jogador de sua responsabilidade.";
-
-    }
-
-  } else {
-
-    if (get("notice")) {
-
-      get("notice").style.display =
-        "none";
-
-    }
-
-  }
-
-
-  /* -----------------------------------------
-     FOOTER
-     ----------------------------------------- */
-
-  if (get("footerText")) {
-
-    get("footerText").textContent =
-      siteData.footer_text ||
-      "© 2026 Viena Roleplay | Todos os direitos reservados.";
-
-  }
-
-
-  /* -----------------------------------------
-     CURSOR
-     ----------------------------------------- */
-
-  if (siteData.cursor) {
-
-    cursorImage =
-      siteData.cursor.image || null;
-
-    cursorSize =
-      Number(siteData.cursor.size) || 34;
-
-    trailEnabled =
-      siteData.cursor.trail_enabled !== false;
-
-    trailColor =
-      siteData.cursor.trail_color ||
-      "#e50914";
-
-  }
-
-
-  /* -----------------------------------------
-     CATEGORIAS
-     ----------------------------------------- */
-
-  renderNavigation();
-
-  renderHomeCategories();
-
-  renderUpdates();
-
+function escapeAttr(value){
+  return escapeHtml(value).replace(/`/g,"&#096;");
 }
 
+function assetUrl(path){
+  if(!path) return "";
+  const value = String(path).trim();
+
+  if(
+    value.startsWith("http://") ||
+    value.startsWith("https://") ||
+    value.startsWith("data:")
+  ){
+    return value;
+  }
+
+  /* Sveltia salva /uploads/arquivo.png.
+     No GitHub Pages usamos ./uploads/arquivo.png */
+  return value.replace(/^\/+/,"./");
+}
+
+function slugify(value){
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g,"-")
+    .replace(/^-+|-+$/g,"")
+    .slice(0,80);
+}
+
+/* Nunca dependa de id preenchido no Admin.
+   Se estiver vazio, cria automaticamente. */
+function categoryId(category,index){
+  return String(
+    category?.id ||
+    slugify(category?.name || category?.short) ||
+    `categoria-${index+1}`
+  );
+}
+
+function categoryIndexById(id){
+  return (state.data?.categories || []).findIndex(
+    (category,index) => categoryId(category,index) === String(id)
+  );
+}
 
 /* =========================================================
-   NAVEGAÇÃO LATERAL
-   ========================================================= */
+   MARKDOWN SIMPLES
+   Suporta:
+   **negrito**
+   *itálico*
+   # títulos
+   - listas
+   1. listas numeradas
+   > caixas
+========================================================= */
 
-function renderNavigation() {
+function inlineMarkdown(value){
+  let text = escapeHtml(value);
 
-  const nav =
-    document.getElementById("nav");
+  text = text.replace(
+    /!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g,
+    '<img src="$2" alt="$1" class="md-inline-image">'
+  );
 
-  if (!nav) return;
+  text = text.replace(
+    /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+    '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+  );
 
-  nav.innerHTML = "";
+  text = text.replace(/`([^`]+)`/g,"<code>$1</code>");
+  text = text.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>");
+  text = text.replace(/__([^_]+)__/g,"<strong>$1</strong>");
+  text = text.replace(
+    /(^|[^\*])\*([^*]+)\*(?!\*)/g,
+    "$1<em>$2</em>"
+  );
+  text = text.replace(
+    /(^|[^_])_([^_]+)_(?!_)/g,
+    "$1<em>$2</em>"
+  );
 
-  const categories =
-    rulesData.categories || [];
+  return text;
+}
 
-  categories.forEach((category, index) => {
+function renderMarkdown(markdown){
+  if(!markdown) return "";
 
-    const link =
-      document.createElement("a");
+  const lines = String(markdown)
+    .replace(/\r\n/g,"\n")
+    .split("\n");
 
-    link.href =
-      "#categoria-" + category.id;
+  const output = [];
+  let inList = false;
+  let listType = null;
+  let inQuote = false;
+  let quoteLines = [];
 
-    link.dataset.route =
-      category.id;
+  function closeList(){
+    if(!inList) return;
+    output.push(listType === "ol" ? "</ol>" : "</ul>");
+    inList = false;
+    listType = null;
+  }
 
-    link.innerHTML = `
-      <span>
-        ${String(index + 1).padStart(2, "0")}
-      </span>
-      ${escapeHTML(category.short || category.name || "")}
+  function closeQuote(){
+    if(!inQuote) return;
+
+    const raw = quoteLines.join("\n").trim();
+
+    let type = "info";
+    let icon = "ℹ";
+    let title = "OBSERVAÇÃO";
+
+    if(/^(⚠️|⚠|ATENÇÃO|ATENCAO)/i.test(raw)){
+      type = "warning";
+      icon = "⚠";
+      title = "ATENÇÃO";
+    }else if(/^(❌|⛔|PROIBIDO|ERRO)/i.test(raw)){
+      type = "danger";
+      icon = "!";
+      title = "PROIBIDO";
+    }else if(/^(✅|PERMITIDO|OK)/i.test(raw)){
+      type = "success";
+      icon = "✓";
+      title = "PERMITIDO";
+    }
+
+    let content = raw
+      .replace(/^(⚠️|⚠|ℹ️|❌|⛔|✅)\s*/u,"")
+      .replace(
+        /^(ATENÇÃO|ATENCAO|OBSERVAÇÃO|OBSERVACAO|PROIBIDO|PERMITIDO|ERRO|OK)\s*:?\s*/i,
+        ""
+      )
+      .trim();
+
+    const firstLine = content.split("\n")[0] || "";
+    const titleMatch = firstLine.match(/^\*\*(.+?)\*\*:?\s*(.*)$/);
+
+    if(titleMatch){
+      title = titleMatch[1];
+      content = [
+        titleMatch[2],
+        ...content.split("\n").slice(1)
+      ].filter(Boolean).join("\n");
+    }
+
+    output.push(`
+      <div class="rule-callout ${type}">
+        <div class="callout-icon">${icon}</div>
+        <div class="callout-content">
+          <strong>${escapeHtml(title)}</strong>
+          ${content ? `<div>${renderMarkdown(content)}</div>` : ""}
+        </div>
+      </div>
+    `);
+
+    inQuote = false;
+    quoteLines = [];
+  }
+
+  for(const line of lines){
+    const trimmed = line.trim();
+
+    if(trimmed.startsWith(">")){
+      closeList();
+
+      if(!inQuote){
+        inQuote = true;
+        quoteLines = [];
+      }
+
+      quoteLines.push(trimmed.replace(/^>\s?/,""));
+      continue;
+    }
+
+    if(inQuote) closeQuote();
+
+    if(!trimmed){
+      closeList();
+      continue;
+    }
+
+    const heading = trimmed.match(/^(#{1,4})\s+(.+)$/);
+
+    if(heading){
+      closeList();
+      const level = heading[1].length;
+      output.push(
+        `<h${level+2} class="md-heading">${inlineMarkdown(heading[2])}</h${level+2}>`
+      );
+      continue;
+    }
+
+    const unordered = trimmed.match(/^[-*+]\s+(.+)$/);
+
+    if(unordered){
+      if(!inList || listType !== "ul"){
+        closeList();
+        output.push("<ul>");
+        inList = true;
+        listType = "ul";
+      }
+
+      output.push(`<li>${inlineMarkdown(unordered[1])}</li>`);
+      continue;
+    }
+
+    const ordered = trimmed.match(/^\d+\.\s+(.+)$/);
+
+    if(ordered){
+      if(!inList || listType !== "ol"){
+        closeList();
+        output.push("<ol>");
+        inList = true;
+        listType = "ol";
+      }
+
+      output.push(`<li>${inlineMarkdown(ordered[1])}</li>`);
+      continue;
+    }
+
+    closeList();
+    output.push(`<p>${inlineMarkdown(line)}</p>`);
+  }
+
+  if(inQuote) closeQuote();
+  closeList();
+
+  return output.join("");
+}
+
+/* =========================================================
+   CARREGAMENTO
+========================================================= */
+
+async function load(){
+  const [siteResponse,rulesResponse] = await Promise.all([
+    fetch("./content/site.json").then(r => {
+      if(!r.ok) throw new Error("content/site.json não encontrado");
+      return r.json();
+    }),
+    fetch("./content/rules.json").then(r => {
+      if(!r.ok) throw new Error("content/rules.json não encontrado");
+      return r.json();
+    })
+  ]);
+
+  state.site = siteResponse || {};
+  state.data = rulesResponse || {
+    categories:[],
+    updates:[]
+  };
+
+  if(!Array.isArray(state.data.categories)){
+    state.data.categories = [];
+  }
+
+  if(!Array.isArray(state.data.updates)){
+    state.data.updates = [];
+  }
+
+  applySite();
+  renderNav();
+  renderHome();
+  setupCursor();
+  setupFallingLetters();
+
+  route(location.hash.replace("#","") || "inicio");
+}
+
+/* =========================================================
+   CONFIGURAÇÕES DO SITE
+========================================================= */
+
+function applySite(){
+  const s = state.site || {};
+  const t = s.theme || {};
+
+  for(const [key,value] of Object.entries(t)){
+    if(!value) continue;
+
+    document.documentElement.style.setProperty(
+      "--" + (key === "accent_light" ? "accent2" : key),
+      value
+    );
+  }
+
+  const logo = assetUrl(s.logo) || "./logo-viena.png";
+
+  if($("headerLogo")){
+    $("headerLogo").src = logo;
+    $("headerLogo").alt = s.site_name || "Viena Roleplay";
+  }
+
+  if($("favicon")){
+    $("favicon").href = assetUrl(s.favicon) || logo;
+  }
+
+  if($("brandTitle")){
+    $("brandTitle").textContent = s.site_title || "CÓDIGO DA RUA";
+  }
+
+  if($("brandSite")){
+    $("brandSite").textContent =
+      (s.site_name || "VIENA ROLEPLAY").toUpperCase();
+  }
+
+  if($("heroEyebrow")){
+    $("heroEyebrow").textContent = s.hero_eyebrow || "";
+  }
+
+  if($("heroTitle")){
+    $("heroTitle").textContent = s.hero_title || "";
+  }
+
+  if($("heroText")){
+    $("heroText").textContent = s.hero_text || "";
+  }
+
+  if($("noticeTitle")){
+    $("noticeTitle").textContent = s.notice_title || "";
+  }
+
+  if($("noticeText")){
+    $("noticeText").textContent = s.notice_text || "";
+  }
+
+  if($("footerText")){
+    $("footerText").textContent = s.footer_text || "";
+  }
+
+  if($("discordBtn")){
+    $("discordBtn").href = s.discord_url || "#";
+  }
+
+  const layout = s.layout || {};
+
+  if($("notice")){
+    $("notice").style.display =
+      layout.show_notice === false ? "none" : "flex";
+  }
+
+  if($("updatesWrap")){
+    $("updatesWrap").style.display =
+      layout.show_updates === false ? "none" : "block";
+  }
+
+  if($("searchOpen")){
+    $("searchOpen").style.display =
+      layout.show_search === false ? "none" : "block";
+  }
+
+  /* HERO: imagem fica no fundo, nunca em card separado */
+  const hero = $("hero");
+  const heroImage = assetUrl(s.hero_image);
+
+  if(hero){
+    if(heroImage && layout.show_hero_image !== false){
+      hero.style.setProperty("--hero-image",`url("${heroImage}")`);
+      hero.classList.add("has-image");
+    }else{
+      hero.style.setProperty("--hero-image","none");
+      hero.classList.remove("has-image");
+    }
+  }
+}
+
+/* =========================================================
+   MENU LATERAL
+========================================================= */
+
+function renderNav(){
+  const nav = $("nav");
+  if(!nav) return;
+
+  nav.innerHTML = state.data.categories.map((category,index) => {
+    const id = categoryId(category,index);
+    const code = category.code || String(index+1).padStart(2,"0");
+    const short =
+      category.short ||
+      category.name ||
+      `Categoria ${index+1}`;
+
+    return `
+      <button
+        data-route="${escapeAttr(id)}"
+        type="button"
+      >
+        <span>${escapeHtml(code)}</span>
+        ${escapeHtml(short)}
+      </button>
     `;
-
-    nav.appendChild(link);
-
-  });
-
+  }).join("");
 }
-
 
 /* =========================================================
    MAPA DA RUA
-   IMPORTANTE:
-   AQUI NÃO MOSTRAMOS A IMAGEM DA CATEGORIA.
-   ========================================================= */
+   A IMAGEM DA CATEGORIA NÃO APARECE AQUI.
+========================================================= */
 
-function renderHomeCategories() {
+function renderHome(){
+  const home = $("homeCategories");
 
-  const container =
-    document.getElementById("homeCategories");
+  if(home){
+    home.innerHTML = state.data.categories.map((category,index) => {
+      const id = categoryId(category,index);
+      const code =
+        category.code ||
+        String(index+1).padStart(2,"0");
 
-  if (!container) return;
+      const title =
+        category.short ||
+        category.name ||
+        `Categoria ${index+1}`;
 
-  container.innerHTML = "";
+      const description = category.desc || "";
 
-  const categories =
-    rulesData.categories || [];
+      return `
+        <article
+          class="cat-card"
+          data-route="${escapeAttr(id)}"
+          tabindex="0"
+          role="button"
+        >
+          <div class="num">${escapeHtml(code)} / VIENA</div>
+          <h3>${escapeHtml(title)}</h3>
+          ${description ? `<p>${escapeHtml(description)}</p>` : ""}
+        </article>
+      `;
+    }).join("");
 
-  categories.forEach((category, index) => {
-
-    const card =
-      document.createElement("button");
-
-    card.type = "button";
-
-    card.className =
-      "category-card";
-
-    card.dataset.route =
-      category.id;
-
-    /*
-      SOMENTE:
-      - código
-      - título
-      - descrição
-
-      A imagem da categoria NÃO entra aqui.
-    */
-
-    card.innerHTML = `
-      <div class="category-code">
-        ${escapeHTML(category.code || String(index + 1).padStart(2, "0"))}
-        / VIENA
-      </div>
-
-      <h3>
-        ${escapeHTML(category.short || category.name || "")}
-      </h3>
-
-      <p>
-        ${escapeHTML(category.desc || "")}
-      </p>
-    `;
-
-    container.appendChild(card);
-
-  });
-
-}
-
-
-/* =========================================================
-   ÚLTIMAS ALTERAÇÕES
-   ========================================================= */
-
-function renderUpdates() {
-
-  const container =
-    document.getElementById("updatesList");
-
-  if (!container) return;
-
-  const updates =
-    rulesData.updates || [];
-
-  container.innerHTML = "";
-
-  if (!updates.length) {
-
-    const wrap =
-      document.getElementById("updatesWrap");
-
-    if (wrap) {
-
-      wrap.style.display = "none";
-
-    }
-
-    return;
-
+    home.querySelectorAll(".cat-card").forEach(card => {
+      card.addEventListener("keydown",event => {
+        if(event.key === "Enter" || event.key === " "){
+          event.preventDefault();
+          card.click();
+        }
+      });
+    });
   }
 
-  updates.forEach(update => {
+  const updatesList = $("updatesList");
+  if(!updatesList) return;
 
-    const item =
-      document.createElement("div");
+  updatesList.innerHTML = (state.data.updates || []).map(item => {
+    const date = item.date || "";
+    const title = item.title || "";
+    const text = item.text || "";
+    const tag = item.tag || "";
 
-    item.className =
-      "update-item";
-
-    item.innerHTML = `
-      <strong>
-        ${escapeHTML(update.title || "")}
-      </strong>
-
-      <p>
-        ${escapeHTML(update.text || "")}
-      </p>
+    return `
+      <div class="update">
+        ${date ? `<time>${escapeHtml(date)}</time>` : "<time></time>"}
+        ${
+          title || text
+            ? `<strong>${escapeHtml(title)}${title && text ? " — " : ""}${escapeHtml(text)}</strong>`
+            : "<strong></strong>"
+        }
+        ${tag ? `<span>${escapeHtml(tag)}</span>` : "<span></span>"}
+      </div>
     `;
-
-    container.appendChild(item);
-
-  });
-
+  }).join("");
 }
 
+/* =========================================================
+   TODAS AS REGRAS
+========================================================= */
+
+function allRules(){
+  return state.data.categories.flatMap((category,categoryIndex) => {
+    const rules = Array.isArray(category.rules)
+      ? category.rules
+      : [];
+
+    return rules.map((rule,ruleIndex) => ({
+      cat:category,
+      catIndex:categoryIndex,
+      ruleIndex,
+      ...rule
+    }));
+  });
+}
+
+/* =========================================================
+   PÁGINA DA CATEGORIA
+========================================================= */
+
+function renderCategory(id){
+  const categoryIndex = categoryIndexById(id);
+
+  if(categoryIndex < 0) return;
+
+  const category = state.data.categories[categoryIndex];
+
+  if($("catCode")){
+    $("catCode").textContent =
+      category.code ? `CÓDIGO ${category.code}` : "";
+  }
+
+  if($("catTitle")){
+    $("catTitle").textContent =
+      category.name ||
+      category.short ||
+      `Categoria ${categoryIndex+1}`;
+  }
+
+  if($("catDesc")){
+    $("catDesc").textContent = category.desc || "";
+  }
+
+  /* Imagem da categoria:
+     NÃO vai para o mapa.
+     Aqui ela fica como fundo da capa da categoria. */
+  const categoryImage = assetUrl(category.image);
+  const categoryHero = $("categoryHero");
+
+  if(categoryHero){
+    if(categoryImage){
+      categoryHero.style.setProperty(
+        "--category-image",
+        `url("${categoryImage}")`
+      );
+      categoryHero.classList.add("has-image");
+    }else{
+      categoryHero.style.setProperty("--category-image","none");
+      categoryHero.classList.remove("has-image");
+    }
+  }
+
+  const rules = Array.isArray(category.rules)
+    ? category.rules
+    : [];
+
+  const ruleList = $("ruleList");
+
+  if(ruleList){
+    if(!rules.length){
+      ruleList.innerHTML = `
+        <div class="empty-rules">
+          <strong>NENHUMA REGRA CADASTRADA</strong>
+          <p>Esta categoria ainda não possui regras publicadas.</p>
+        </div>
+      `;
+    }else{
+      ruleList.innerHTML = rules.map((rule,index) => {
+        const code = rule.code || "";
+        const title = rule.title || "";
+        const text = rule.text || "";
+        const tag = rule.tag || "";
+        const image = assetUrl(rule.image);
+
+        return `
+          <article class="rule" id="rule-${index}">
+            <div class="rule-top">
+              <div class="rule-num">${escapeHtml(code)}</div>
+
+              <div class="rule-content">
+                ${title ? `<h3>${escapeHtml(title)}</h3>` : ""}
+                ${text ? `<div class="rule-markdown">${renderMarkdown(text)}</div>` : ""}
+                ${tag ? `<span class="tag">${escapeHtml(tag)}</span>` : ""}
+                ${
+                  image
+                    ? `<img class="rule-image"
+                              src="${escapeAttr(image)}"
+                              alt=""
+                              loading="lazy"
+                              onerror="this.style.display='none'">`
+                    : ""
+                }
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+  }
+
+  /* ÍNDICE */
+  const ruleToc = $("ruleToc");
+
+  if(ruleToc){
+    if(!rules.length){
+      ruleToc.innerHTML = "";
+    }else{
+      ruleToc.innerHTML =
+        `<strong>NESTA CATEGORIA</strong>` +
+        rules.map((rule,index) => {
+          const code = rule.code || "";
+          const title = rule.title || "Regra";
+
+          return `
+            <button type="button" data-scroll-rule="${index}">
+              ${escapeHtml(code)}
+              ${code && title ? " — " : ""}
+              ${escapeHtml(title)}
+            </button>
+          `;
+        }).join("");
+
+      ruleToc.querySelectorAll("[data-scroll-rule]").forEach(button => {
+        button.addEventListener("click",() => {
+          const element = document.getElementById(
+            `rule-${button.dataset.scrollRule}`
+          );
+
+          if(element){
+            element.scrollIntoView({
+              behavior:"smooth",
+              block:"center"
+            });
+          }
+        });
+      });
+    }
+  }
+
+  renderCategoryNavigation(categoryIndex);
+}
+
+/* =========================================================
+   PRÓXIMA / ANTERIOR
+========================================================= */
+
+function renderCategoryNavigation(currentIndex){
+  const navigation = $("categoryNavigation");
+  if(!navigation) return;
+
+  const total = state.data.categories.length;
+
+  const previousIndex =
+    currentIndex > 0 ? currentIndex-1 : null;
+
+  const nextIndex =
+    currentIndex < total-1 ? currentIndex+1 : null;
+
+  const previousCategory =
+    previousIndex !== null
+      ? state.data.categories[previousIndex]
+      : null;
+
+  const nextCategory =
+    nextIndex !== null
+      ? state.data.categories[nextIndex]
+      : null;
+
+  navigation.innerHTML = `
+    <div class="category-nav-side">
+      ${
+        previousCategory
+          ? `
+            <button
+              type="button"
+              class="category-nav-button previous"
+              data-route="${escapeAttr(categoryId(previousCategory,previousIndex))}"
+            >
+              <span>← ANTERIOR</span>
+              <strong>${escapeHtml(
+                previousCategory.short ||
+                previousCategory.name ||
+                "Categoria anterior"
+              )}</strong>
+            </button>
+          `
+          : ""
+      }
+    </div>
+
+    <button
+      type="button"
+      class="category-nav-map"
+      data-route="inicio"
+    >
+      VOLTAR AO MAPA
+    </button>
+
+    <div class="category-nav-side next-side">
+      ${
+        nextCategory
+          ? `
+            <button
+              type="button"
+              class="category-nav-button next"
+              data-route="${escapeAttr(categoryId(nextCategory,nextIndex))}"
+            >
+              <span>PRÓXIMA →</span>
+              <strong>${escapeHtml(
+                nextCategory.short ||
+                nextCategory.name ||
+                "Próxima categoria"
+              )}</strong>
+            </button>
+          `
+          : ""
+      }
+    </div>
+  `;
+}
+
+/* =========================================================
+   PESQUISA
+========================================================= */
+
+function search(query,target){
+  if(!target) return;
+
+  const q = String(query || "").trim().toLowerCase();
+
+  if(!q){
+    target.innerHTML = "";
+    return;
+  }
+
+  const results = allRules()
+    .filter(rule => {
+      const searchable = `
+        ${rule.cat?.short || ""}
+        ${rule.cat?.name || ""}
+        ${rule.cat?.code || ""}
+        ${rule.code || ""}
+        ${rule.title || ""}
+        ${rule.text || ""}
+        ${rule.tag || ""}
+      `.toLowerCase();
+
+      return searchable.includes(q);
+    })
+    .slice(0,30);
+
+  target.innerHTML = results.length
+    ? results.map(rule => {
+        const routeId = categoryId(rule.cat,rule.catIndex);
+
+        return `
+          <div class="result" data-route="${escapeAttr(routeId)}">
+            <small>
+              ${escapeHtml(
+                rule.cat.short ||
+                rule.cat.name ||
+                ""
+              )}
+              ·
+              ${escapeHtml(
+                rule.code ||
+                rule.cat.code ||
+                ""
+              )}
+            </small>
+
+            <h3>${escapeHtml(rule.title || "")}</h3>
+
+            <p>${escapeHtml(
+              String(rule.text || "")
+                .replace(/[#>*_`]/g,"")
+                .slice(0,240)
+            )}</p>
+          </div>
+        `;
+      }).join("")
+    : `
+      <div class="result">
+        <h3>Nenhuma regra encontrada.</h3>
+        <p>Tente outra palavra.</p>
+      </div>
+    `;
+
+  target.querySelectorAll("[data-route]").forEach(result => {
+    result.addEventListener("click",() => {
+      const routeId = result.dataset.route;
+      route(routeId);
+      history.replaceState(null,"","#" + routeId);
+    });
+  });
+}
 
 /* =========================================================
    ROTAS
-   ========================================================= */
+========================================================= */
 
-function initNavigation() {
-
-  document.addEventListener("click", event => {
-
-    const routeElement =
-      event.target.closest("[data-route]");
-
-    if (!routeElement) return;
-
-    event.preventDefault();
-
-    const route =
-      routeElement.dataset.route;
-
-    if (route === "inicio") {
-
-      showHome();
-
-      return;
-
-    }
-
-    if (route === "gerais") {
-
-      const category =
-        findCategory("gerais");
-
-      if (category) {
-
-        showCategory(category);
-
-      } else {
-
-        const first =
-          rulesData.categories?.[0];
-
-        if (first) {
-
-          showCategory(first);
-
-        }
-
-      }
-
-      return;
-
-    }
-
-    if (route === "corridas") {
-
-      const category =
-        findCategory("corridas");
-
-      if (category) {
-
-        showCategory(category);
-
-      }
-
-      return;
-
-    }
-
-    const category =
-      findCategory(route);
-
-    if (category) {
-
-      showCategory(category);
-
-    }
-
+function route(id){
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.remove("active");
   });
 
-}
+  if(id === "inicio"){
+    $("inicio")?.classList.add("active");
+  }else if(id === "pesquisa"){
+    $("searchPage")?.classList.add("active");
 
+    setTimeout(() => {
+      $("searchInput")?.focus();
+    },50);
+  }else{
+    const exists = categoryIndexById(id) >= 0;
 
-/* =========================================================
-   MOSTRAR HOME
-   ========================================================= */
-
-function showHome() {
-
-  document
-    .querySelectorAll(".page")
-    .forEach(page => {
-
-      page.classList.remove("active");
-
-    });
-
-  const home =
-    document.getElementById("inicio");
-
-  if (home) {
-
-    home.classList.add("active");
-
+    if(!exists){
+      $("inicio")?.classList.add("active");
+      id = "inicio";
+    }else{
+      $("categoryPage")?.classList.add("active");
+      renderCategory(id);
+    }
   }
 
-  updateActiveNav("");
+  document.querySelectorAll(".sidebar nav button").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.route === id
+    );
+  });
+
+  $("sidebar")?.classList.remove("open");
 
   window.scrollTo({
-    top: 0,
-    behavior: "smooth"
+    top:0,
+    behavior:"smooth"
   });
-
 }
 
-
 /* =========================================================
-   MOSTRAR CATEGORIA
-   ========================================================= */
+   CLIQUES DE NAVEGAÇÃO
+========================================================= */
 
-function showCategory(category) {
+document.addEventListener("click",event => {
+  const target = event.target.closest("[data-route]");
+  if(!target) return;
 
-  document
-    .querySelectorAll(".page")
-    .forEach(page => {
-
-      page.classList.remove("active");
-
-    });
-
-  const page =
-    document.getElementById("categoryPage");
-
-  if (!page) return;
-
-  page.classList.add("active");
-
-
-  const code =
-    document.getElementById("catCode");
-
-  const title =
-    document.getElementById("catTitle");
-
-  const desc =
-    document.getElementById("catDesc");
-
-
-  if (code) {
-
-    code.textContent =
-      category.code || "";
-
+  if(
+    target.tagName === "A" &&
+    target.getAttribute("target") === "_blank"
+  ){
+    return;
   }
 
-  if (title) {
+  event.preventDefault();
 
-    title.textContent =
-      category.name ||
-      category.short ||
-      "";
+  const routeId = target.dataset.route;
+  if(!routeId) return;
 
-  }
+  route(routeId);
 
-  if (desc) {
-
-    desc.textContent =
-      category.desc || "";
-
-  }
-
-
-  renderRules(category);
-
-  updateActiveNav(category.id);
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-
-}
-
-
-/* =========================================================
-   RENDERIZAR REGRAS
-   ========================================================= */
-
-function renderRules(category) {
-
-  const list =
-    document.getElementById("ruleList");
-
-  const toc =
-    document.getElementById("ruleToc");
-
-  if (!list) return;
-
-  list.innerHTML = "";
-
-  if (toc) {
-
-    toc.innerHTML = "";
-
-  }
-
-  const rules =
-    category.rules || [];
-
-
-  rules.forEach((rule, index) => {
-
-    const id =
-      "regra-" +
-      category.id +
-      "-" +
-      index;
-
-
-    const card =
-      document.createElement("article");
-
-    card.className =
-      "rule-card";
-
-    card.id = id;
-
-
-    /*
-      TEXTO DA REGRA
-
-      Permite que o texto venha do Admin
-      com quebras de linha.
-    */
-
-    let content =
-      escapeHTML(rule.text || "");
-
-
-    /*
-      Suporte simples para:
-      **negrito**
-    */
-
-    content =
-      content.replace(
-        /\*\*(.*?)\*\*/g,
-        "<strong>$1</strong>"
-      );
-
-
-    card.innerHTML = `
-
-      <div class="rule-code">
-        ${escapeHTML(rule.code || "")}
-      </div>
-
-      <h2>
-        ${escapeHTML(rule.title || "")}
-      </h2>
-
-      <p>
-        ${content}
-      </p>
-
-      ${
-        rule.tag
-          ? `
-            <span class="rule-tag">
-              ${escapeHTML(rule.tag)}
-            </span>
-          `
-          : ""
-      }
-
-      ${
-        rule.image
-          ? `
-            <img
-              class="rule-image"
-              src="${escapeAttribute(rule.image)}"
-              alt=""
-            >
-          `
-          : ""
-      }
-
-    `;
-
-    list.appendChild(card);
-
-
-    if (toc) {
-
-      const tocLink =
-        document.createElement("a");
-
-      tocLink.href =
-        "#" + id;
-
-      tocLink.textContent =
-        rule.title || "";
-
-      toc.appendChild(tocLink);
-
-    }
-
-  });
-
-}
-
-
-/* =========================================================
-   ENCONTRAR CATEGORIA
-   ========================================================= */
-
-function findCategory(id) {
-
-  const categories =
-    rulesData.categories || [];
-
-  return categories.find(category =>
-    String(category.id) === String(id) ||
-    String(category.code) === String(id) ||
-    String(category.short || "")
-      .toLowerCase()
-      .includes(String(id).toLowerCase())
+  history.replaceState(
+    null,
+    "",
+    "#" + routeId
   );
-
-}
-
-
-/* =========================================================
-   NAV ATIVA
-   ========================================================= */
-
-function updateActiveNav(id) {
-
-  document
-    .querySelectorAll("#nav a")
-    .forEach(link => {
-
-      link.classList.toggle(
-        "active",
-        link.dataset.route === id
-      );
-
-    });
-
-}
-
+});
 
 /* =========================================================
    PESQUISA
-   ========================================================= */
+========================================================= */
 
-function initSearch() {
+$("searchOpen")?.addEventListener("click",() => {
+  $("searchOverlay")?.classList.add("open");
+  $("overlaySearch")?.focus();
+});
 
-  const open =
-    document.getElementById("searchOpen");
+$("searchClose")?.addEventListener("click",() => {
+  $("searchOverlay")?.classList.remove("open");
+});
 
-  const overlay =
-    document.getElementById("searchOverlay");
-
-  const close =
-    document.getElementById("searchClose");
-
-  const input =
-    document.getElementById("overlaySearch");
-
-
-  if (open && overlay) {
-
-    open.addEventListener("click", () => {
-
-      overlay.classList.add("open");
-
-      setTimeout(() => {
-
-        input?.focus();
-
-      }, 100);
-
-    });
-
+$("searchOverlay")?.addEventListener("click",event => {
+  if(event.target === $("searchOverlay")){
+    $("searchOverlay")?.classList.remove("open");
   }
+});
 
+$("overlaySearch")?.addEventListener("input",event => {
+  search(event.target.value,$("overlayResults"));
+});
 
-  if (close && overlay) {
+$("searchInput")?.addEventListener("input",event => {
+  search(event.target.value,$("searchResults"));
+});
 
-    close.addEventListener("click", () => {
-
-      overlay.classList.remove("open");
-
-    });
-
+document.addEventListener("keydown",event => {
+  if(
+    event.key === "Escape" &&
+    $("searchOverlay")?.classList.contains("open")
+  ){
+    $("searchOverlay").classList.remove("open");
   }
-
-
-  if (overlay) {
-
-    overlay.addEventListener("click", event => {
-
-      if (event.target === overlay) {
-
-        overlay.classList.remove("open");
-
-      }
-
-    });
-
-  }
-
-
-  if (input) {
-
-    input.addEventListener(
-      "input",
-      () => {
-
-        performSearch(
-          input.value,
-          "overlayResults"
-        );
-
-      }
-    );
-
-  }
-
-
-  const pageInput =
-    document.getElementById("searchInput");
-
-  if (pageInput) {
-
-    pageInput.addEventListener(
-      "input",
-      () => {
-
-        performSearch(
-          pageInput.value,
-          "searchResults"
-        );
-
-      }
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   PESQUISA
-   ========================================================= */
-
-function performSearch(query, containerId) {
-
-  const container =
-    document.getElementById(containerId);
-
-  if (!container) return;
-
-  const term =
-    String(query || "")
-      .trim()
-      .toLowerCase();
-
-
-  if (!term) {
-
-    container.innerHTML = "";
-
-    return;
-
-  }
-
-
-  const results = [];
-
-
-  (rulesData.categories || [])
-    .forEach(category => {
-
-      (category.rules || [])
-        .forEach(rule => {
-
-          const searchable = [
-
-            rule.code,
-            rule.title,
-            rule.text,
-            rule.tag
-
-          ]
-            .join(" ")
-            .toLowerCase();
-
-
-          if (searchable.includes(term)) {
-
-            results.push({
-              category,
-              rule
-            });
-
-          }
-
-        });
-
-    });
-
-
-  if (!results.length) {
-
-    container.innerHTML = `
-      <div class="update-item">
-        Nenhuma regra encontrada.
-      </div>
-    `;
-
-    return;
-
-  }
-
-
-  container.innerHTML =
-    results.map(result => `
-
-      <div
-        class="update-item"
-        data-search-category="${escapeAttribute(
-          result.category.id
-        )}"
-      >
-
-        <strong>
-          ${escapeHTML(
-            result.rule.code || ""
-          )}
-          —
-          ${escapeHTML(
-            result.rule.title || ""
-          )}
-        </strong>
-
-        <p>
-          ${escapeHTML(
-            result.rule.text || ""
-          )}
-        </p>
-
-      </div>
-
-    `).join("");
-
-}
-
+});
 
 /* =========================================================
    MENU MOBILE
-   ========================================================= */
+========================================================= */
 
-function initMobileMenu() {
+$("mobileMenu")?.addEventListener("click",() => {
+  $("sidebar")?.classList.toggle("open");
+});
 
-  const button =
-    document.getElementById("mobileMenu");
+/* =========================================================
+   HASH
+========================================================= */
 
-  const sidebar =
-    document.getElementById("sidebar");
-
-  if (!button || !sidebar) return;
-
-  button.addEventListener("click", () => {
-
-    sidebar.classList.toggle("open");
-
-  });
-
-}
-
+window.addEventListener("hashchange",() => {
+  route(
+    location.hash.replace("#","") || "inicio"
+  );
+});
 
 /* =========================================================
    CURSOR PERSONALIZADO
-   ========================================================= */
+   - sem bolinha
+   - usa a imagem do Admin
+   - rastro de tinta aparece SEM clicar
+========================================================= */
 
-function initCursor() {
+function setupCursor(){
+  const config = state.site?.cursor || {};
+  const cursor = $("customCursor");
 
-  /*
-     Cria o elemento caso ainda não exista.
-  */
+  if(!cursor) return;
 
-  cursorElement =
-    document.getElementById(
-      "customCursor"
-    );
-
-
-  if (!cursorElement) {
-
-    cursorElement =
-      document.createElement("div");
-
-    cursorElement.id =
-      "customCursor";
-
-    cursorElement.className =
-      "custom-cursor";
-
-    document.body.appendChild(
-      cursorElement
-    );
-
+  /* Evita listeners duplicados se setupCursor for chamado novamente */
+  if(window.__vienaCursorCleanup){
+    window.__vienaCursorCleanup();
   }
 
-
-  /*
-     IMPORTANTE:
-
-     Não existe bolinha.
-     Não existe cursor-dot.
-  */
-
-  const oldDot =
-    document.getElementById("cursorDot");
-
-  if (oldDot) {
-
-    oldDot.style.display =
-      "none";
-
-  }
-
-
-  /*
-     Verifica se o cursor está ativado.
-  */
-
-  if (
-    siteData.cursor &&
-    siteData.cursor.enabled === false
-  ) {
-
-    cursorElement.style.display =
-      "none";
-
-    document.body.style.cursor =
-      "auto";
-
+  if(config.enabled === false){
+    document.documentElement.classList.remove("viena-cursor-active");
+    cursor.style.display = "none";
     return;
-
   }
 
+  document.documentElement.classList.add("viena-cursor-active");
+  cursor.style.display = "block";
 
-  /*
-     Se o Admin colocou uma imagem,
-     ela será usada.
-  */
+  const cursorImage =
+    assetUrl(config.image) ||
+    assetUrl(state.site?.logo) ||
+    "./logo-viena.png";
 
-  if (cursorImage) {
+  const size = Math.max(
+    12,
+    Math.min(96,Number(config.size) || 34)
+  );
 
-    cursorElement.style.backgroundImage =
-      `url("${cursorImage}")`;
+  cursor.style.width = `${size}px`;
+  cursor.style.height = `${size}px`;
+  cursor.style.backgroundImage =
+    `url("${cursorImage}")`;
 
-    cursorElement.style.width =
-      `${cursorSize}px`;
+  const trailEnabled =
+    config.trail_enabled !== false;
 
-    cursorElement.style.height =
-      `${cursorSize}px`;
+  const trailColor =
+    config.trail_color || "#e50914";
 
-    cursorElement.classList.add(
-      "active"
+  const trailCount = Math.max(
+    2,
+    Math.min(30,Number(config.trail_count) || 10)
+  );
+
+  let mouseX = window.innerWidth / 2;
+  let mouseY = window.innerHeight / 2;
+  let cursorX = mouseX;
+  let cursorY = mouseY;
+  let lastTrail = 0;
+  let trailIndex = 0;
+
+  const moveHandler = event => {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+
+    if(!trailEnabled) return;
+
+    const now = performance.now();
+    const interval = Math.max(
+      10,
+      48 - trailCount * 1.25
     );
 
-  }
+    if(now - lastTrail < interval) return;
 
+    lastTrail = now;
 
-  /*
-     Movimento do cursor
-  */
+    /* Faz o rastro parecer uma pincelada,
+       não uma bolinha. */
+    const previousX = window.__vienaLastX ?? mouseX;
+    const previousY = window.__vienaLastY ?? mouseY;
 
-  document.addEventListener(
-    "mousemove",
-    event => {
+    const dx = mouseX - previousX;
+    const dy = mouseY - previousY;
+    const distance = Math.max(1,Math.hypot(dx,dy));
+    const angle = Math.atan2(dy,dx) * 180 / Math.PI;
 
-      mouseX =
-        event.clientX;
+    window.__vienaLastX = mouseX;
+    window.__vienaLastY = mouseY;
 
-      mouseY =
-        event.clientY;
+    const paint = document.createElement("span");
+    paint.className = "cursor-paint";
+    paint.style.left = `${mouseX}px`;
+    paint.style.top = `${mouseY}px`;
+    paint.style.background = trailColor;
+    paint.style.setProperty("--angle",`${angle}deg`);
 
+    const width =
+      10 +
+      Math.min(22,distance * .45) +
+      Math.random() * 9;
 
-      if (cursorElement) {
+    const height =
+      4 +
+      Math.random() * 5;
 
-        cursorElement.style.transform =
-          `translate3d(
-            ${mouseX}px,
-            ${mouseY}px,
-            0
-          ) translate(-50%, -50%)`;
+    paint.style.width = `${width}px`;
+    paint.style.height = `${height}px`;
+    paint.style.marginLeft = `${-width/2}px`;
+    paint.style.marginTop = `${-height/2}px`;
+    paint.style.opacity =
+      `${Math.min(.85,.38 + trailCount/35)}`;
 
+    /* Pequena variação para parecer tinta */
+    paint.style.transform =
+      `rotate(${angle + (Math.random()*24-12)}deg)`;
+
+    document.body.appendChild(paint);
+
+    trailIndex++;
+
+    /* Mantém o número de manchas sob controle */
+    const maxPaint = trailCount * 2 + 8;
+    const paints = document.querySelectorAll(".cursor-paint");
+
+    if(paints.length > maxPaint){
+      for(let i=0;i<paints.length-maxPaint;i++){
+        paints[i].remove();
       }
-
-
-      /*
-         Cria spray somente quando
-         o mouse realmente está andando.
-      */
-
-      if (trailEnabled) {
-
-        const dx =
-          mouseX - lastX;
-
-        const dy =
-          mouseY - lastY;
-
-        const distance =
-          Math.sqrt(
-            dx * dx +
-            dy * dy
-          );
-
-
-        if (distance > 2) {
-
-          createPaintSpray(
-            mouseX,
-            mouseY,
-            dx,
-            dy
-          );
-
-        }
-
-      }
-
-
-      lastX =
-        mouseX;
-
-      lastY =
-        mouseY;
-
-    },
-    {
-      passive: true
     }
-  );
 
-}
+    setTimeout(() => paint.remove(),760);
+  };
 
+  document.addEventListener("mousemove",moveHandler,{passive:true});
 
-/* =========================================================
-   CANVAS DO SPRAY
-   ========================================================= */
+  function animateCursor(){
+    cursorX += (mouseX - cursorX) * .28;
+    cursorY += (mouseY - cursorY) * .28;
 
-function initPaintTrail() {
+    cursor.style.transform =
+      `translate3d(
+        ${cursorX - size/2}px,
+        ${cursorY - size/2}px,
+        0
+      )`;
 
-  /*
-     Evita criar no celular.
-  */
-
-  if (
-    window.innerWidth <= 600
-  ) {
-
-    return;
-
+    window.__vienaCursorFrame =
+      requestAnimationFrame(animateCursor);
   }
 
+  animateCursor();
 
-  paintCanvas =
-    document.createElement("canvas");
-
-  paintCanvas.id =
-    "paintTrailCanvas";
-
-  document.body.appendChild(
-    paintCanvas
-  );
-
-
-  paintCtx =
-    paintCanvas.getContext(
-      "2d"
-    );
-
-
-  resizePaintCanvas();
-
-
-  window.addEventListener(
-    "resize",
-    resizePaintCanvas
-  );
-
-
-  animatePaintTrail();
-
+  window.__vienaCursorCleanup = () => {
+    document.removeEventListener("mousemove",moveHandler);
+    cancelAnimationFrame(window.__vienaCursorFrame);
+    document.querySelectorAll(".cursor-paint").forEach(el => el.remove());
+  };
 }
 
-
 /* =========================================================
-   TAMANHO DO CANVAS
-   ========================================================= */
+   LETRINHAS CAINDO
+========================================================= */
 
-function resizePaintCanvas() {
+function setupFallingLetters(){
+  const container = $("fallingLetters");
+  if(!container) return;
 
-  if (!paintCanvas) return;
-
-  const ratio =
-    window.devicePixelRatio || 1;
-
-
-  paintCanvas.width =
-    window.innerWidth * ratio;
-
-  paintCanvas.height =
-    window.innerHeight * ratio;
-
-
-  paintCanvas.style.width =
-    window.innerWidth + "px";
-
-  paintCanvas.style.height =
-    window.innerHeight + "px";
-
-
-  if (paintCtx) {
-
-    paintCtx.setTransform(
-      ratio,
-      0,
-      0,
-      ratio,
-      0,
-      0
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   CRIAR SPRAY
-   ========================================================= */
-
-function createPaintSpray(
-  x,
-  y,
-  dx,
-  dy
-) {
-
-  if (!paintCtx) return;
-
-
-  /*
-     Velocidade do mouse.
-  */
-
-  const speed =
-    Math.sqrt(
-      dx * dx +
-      dy * dy
-    );
-
-
-  /*
-     Quantidade de spray.
-
-     Quanto mais rápido o mouse,
-     mais tinta sai.
-  */
+  const letters =
+    "VIENA • CÓDIGO DA RUA • RP • 01 • 02 • 03 •";
 
   const amount =
-    Math.min(
-      14,
-      Math.max(
-        3,
-        Math.floor(speed / 2)
-      )
-    );
+    window.innerWidth < 700 ? 18 : 34;
 
+  container.innerHTML = "";
 
-  for (
-    let i = 0;
-    i < amount;
-    i++
-  ) {
+  for(let i=0;i<amount;i++){
+    const span = document.createElement("span");
 
-    /*
-       Spray espalhado para trás
-       como tinta de spray.
-    */
+    span.className = "falling-letter";
+    span.textContent =
+      letters[Math.floor(Math.random()*letters.length)];
 
-    const angle =
-      Math.random() *
-      Math.PI *
-      2;
+    span.style.left =
+      `${Math.random()*100}%`;
 
+    span.style.animationDuration =
+      `${8 + Math.random()*15}s`;
 
-    const distance =
-      Math.random() *
-      22;
+    span.style.animationDelay =
+      `${-Math.random()*18}s`;
 
+    span.style.fontSize =
+      `${9 + Math.random()*13}px`;
 
-    const px =
-      x +
-      Math.cos(angle) *
-      distance;
+    span.style.opacity =
+      `${.04 + Math.random()*.09}`;
 
-
-    const py =
-      y +
-      Math.sin(angle) *
-      distance;
-
-
-    const radius =
-      Math.random() *
-      2.8 +
-      0.5;
-
-
-    particles.push({
-
-      x: px,
-
-      y: py,
-
-      radius: radius,
-
-      alpha:
-        Math.random() *
-          0.7 +
-        0.25,
-
-      life:
-        Math.random() *
-          45 +
-        25,
-
-      maxLife:
-        70,
-
-      vx:
-        (Math.random() - 0.5) *
-        0.5,
-
-      vy:
-        (Math.random() - 0.5) *
-        0.5
-
-    });
-
+    container.appendChild(span);
   }
-
-
-  /*
-     Pequenos respingos maiores.
-  */
-
-  if (
-    Math.random() < 0.35
-  ) {
-
-    particles.push({
-
-      x:
-        x +
-        (Math.random() - 0.5) *
-        25,
-
-      y:
-        y +
-        (Math.random() - 0.5) *
-        25,
-
-      radius:
-        Math.random() * 5 +
-        2,
-
-      alpha:
-        0.25,
-
-      life:
-        80,
-
-      maxLife:
-        80,
-
-      vx:
-        (Math.random() - 0.5),
-
-      vy:
-        (Math.random() - 0.5)
-
-    });
-
-  }
-
-
-  /*
-     Limite de partículas
-     para não pesar a página.
-  */
-
-  if (
-    particles.length > 1200
-  ) {
-
-    particles.splice(
-      0,
-      particles.length - 1200
-    );
-
-  }
-
 }
 
-
-/* =========================================================
-   ANIMAÇÃO DO SPRAY
-   ========================================================= */
-
-function animatePaintTrail() {
-
-  requestAnimationFrame(
-    animatePaintTrail
+window.addEventListener("resize",() => {
+  clearTimeout(window.__vienaResizeTimer);
+  window.__vienaResizeTimer = setTimeout(
+    setupFallingLetters,
+    200
   );
+});
 
+/* =========================================================
+   ERRO
+========================================================= */
 
-  if (
-    !paintCtx ||
-    !paintCanvas
-  ) {
+load().catch(error => {
+  console.error("Erro ao carregar o site:",error);
 
-    return;
-
-  }
-
-
-  /*
-     Limpa o canvas inteiro.
-
-     Assim o spray desaparece
-     naturalmente.
-  */
-
-  paintCtx.clearRect(
-    0,
-    0,
-    window.innerWidth,
-    window.innerHeight
+  document.body.insertAdjacentHTML(
+    "beforeend",
+    `
+      <div class="load-error">
+        Não foi possível carregar o conteúdo.
+        Verifique se <strong>content/site.json</strong> e
+        <strong>content/rules.json</strong> existem no projeto.
+      </div>
+    `
   );
-
-
-  for (
-    let i = particles.length - 1;
-    i >= 0;
-    i--
-  ) {
-
-    const particle =
-      particles[i];
-
-
-    particle.life -= 1;
-
-
-    particle.x +=
-      particle.vx;
-
-    particle.y +=
-      particle.vy;
-
-
-    if (
-      particle.life <= 0
-    ) {
-
-      particles.splice(
-        i,
-        1
-      );
-
-      continue;
-
-    }
-
-
-    const opacity =
-      Math.max(
-        0,
-        particle.alpha *
-        (
-          particle.life /
-          particle.maxLife
-        )
-      );
-
-
-    /*
-       Cor configurada no Admin.
-    */
-
-    paintCtx.fillStyle =
-      hexToRGBA(
-        trailColor,
-        opacity
-      );
-
-
-    paintCtx.beginPath();
-
-    paintCtx.arc(
-      particle.x,
-      particle.y,
-      particle.radius,
-      0,
-      Math.PI * 2
-    );
-
-    paintCtx.fill();
-
-  }
-
-}
-
-
-/* =========================================================
-   HEX → RGBA
-   ========================================================= */
-
-function hexToRGBA(
-  hex,
-  alpha
-) {
-
-  let value =
-    String(hex || "#e50914")
-      .replace("#", "");
-
-
-  if (
-    value.length === 3
-  ) {
-
-    value =
-      value
-        .split("")
-        .map(char => char + char)
-        .join("");
-
-  }
-
-
-  const number =
-    parseInt(
-      value,
-      16
-    );
-
-
-  const r =
-    (number >> 16) & 255;
-
-  const g =
-    (number >> 8) & 255;
-
-  const b =
-    number & 255;
-
-
-  return `
-    rgba(
-      ${r},
-      ${g},
-      ${b},
-      ${alpha}
-    )
-  `;
-
-}
-
-
-/* =========================================================
-   SEGURANÇA — TEXTO
-   ========================================================= */
-
-function escapeHTML(value) {
-
-  return String(value ?? "")
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-
-}
-
-
-function escapeAttribute(value) {
-
-  return String(value ?? "")
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    );
-
-}
+});

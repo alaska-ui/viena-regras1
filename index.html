@@ -8,14 +8,12 @@
   <title>Viena RP — Código da Rua</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
   <div class="noise"></div>
   <div class="falling-letters" id="fallingLetters" aria-hidden="true"></div>
 
-  <!-- Cursor personalizado -->
+  <!-- Cursor: somente a imagem escolhida no Admin -->
   <div class="custom-cursor" id="customCursor" aria-hidden="true"></div>
-  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
 
   <header class="topbar">
     <button class="mobile-menu" id="mobileMenu" type="button" aria-label="Abrir menu">☰</button>
@@ -42,25 +40,20 @@
 
   <main class="content">
     <section id="inicio" class="page active">
-      <div class="hero">
+      <div class="hero" id="hero">
         <div class="hero-copy">
           <p class="eyebrow" id="heroEyebrow"></p>
           <h1 id="heroTitle"></h1>
           <p class="hero-text" id="heroText"></p>
 
           <div class="hero-actions">
-            <button class="primary" data-route="corridas" type="button">
+            <button class="primary" id="exploreButton" data-route="corridas" type="button">
               EXPLORAR CORRIDAS <span>→</span>
             </button>
-            <button class="ghost" data-route="gerais" type="button">
+            <button class="ghost" data-route="inicio" type="button" id="allRulesButton">
               VER TODAS AS REGRAS
             </button>
           </div>
-        </div>
-
-        <!-- Mantido apenas por compatibilidade. A imagem fica como fundo da capa. -->
-        <div class="hero-art" id="heroArt">
-          <img id="heroImage" alt="">
         </div>
       </div>
 
@@ -109,7 +102,6 @@
         <aside class="rule-toc" id="ruleToc"></aside>
       </div>
 
-      <!-- Navegação entre categorias -->
       <div class="category-navigation" id="categoryNavigation"></div>
     </section>
 
@@ -119,12 +111,9 @@
       <div class="category-title search-title">
         <p class="eyebrow">PESQUISA</p>
         <h1>ENCONTRE A REGRA.</h1>
-        <input
-          id="searchInput"
-          class="big-search"
-          placeholder="Digite: RDM, PIT, corrida, aposta..."
-          autocomplete="off"
-        >
+        <input id="searchInput" class="big-search"
+               placeholder="Digite: RDM, PIT, corrida, aposta..."
+               autocomplete="off">
       </div>
 
       <div id="searchResults" class="search-results"></div>

@@ -1,19 +1,22 @@
-# VIENA RP — Código da Rua
+VIENA RP — ARQUIVOS CORRIGIDOS
 
-Central de regras estática, responsiva e sem dependências de servidor.
+Substitua no projeto:
+- index.html
+- style.css
+- app.js
+- config.yml
 
-## Como abrir
-1. Extraia o ZIP.
-2. Abra `index.html` no navegador.
+Não apague content/, uploads/ ou logo-viena.png.
 
-## Como publicar gratuitamente
-Pode subir a pasta inteira para GitHub Pages, Netlify ou Cloudflare Pages.
+Correções:
+- imagem da categoria não aparece no Mapa da Rua;
+- imagem da categoria continua na capa da própria categoria;
+- IDs vazios são gerados automaticamente;
+- navegação dos botões foi unificada;
+- cursor usa somente a imagem do Admin, sem bolinha;
+- rastro virou pincelada de tinta e aparece ao mover o mouse;
+- Markdown continua aceitando negrito, listas, títulos e caixas;
+- imagem da capa continua como fundo;
+- letrinhas continuam caindo.
 
-## Editor
-O botão ADMIN no rodapé abre um editor local.
-Senha inicial: `VIENA2026`
-
-Importante: este editor é apenas uma primeira versão. A senha e as alterações ficam no navegador e não são seguras para uma equipe real. Para produção, o próximo passo é ligar o painel a login + banco de dados.
-
-## Identidade
-O site usa a logo enviada para esta conversa como `logo-viena.png`.
+Depois do commit/push, use Ctrl+F5 para forçar a atualização.
