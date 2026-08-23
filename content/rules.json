@@ -246,7 +246,6 @@
     },
     {
       "id": "corridas",
-      "code": "02",
       "name": "CÓDIGO VERMELHO",
       "short": "Corridas Ilegais",
       "desc": "As ruas pertencem a quem tem coragem. Corridas clandestinas, apostas e perseguições seguem este código.",
@@ -495,6 +494,11 @@
           "tag": "PUNIÇÃO"
         }
       ]
+    },
+    {
+      "code": "02",
+      "name": "A RUA",
+      "short": "Combate & Conflito"
     }
   ],
   "updates": [
