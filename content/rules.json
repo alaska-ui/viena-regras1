@@ -73,6 +73,7 @@
       ]
     },
     {
+      "code": "02",
       "name": "MANTENHA A CONDUTA",
       "short": "Regras Básicas",
       "desc": "As regras da Viena existem para preservar a qualidade do RP, a imersão e, principalmente, uma experiência justa para todos os cidadãos.\nToda situação será analisada considerando **contexto, intenção, gravidade e impacto no RP**. A ausência de uma situação específica neste documento não significa que ela esteja automaticamente permitida.",
@@ -245,6 +246,11 @@
       ]
     },
     {
+      "code": "03",
+      "name": "A RUA",
+      "short": "Combate & Conflito"
+    },
+    {
       "id": "corridas",
       "name": "CÓDIGO VERMELHO",
       "short": "Corridas Ilegais",
@@ -314,7 +320,6 @@
     },
     {
       "id": "policia",
-      "code": "03",
       "name": "CÓDIGO AZUL",
       "short": "Polícia & Perseguições",
       "desc": "Procedimentos para abordagens, perseguições e operações contra o submundo das corridas.",
@@ -494,11 +499,6 @@
           "tag": "PUNIÇÃO"
         }
       ]
-    },
-    {
-      "code": "02",
-      "name": "A RUA",
-      "short": "Combate & Conflito"
     }
   ],
   "updates": [
