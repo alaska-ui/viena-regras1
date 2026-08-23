@@ -8,14 +8,17 @@
   --bg:#080808;
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 html{
   scroll-behavior:smooth;
   background:var(--bg);
 }
 
-html,body{
+html,
+body{
   margin:0;
   min-height:100%;
   background:var(--bg);
@@ -24,9 +27,14 @@ html,body{
   letter-spacing:.1px;
 }
 
-body{overflow-x:hidden}
+body{
+  overflow-x:hidden;
+}
 
-/* CURSOR */
+/* =========================================================
+   CURSOR
+========================================================= */
+
 html.viena-cursor-active,
 html.viena-cursor-active *,
 html.viena-cursor-active a,
@@ -38,18 +46,72 @@ html.viena-cursor-active [role="button"]{
   cursor:none!important;
 }
 
-#customCursor,
-#cursorDot{
-  display:none!important;
-}
-
-.viena-global-cursor,
-.viena-global-trail{
+#customCursor{
+  display:none;
+  position:fixed;
+  left:0;
+  top:0;
+  width:34px;
+  height:34px;
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:contain;
   pointer-events:none!important;
-  user-select:none!important;
+  user-select:none;
+  z-index:999999;
+  filter:drop-shadow(0 0 5px rgba(229,9,20,.45));
+  will-change:transform;
 }
 
-/* FUNDO */
+#cursorDot{
+  display:none;
+  position:fixed;
+  left:0;
+  top:0;
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  background:var(--accent);
+  pointer-events:none!important;
+  z-index:999998;
+  margin-left:-2px;
+  margin-top:-2px;
+}
+
+html.viena-cursor-active #customCursor{
+  display:block;
+}
+
+html.viena-cursor-active #cursorDot{
+  display:block;
+}
+
+.cursor-trail{
+  position:fixed;
+  left:0;
+  top:0;
+  width:var(--trail-size,5px);
+  height:var(--trail-size,5px);
+  border-radius:50%;
+  transform:translate(-50%,-50%) scale(1);
+  pointer-events:none!important;
+  z-index:999997;
+  opacity:.9;
+  box-shadow:0 0 9px currentColor;
+  transition:
+    opacity .65s ease,
+    transform .65s ease;
+}
+
+.cursor-trail.fade{
+  opacity:0;
+  transform:translate(-50%,-50%) scale(.15);
+}
+
+/* =========================================================
+   FUNDO / RUÍDO
+========================================================= */
+
 .noise{
   position:fixed;
   inset:0;
@@ -60,7 +122,58 @@ html.viena-cursor-active [role="button"]{
   z-index:100;
 }
 
-/* TOPO */
+/* =========================================================
+   LETRAS CAINDO
+========================================================= */
+
+.falling-letters{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:40;
+  opacity:.75;
+}
+
+.falling-letter{
+  position:absolute;
+  top:-40px;
+  color:var(--accent);
+  font-weight:900;
+  letter-spacing:2px;
+  text-shadow:0 0 12px rgba(229,9,20,.25);
+  animation-name:vienaFall;
+  animation-timing-function:linear;
+  animation-iteration-count:infinite;
+  user-select:none;
+}
+
+@keyframes vienaFall{
+  0%{
+    transform:translate3d(0,-50px,0) rotate(0deg);
+  }
+
+  25%{
+    transform:translate3d(15px,28vh,0) rotate(3deg);
+  }
+
+  50%{
+    transform:translate3d(-12px,56vh,0) rotate(-4deg);
+  }
+
+  75%{
+    transform:translate3d(12px,82vh,0) rotate(3deg);
+  }
+
+  100%{
+    transform:translate3d(-5px,115vh,0) rotate(-2deg);
+  }
+}
+
+/* =========================================================
+   TOPO
+========================================================= */
+
 .topbar{
   position:fixed;
   top:0;
@@ -122,11 +235,18 @@ html.viena-cursor-active [role="button"]{
   padding:11px 15px;
   font-weight:700;
   text-decoration:none;
+  transition:.2s ease;
 }
 
 .icon-btn{
   font-size:20px;
   line-height:1;
+}
+
+.icon-btn:hover,
+.ghost:hover,
+.back:hover{
+  border-color:var(--accent);
 }
 
 .discord-btn{
@@ -135,9 +255,19 @@ html.viena-cursor-active [role="button"]{
   font-size:12px;
 }
 
-.mobile-menu{display:none}
+.discord-btn:hover,
+.primary:hover{
+  filter:brightness(1.12);
+}
 
-/* MENU */
+.mobile-menu{
+  display:none;
+}
+
+/* =========================================================
+   MENU
+========================================================= */
+
 .sidebar{
   position:fixed;
   top:74px;
@@ -174,6 +304,7 @@ html.viena-cursor-active [role="button"]{
   padding:12px 10px;
   font-size:12px;
   font-weight:700;
+  transition:.2s ease;
 }
 
 .sidebar nav button span{
@@ -201,19 +332,34 @@ html.viena-cursor-active [role="button"]{
   letter-spacing:1.5px;
 }
 
-.side-footer strong{color:#aaa}
+.side-footer strong{
+  color:#aaa;
+}
 
-/* CONTEÚDO */
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
 .content{
   margin-left:245px;
   padding:110px 55px 90px;
   max-width:1650px;
+  position:relative;
+  z-index:50;
 }
 
-.page{display:none}
-.page.active{display:block}
+.page{
+  display:none;
+}
 
-/* HERO */
+.page.active{
+  display:block;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
 .hero{
   --hero-image:none;
   position:relative;
@@ -310,16 +456,13 @@ html.viena-cursor-active [role="button"]{
   border-color:var(--accent);
 }
 
-.ghost:hover,
-.back:hover{
-  border-color:var(--accent);
-  color:#fff;
-}
-
-/* O elemento antigo fica oculto porque a imagem é fundo */
 .hero-art{
   display:none!important;
 }
+
+/* =========================================================
+   AVISO
+========================================================= */
 
 .notice{
   display:flex;
@@ -330,7 +473,9 @@ html.viena-cursor-active [role="button"]{
   border-left:3px solid var(--accent);
 }
 
-.notice strong{font-size:12px}
+.notice strong{
+  font-size:12px;
+}
 
 .notice p{
   margin:5px 0 0;
@@ -347,6 +492,10 @@ html.viena-cursor-active [role="button"]{
   place-items:center;
   font-weight:900;
 }
+
+/* =========================================================
+   SEÇÕES / MAPA
+========================================================= */
 
 .section-head{
   display:flex;
@@ -388,9 +537,12 @@ html.viena-cursor-active [role="button"]{
   padding:25px;
   min-height:170px;
   transition:.2s;
+  cursor:none;
+  outline:none;
 }
 
-.cat-card:hover{
+.cat-card:hover,
+.cat-card:focus{
   transform:translateY(-3px);
   border-color:var(--accent);
 }
@@ -412,20 +564,6 @@ html.viena-cursor-active [role="button"]{
   font-size:13px;
 }
 
-.card-image-wrap{
-  height:120px;
-  margin:18px 0 -4px;
-  overflow:hidden;
-  border:1px solid #282828;
-}
-
-.card-image{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-
 .update{
   display:grid;
   grid-template-columns:120px 1fr 90px;
@@ -440,8 +578,12 @@ html.viena-cursor-active [role="button"]{
   color:#666;
 }
 
-/* CATEGORIA */
+/* =========================================================
+   CATEGORIA
+========================================================= */
+
 .category-title{
+  --category-image:none;
   position:relative;
   min-height:420px;
   margin:0 -55px;
@@ -472,6 +614,7 @@ html.viena-cursor-active [role="button"]{
   position:absolute;
   inset:0;
   z-index:-2;
+
   background:
     linear-gradient(
       90deg,
@@ -487,6 +630,7 @@ html.viena-cursor-active [role="button"]{
       transparent 40%,
       rgba(8,8,8,.88) 100%
     );
+
   pointer-events:none;
 }
 
@@ -520,7 +664,10 @@ html.viena-cursor-active [role="button"]{
   font-size:11px;
 }
 
-/* REGRAS */
+/* =========================================================
+   REGRAS
+========================================================= */
+
 .rule-layout{
   display:grid;
   grid-template-columns:1fr 300px;
@@ -530,8 +677,9 @@ html.viena-cursor-active [role="button"]{
 
 .rule{
   border-bottom:1px solid #222;
-  padding:0 0 25px;
-  margin-bottom:25px;
+  padding:0 0 30px;
+  margin-bottom:30px;
+  scroll-margin-top:110px;
 }
 
 .rule-top{
@@ -547,30 +695,173 @@ html.viena-cursor-active [role="button"]{
 }
 
 .rule h3{
-  margin:0 0 9px;
-  font-size:20px;
+  margin:0 0 12px;
+  font-size:22px;
+  line-height:1.25;
 }
 
-.rule p{
+.rule-markdown{
   color:#aaa;
-  line-height:1.7;
-  margin:0 0 12px;
-  white-space:pre-line;
+  line-height:1.75;
+  font-size:15px;
 }
+
+.rule-markdown p{
+  margin:0 0 15px;
+}
+
+.rule-markdown strong{
+  color:#fff;
+  font-weight:800;
+}
+
+.rule-markdown em{
+  color:#ddd;
+}
+
+.rule-markdown a{
+  color:var(--accent2);
+}
+
+.rule-markdown ul,
+.rule-markdown ol{
+  margin:8px 0 18px;
+  padding-left:25px;
+}
+
+.rule-markdown li{
+  margin:7px 0;
+}
+
+.rule-markdown code{
+  background:#151515;
+  border:1px solid #292929;
+  padding:2px 6px;
+  color:#fff;
+}
+
+.md-heading{
+  color:#fff;
+  margin:24px 0 12px;
+  line-height:1.2;
+}
+
+.rule-markdown h3{
+  font-size:21px;
+}
+
+.rule-markdown h4{
+  font-size:18px;
+}
+
+.md-inline-image{
+  display:block;
+  max-width:100%;
+  max-height:300px;
+  margin:15px 0;
+}
+
+/* =========================================================
+   CAIXAS DAS REGRAS
+========================================================= */
+
+.rule-callout{
+  display:flex;
+  gap:14px;
+  margin:20px 0;
+  padding:18px 20px;
+  border:1px solid #303030;
+  background:#151515;
+}
+
+.callout-icon{
+  width:30px;
+  height:30px;
+  min-width:30px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-weight:900;
+  background:#303030;
+  color:#fff;
+}
+
+.callout-content{
+  flex:1;
+}
+
+.callout-content>strong{
+  display:block;
+  margin-bottom:7px;
+  color:#fff;
+  font-size:13px;
+  letter-spacing:.3px;
+}
+
+.callout-content>div{
+  color:#c1c1c1;
+}
+
+.rule-callout.warning{
+  background:rgba(130,78,30,.22);
+  border-color:rgba(194,120,45,.42);
+}
+
+.rule-callout.warning .callout-icon{
+  background:#9b5b20;
+}
+
+.rule-callout.danger{
+  background:rgba(130,30,30,.25);
+  border-color:rgba(229,9,20,.38);
+}
+
+.rule-callout.danger .callout-icon{
+  background:var(--accent);
+}
+
+.rule-callout.success{
+  background:rgba(30,110,55,.20);
+  border-color:rgba(60,160,90,.35);
+}
+
+.rule-callout.success .callout-icon{
+  background:#2d8a4a;
+}
+
+.rule-callout.info{
+  background:rgba(60,60,60,.35);
+  border-color:#444;
+}
+
+.rule-callout.info .callout-icon{
+  background:#444;
+}
+
+/* =========================================================
+   TAG / IMAGEM DA REGRA
+========================================================= */
 
 .tag{
+  display:inline-block;
   font-size:9px;
   border:1px solid #333;
   padding:5px 8px;
   color:#777;
+  margin-top:3px;
 }
 
 .rule-image{
+  display:block;
   max-width:100%;
-  max-height:300px;
-  margin-top:15px;
+  max-height:400px;
+  margin-top:18px;
   border:1px solid #2a2a2a;
 }
+
+/* =========================================================
+   ÍNDICE
+========================================================= */
 
 .rule-toc{
   position:sticky;
@@ -578,6 +869,8 @@ html.viena-cursor-active [role="button"]{
   align-self:start;
   background:#101010;
   padding:20px;
+  max-height:calc(100vh - 130px);
+  overflow:auto;
 }
 
 .rule-toc strong{
@@ -602,7 +895,97 @@ html.viena-cursor-active [role="button"]{
   color:#fff;
 }
 
-/* PESQUISA */
+/* =========================================================
+   NAVEGAÇÃO ANTERIOR / PRÓXIMA
+========================================================= */
+
+.category-navigation{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:15px;
+  align-items:stretch;
+  margin-top:45px;
+  padding-top:25px;
+  border-top:1px solid #292929;
+}
+
+.category-nav-side{
+  min-width:0;
+}
+
+.category-nav-button,
+.category-nav-map{
+  width:100%;
+  min-height:76px;
+  border:1px solid #292929;
+  background:#101010;
+  color:#fff;
+  text-align:left;
+  padding:16px 18px;
+  transition:.2s ease;
+}
+
+.category-nav-button:hover,
+.category-nav-map:hover{
+  border-color:var(--accent);
+  background:#151515;
+}
+
+.category-nav-button span{
+  display:block;
+  color:var(--accent);
+  font-size:9px;
+  letter-spacing:2px;
+  font-weight:900;
+  margin-bottom:8px;
+}
+
+.category-nav-button strong{
+  display:block;
+  font-size:13px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.category-nav-button.next{
+  text-align:right;
+}
+
+.category-nav-map{
+  width:auto;
+  min-width:180px;
+  text-align:center;
+  align-self:stretch;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:1px;
+}
+
+/* =========================================================
+   VAZIO
+========================================================= */
+
+.empty-rules{
+  border:1px solid #292929;
+  background:#101010;
+  padding:30px;
+}
+
+.empty-rules strong{
+  color:var(--accent);
+  font-size:11px;
+  letter-spacing:2px;
+}
+
+.empty-rules p{
+  color:#777;
+}
+
+/* =========================================================
+   PESQUISA
+========================================================= */
+
 .big-search{
   width:100%;
   max-width:850px;
@@ -632,6 +1015,7 @@ html.viena-cursor-active [role="button"]{
 .result{
   border-bottom:1px solid #222;
   padding:18px 0;
+  cursor:none;
 }
 
 .result small{
@@ -698,6 +1082,10 @@ html.viena-cursor-active [role="button"]{
   border-color:var(--accent);
 }
 
+/* =========================================================
+   RODAPÉ
+========================================================= */
+
 footer{
   position:relative;
   margin-left:245px;
@@ -705,7 +1093,12 @@ footer{
   padding:25px 55px;
   color:#666;
   font-size:11px;
+  z-index:50;
 }
+
+/* =========================================================
+   ERRO
+========================================================= */
 
 .load-error{
   position:fixed;
@@ -716,11 +1109,15 @@ footer{
   color:#fff;
   padding:12px;
   text-align:center;
-  z-index:99999;
+  z-index:999999;
 }
 
-/* RESPONSIVO */
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
 @media(max-width:1100px){
+
   .content{
     padding-left:35px;
     padding-right:35px;
@@ -744,13 +1141,28 @@ footer{
 }
 
 @media(max-width:900px){
-  html,body{
+
+  html,
+  body{
     cursor:auto!important;
   }
 
-  .viena-global-cursor,
-  .viena-global-trail{
+  html.viena-cursor-active,
+  html.viena-cursor-active *,
+  html.viena-cursor-active a,
+  html.viena-cursor-active button,
+  html.viena-cursor-active input{
+    cursor:auto!important;
+  }
+
+  #customCursor,
+  #cursorDot,
+  .cursor-trail{
     display:none!important;
+  }
+
+  .falling-letters{
+    opacity:.45;
   }
 
   .mobile-menu{
@@ -768,6 +1180,7 @@ footer{
 
   .brand{
     margin-right:auto;
+    margin-left:10px;
   }
 
   .top-actions .discord-btn{
@@ -846,8 +1259,41 @@ footer{
     letter-spacing:-3px;
   }
 
+  .rule-top{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+
+  .rule-num{
+    margin-bottom:2px;
+  }
+
+  .category-navigation{
+    grid-template-columns:1fr;
+  }
+
+  .category-nav-map{
+    width:100%;
+    min-width:0;
+  }
+
+  .category-nav-button.next{
+    text-align:left;
+  }
+
   footer{
     margin-left:0;
     padding:20px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,
+  *::before,
+  *::after{
+    scroll-behavior:auto!important;
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
   }
 }

@@ -3,26 +3,29 @@ const state = {
   data: null
 };
 
-
 /* =========================================================
    UTILIDADES
 ========================================================= */
 
 const $ = id => document.getElementById(id);
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
-/*
-  Corrige caminhos de imagens vindos do Admin.
+function escapeAttr(value) {
+  return escapeHtml(value).replace(/`/g, "&#096;");
+}
 
-  O Sveltia salva normalmente:
-  /uploads/imagem.png
-
-  No GitHub Pages precisamos:
-  ./uploads/imagem.png
-*/
 function assetUrl(path) {
-
   if (!path) return "";
+
+  path = String(path);
 
   if (
     path.startsWith("http://") ||
@@ -35,20 +38,247 @@ function assetUrl(path) {
   return path.replace(/^\/+/, "./");
 }
 
+function slugify(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
+function categoryId(category, index) {
+  return String(
+    category?.id ||
+    slugify(category?.name || category?.short) ||
+    `categoria-${index + 1}`
+  );
+}
+
+function categoryIndexById(id) {
+  return state.data.categories.findIndex(
+    (category, index) => categoryId(category, index) === id
+  );
+}
+
+/* =========================================================
+   MARKDOWN SIMPLES E SEGURO
+   Permite:
+   **negrito**
+   *itálico*
+   # títulos
+   - listas
+   > caixas
+========================================================= */
+
+function inlineMarkdown(value) {
+  let text = escapeHtml(value);
+
+  text = text.replace(
+    /!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g,
+    '<img src="$2" alt="$1" class="md-inline-image">'
+  );
+
+  text = text.replace(
+    /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+    '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+  );
+
+  text = text.replace(
+    /`([^`]+)`/g,
+    '<code>$1</code>'
+  );
+
+  text = text.replace(
+    /\*\*([^*]+)\*\*/g,
+    "<strong>$1</strong>"
+  );
+
+  text = text.replace(
+    /__([^_]+)__/g,
+    "<strong>$1</strong>"
+  );
+
+  text = text.replace(
+    /(^|[^\*])\*([^*]+)\*(?!\*)/g,
+    "$1<em>$2</em>"
+  );
+
+  text = text.replace(
+    /(^|[^_])_([^_]+)_(?!_)/g,
+    "$1<em>$2</em>"
+  );
+
+  return text;
+}
+
+function renderMarkdown(markdown) {
+  if (!markdown) return "";
+
+  const lines = String(markdown).replace(/\r\n/g, "\n").split("\n");
+  const output = [];
+
+  let inList = false;
+  let listType = null;
+  let inQuote = false;
+  let quoteLines = [];
+
+  function closeList() {
+    if (!inList) return;
+    output.push(listType === "ol" ? "</ol>" : "</ul>");
+    inList = false;
+    listType = null;
+  }
+
+  function closeQuote() {
+    if (!inQuote) return;
+
+    const raw = quoteLines.join("\n").trim();
+
+    let type = "info";
+    let icon = "ℹ️";
+    let title = "OBSERVAÇÃO";
+
+    if (/^(⚠️|⚠|ATENÇÃO|ATENCAO)/i.test(raw)) {
+      type = "warning";
+      icon = "⚠️";
+      title = "ATENÇÃO";
+    } else if (/^(❌|⛔|PROIBIDO|ERRO)/i.test(raw)) {
+      type = "danger";
+      icon = "❌";
+      title = "PROIBIDO";
+    } else if (/^(✅|PERMITIDO|OK)/i.test(raw)) {
+      type = "success";
+      icon = "✓";
+      title = "PERMITIDO";
+    }
+
+    let content = raw
+      .replace(/^(⚠️|⚠|ℹ️|❌|⛔|✅)\s*/u, "")
+      .replace(/^(ATENÇÃO|ATENCAO|OBSERVAÇÃO|OBSERVACAO|PROIBIDO|PERMITIDO|ERRO|OK)\s*:?\s*/i, "")
+      .trim();
+
+    const firstLine = content.split("\n")[0] || "";
+    const titleMatch = firstLine.match(/^\*\*(.+?)\*\*:?\s*(.*)$/);
+
+    if (titleMatch) {
+      title = titleMatch[1];
+      content = [
+        titleMatch[2],
+        ...content.split("\n").slice(1)
+      ].filter(Boolean).join("\n");
+    }
+
+    output.push(`
+      <div class="rule-callout ${type}">
+        <div class="callout-icon">${icon}</div>
+        <div class="callout-content">
+          <strong>${escapeHtml(title)}</strong>
+          ${
+            content
+              ? `<div>${renderMarkdown(content)}</div>`
+              : ""
+          }
+        </div>
+      </div>
+    `);
+
+    inQuote = false;
+    quoteLines = [];
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith(">")) {
+      closeList();
+
+      if (!inQuote) {
+        inQuote = true;
+        quoteLines = [];
+      }
+
+      quoteLines.push(
+        trimmed.replace(/^>\s?/, "")
+      );
+
+      continue;
+    }
+
+    if (inQuote) closeQuote();
+
+    if (!trimmed) {
+      closeList();
+      continue;
+    }
+
+    const heading = trimmed.match(/^(#{1,4})\s+(.+)$/);
+
+    if (heading) {
+      closeList();
+
+      const level = heading[1].length;
+      output.push(
+        `<h${level + 2} class="md-heading">${inlineMarkdown(heading[2])}</h${level + 2}>`
+      );
+      continue;
+    }
+
+    const unordered = trimmed.match(/^[-*+]\s+(.+)$/);
+
+    if (unordered) {
+      if (!inList || listType !== "ul") {
+        closeList();
+        output.push("<ul>");
+        inList = true;
+        listType = "ul";
+      }
+
+      output.push(`<li>${inlineMarkdown(unordered[1])}</li>`);
+      continue;
+    }
+
+    const ordered = trimmed.match(/^\d+\.\s+(.+)$/);
+
+    if (ordered) {
+      if (!inList || listType !== "ol") {
+        closeList();
+        output.push("<ol>");
+        inList = true;
+        listType = "ol";
+      }
+
+      output.push(`<li>${inlineMarkdown(ordered[1])}</li>`);
+      continue;
+    }
+
+    closeList();
+
+    output.push(
+      `<p>${inlineMarkdown(line)}</p>`
+    );
+  }
+
+  if (inQuote) closeQuote();
+  closeList();
+
+  return output.join("");
+}
 
 /* =========================================================
    CARREGAMENTO
 ========================================================= */
 
 async function load() {
-
-  const [siteResponse, rulesResponse] =
-    await Promise.all([
-      fetch("./content/site.json").then(r => r.json()),
-      fetch("./content/rules.json").then(r => r.json())
-    ]);
+  const [siteResponse, rulesResponse] = await Promise.all([
+    fetch("./content/site.json").then(response => response.json()),
+    fetch("./content/rules.json").then(response => response.json())
+  ]);
 
   state.site = siteResponse || {};
+
   state.data = rulesResponse || {
     categories: [],
     updates: []
@@ -66,749 +296,457 @@ async function load() {
   renderNav();
   renderHome();
   setupCursor();
+  setupFallingLetters();
 
   route(
     location.hash.replace("#", "") || "inicio"
   );
 }
 
-
 /* =========================================================
    SITE / CONFIGURAÇÕES
 ========================================================= */
 
 function applySite() {
-
   const s = state.site || {};
   const t = s.theme || {};
 
-  /*
-    CORES
-  */
-
   for (const [key, value] of Object.entries(t)) {
-
     if (!value) continue;
 
     document.documentElement.style.setProperty(
-      "--" +
-      (
-        key === "accent_light"
-          ? "accent2"
-          : key
-      ),
+      "--" + (key === "accent_light" ? "accent2" : key),
       value
     );
   }
-
-
-  /*
-    LOGO
-  */
 
   const logo =
     assetUrl(s.logo) ||
     "./logo-viena.png";
 
   if ($("headerLogo")) {
-
     $("headerLogo").src = logo;
-
     $("headerLogo").alt =
-      s.site_name ||
-      "Viena Roleplay";
+      s.site_name || "Viena Roleplay";
   }
-
-
-  /*
-    FAVICON
-  */
 
   if ($("favicon")) {
-
     $("favicon").href =
-      assetUrl(s.favicon) ||
-      logo;
+      assetUrl(s.favicon) || logo;
   }
 
-
-  /*
-    TÍTULOS
-  */
-
   if ($("brandTitle")) {
-
     $("brandTitle").textContent =
-      s.site_title ||
-      "CÓDIGO DA RUA";
+      s.site_title || "CÓDIGO DA RUA";
   }
 
   if ($("brandSite")) {
-
     $("brandSite").textContent =
-      (
-        s.site_name ||
-        "VIENA ROLEPLAY"
-      ).toUpperCase();
+      (s.site_name || "VIENA ROLEPLAY").toUpperCase();
   }
 
-
-  /*
-    HERO
-  */
-
   if ($("heroEyebrow")) {
-
     $("heroEyebrow").textContent =
-      s.hero_eyebrow ||
-      "";
+      s.hero_eyebrow || "";
   }
 
   if ($("heroTitle")) {
-
     $("heroTitle").textContent =
-      s.hero_title ||
-      "";
+      s.hero_title || "";
   }
 
   if ($("heroText")) {
-
     $("heroText").textContent =
-      s.hero_text ||
-      "";
+      s.hero_text || "";
   }
 
-
-  /*
-    AVISO
-  */
-
   if ($("noticeTitle")) {
-
     $("noticeTitle").textContent =
-      s.notice_title ||
-      "";
+      s.notice_title || "";
   }
 
   if ($("noticeText")) {
-
     $("noticeText").textContent =
-      s.notice_text ||
-      "";
+      s.notice_text || "";
   }
-
-
-  /*
-    RODAPÉ
-  */
 
   if ($("footerText")) {
-
     $("footerText").textContent =
-      s.footer_text ||
-      "";
+      s.footer_text || "";
   }
-
-
-  /*
-    DISCORD
-  */
 
   if ($("discordBtn")) {
-
     $("discordBtn").href =
-      s.discord_url ||
-      "#";
-
-    $("discordBtn").target =
-      "_blank";
-
-    $("discordBtn").rel =
-      "noopener noreferrer";
+      s.discord_url || "#";
   }
 
-
-  /*
-    ELEMENTOS VISÍVEIS
-  */
-
-  const layout =
-    s.layout || {};
-
+  const layout = s.layout || {};
 
   if ($("notice")) {
-
     $("notice").style.display =
-      layout.show_notice === false
-        ? "none"
-        : "flex";
+      layout.show_notice === false ? "none" : "flex";
   }
-
 
   if ($("updatesWrap")) {
-
     $("updatesWrap").style.display =
-      layout.show_updates === false
-        ? "none"
-        : "block";
+      layout.show_updates === false ? "none" : "block";
   }
-
 
   if ($("searchOpen")) {
-
     $("searchOpen").style.display =
-      layout.show_search === false
-        ? "none"
-        : "block";
+      layout.show_search === false ? "none" : "block";
   }
 
+  /* IMAGEM DA CAPA COMO FUNDO */
+  const hero = document.querySelector(".hero");
+  const heroImage = assetUrl(s.hero_image);
 
-  /*
-    IMAGEM DA CAPA
-  */
+  if (hero) {
+    if (
+      heroImage &&
+      layout.show_hero_image !== false
+    ) {
+      hero.style.setProperty(
+        "--hero-image",
+        `url("${heroImage}")`
+      );
 
-  const heroImage =
-    assetUrl(s.hero_image);
+      hero.classList.add("has-image");
+    } else {
+      hero.style.setProperty(
+        "--hero-image",
+        "none"
+      );
 
-
-  /*
-    Mantém a imagem como fundo da área HERO.
-    Isso evita transformar a imagem em um card
-    separado.
-  */
-
-  const hero =
-    document.querySelector(".hero");
-
-
-  if (
-    hero &&
-    heroImage &&
-    layout.show_hero_image !== false
-  ) {
-
-    hero.style.backgroundImage =
-      `url("${heroImage}")`;
-
-    hero.classList.add(
-      "has-hero-background"
-    );
+      hero.classList.remove("has-image");
+    }
   }
-
-
-  /*
-    Mantém o elemento antigo escondido.
-    A imagem agora fica no fundo.
-  */
 
   if ($("heroArt")) {
-
-    $("heroArt").style.display =
-      "none";
+    $("heroArt").style.display = "none";
   }
-
-
-  /*
-    Caso exista heroImage no HTML,
-    também atualiza para manter compatibilidade.
-  */
 
   if ($("heroImage") && heroImage) {
-
-    $("heroImage").src =
-      heroImage;
+    $("heroImage").src = heroImage;
   }
 }
-
 
 /* =========================================================
    MENU LATERAL
 ========================================================= */
 
 function renderNav() {
-
-  const nav =
-    $("nav");
-
+  const nav = $("nav");
   if (!nav) return;
 
-  nav.innerHTML =
-    state.data.categories
-      .map(c => {
+  nav.innerHTML = state.data.categories
+    .map((category, index) => {
+      const id = categoryId(category, index);
+      const code = category.code || String(index + 1).padStart(2, "0");
+      const short =
+        category.short ||
+        category.name ||
+        `Categoria ${index + 1}`;
 
-        const id =
-          c.id || "";
-
-        const code =
-          c.code || "";
-
-        const short =
-          c.short ||
-          c.name ||
-          "";
-
-        return `
-          <button
-            data-route="${id}"
-            type="button"
-          >
-            <span>${code}</span>
-            ${short}
-          </button>
-        `;
-      })
-      .join("");
+      return `
+        <button
+          data-route="${escapeAttr(id)}"
+          type="button"
+        >
+          <span>${escapeHtml(code)}</span>
+          ${escapeHtml(short)}
+        </button>
+      `;
+    })
+    .join("");
 }
-
 
 /* =========================================================
    MAPA DA RUA
+   IMPORTANTE:
+   A imagem da categoria NÃO aparece aqui.
 ========================================================= */
 
 function renderHome() {
-
-  /*
-    IMPORTANTE:
-
-    AQUI NÃO EXISTE MAIS <img>.
-
-    A imagem cadastrada na categoria NÃO aparece
-    no mapa.
-
-    O mapa mostra somente:
-    - código
-    - nome
-    - descrição
-  */
-
-  const home =
-    $("homeCategories");
+  const home = $("homeCategories");
 
   if (home) {
+    home.innerHTML = state.data.categories
+      .map((category, index) => {
+        const id = categoryId(category, index);
+        const code =
+          category.code ||
+          String(index + 1).padStart(2, "0");
 
-    home.innerHTML =
-      state.data.categories
-        .map(c => {
+        const title =
+          category.short ||
+          category.name ||
+          `Categoria ${index + 1}`;
 
-          const id =
-            c.id || "";
+        const description =
+          category.desc || "";
 
-          const code =
-            c.code || "";
+        return `
+          <article
+            class="cat-card"
+            data-route="${escapeAttr(id)}"
+            tabindex="0"
+          >
+            <div class="num">
+              ${escapeHtml(code)} / VIENA
+            </div>
 
-          const title =
-            c.short ||
-            c.name ||
-            "";
+            <h3>
+              ${escapeHtml(title)}
+            </h3>
 
-          const description =
-            c.desc ||
-            "";
+            ${
+              description
+                ? `<p>${escapeHtml(description)}</p>`
+                : ""
+            }
+          </article>
+        `;
+      })
+      .join("");
 
-          return `
-            <article
-              class="cat-card"
-              data-route="${id}"
-            >
-
-              <div class="num">
-                ${code} / VIENA
-              </div>
-
-              <h3>
-                ${title}
-              </h3>
-
-              ${
-                description
-                  ? `
-                    <p>
-                      ${description}
-                    </p>
-                  `
-                  : ""
-              }
-
-            </article>
-          `;
-        })
-        .join("");
+    home.querySelectorAll("[data-route]").forEach(card => {
+      card.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          card.click();
+        }
+      });
+    });
   }
 
-
-  /*
-    ÚLTIMAS ALTERAÇÕES
-  */
-
-  const updatesList =
-    $("updatesList");
-
+  const updatesList = $("updatesList");
   if (!updatesList) return;
 
   updatesList.innerHTML =
     (state.data.updates || [])
       .map(item => {
-
-        const date =
-          item.date || "";
-
-        const title =
-          item.title || "";
-
-        const text =
-          item.text || "";
-
-        const tag =
-          item.tag || "";
+        const date = item.date || "";
+        const title = item.title || "";
+        const text = item.text || "";
+        const tag = item.tag || "";
 
         return `
           <div class="update">
-
-            ${
-              date
-                ? `
-                  <time>
-                    ${date}
-                  </time>
-                `
-                : ""
-            }
+            ${date ? `<time>${escapeHtml(date)}</time>` : "<time></time>"}
 
             ${
               title || text
                 ? `
                   <strong>
-                    ${title}
-                    ${
-                      title && text
-                        ? " — "
-                        : ""
-                    }
-                    ${text}
+                    ${escapeHtml(title)}
+                    ${title && text ? " — " : ""}
+                    ${escapeHtml(text)}
                   </strong>
                 `
-                : ""
+                : "<strong></strong>"
             }
 
             ${
               tag
-                ? `
-                  <span>
-                    ${tag}
-                  </span>
-                `
-                : ""
+                ? `<span>${escapeHtml(tag)}</span>`
+                : "<span></span>"
             }
-
           </div>
         `;
       })
       .join("");
 }
 
-
 /* =========================================================
    TODAS AS REGRAS
 ========================================================= */
 
 function allRules() {
-
-  return state.data.categories
-    .flatMap(category => {
-
+  return state.data.categories.flatMap(
+    (category, categoryIndex) => {
       const rules =
         Array.isArray(category.rules)
           ? category.rules
           : [];
 
-      return rules.map(rule => ({
+      return rules.map((rule, ruleIndex) => ({
         cat: category,
+        catIndex: categoryIndex,
+        ruleIndex,
         ...rule
       }));
-    });
+    }
+  );
 }
-
 
 /* =========================================================
    PÁGINA DA CATEGORIA
 ========================================================= */
 
 function renderCategory(id) {
+  const categoryIndex = categoryIndexById(id);
+
+  if (categoryIndex < 0) return;
 
   const category =
-    state.data.categories.find(
-      item => item.id === id
-    );
-
-
-  if (!category) return;
-
-
-  /*
-    TÍTULO
-  */
+    state.data.categories[categoryIndex];
 
   if ($("catCode")) {
-
     $("catCode").textContent =
       category.code
         ? `CÓDIGO ${category.code}`
         : "";
   }
 
-
   if ($("catTitle")) {
-
     $("catTitle").textContent =
       category.name ||
       category.short ||
-      "";
+      `Categoria ${categoryIndex + 1}`;
   }
-
 
   if ($("catDesc")) {
-
     $("catDesc").textContent =
-      category.desc ||
-      "";
+      category.desc || "";
   }
-
-
-  /*
-    IMAGEM DA CATEGORIA
-
-    IMPORTANTE:
-
-    A imagem NÃO aparece no mapa.
-
-    Ela continua disponível SOMENTE
-    dentro da página da categoria.
-  */
 
   const categoryImage =
     assetUrl(category.image);
 
-
-  if ($("catImage")) {
-
-    if (categoryImage) {
-
-      $("catImage").src =
-        categoryImage;
-
-      $("catImage").hidden =
-        false;
-
-    } else {
-
-      $("catImage").hidden =
-        true;
-
-      $("catImage").removeAttribute(
-        "src"
-      );
-    }
-  }
-
-
-  /*
-    FUNDO DA CATEGORIA
-
-    Caso seu HTML/CSS use #categoryHero,
-    a imagem também pode funcionar como
-    fundo da página da categoria.
-  */
-
   const categoryHero =
     $("categoryHero");
 
-
   if (categoryHero) {
-
     if (categoryImage) {
-
-      categoryHero.style.backgroundImage =
-        `url("${categoryImage}")`;
-
-      categoryHero.classList.add(
-        "has-category-background"
+      categoryHero.style.setProperty(
+        "--category-image",
+        `url("${categoryImage}")`
       );
 
+      categoryHero.classList.add("has-image");
     } else {
-
-      categoryHero.style.backgroundImage =
-        "";
-
-      categoryHero.classList.remove(
-        "has-category-background"
+      categoryHero.style.setProperty(
+        "--category-image",
+        "none"
       );
+
+      categoryHero.classList.remove("has-image");
     }
   }
-
-
-  /*
-    REGRAS
-  */
 
   const rules =
     Array.isArray(category.rules)
       ? category.rules
       : [];
 
-
-  const ruleList =
-    $("ruleList");
-
+  const ruleList = $("ruleList");
 
   if (ruleList) {
-
-    ruleList.innerHTML =
-      rules
-        .map((rule, index) => {
-
-          const code =
-            rule.code || "";
-
-          const title =
-            rule.title || "";
-
-          const text =
-            rule.text || "";
-
-          const tag =
-            rule.tag || "";
-
-          const image =
-            assetUrl(rule.image);
-
+    if (!rules.length) {
+      ruleList.innerHTML = `
+        <div class="empty-rules">
+          <strong>NENHUMA REGRA CADASTRADA</strong>
+          <p>Esta categoria ainda não possui regras publicadas.</p>
+        </div>
+      `;
+    } else {
+      ruleList.innerHTML =
+        rules.map((rule, index) => {
+          const code = rule.code || "";
+          const title = rule.title || "";
+          const text = rule.text || "";
+          const tag = rule.tag || "";
+          const image = assetUrl(rule.image);
 
           return `
             <article
               class="rule"
               id="rule-${index}"
             >
-
               <div class="rule-top">
+                ${
+                  code
+                    ? `<div class="rule-num">${escapeHtml(code)}</div>`
+                    : `<div class="rule-num"></div>`
+                }
 
-                <div class="rule-num">
-                  ${code}
-                </div>
-
-                <div>
-
+                <div class="rule-content">
                   ${
                     title
-                      ? `
-                        <h3>
-                          ${title}
-                        </h3>
-                      `
+                      ? `<h3>${escapeHtml(title)}</h3>`
                       : ""
                   }
 
                   ${
                     text
-                      ? `
-                        <p>
-                          ${text}
-                        </p>
-                      `
+                      ? `<div class="rule-markdown">${renderMarkdown(text)}</div>`
                       : ""
                   }
 
                   ${
                     tag
-                      ? `
-                        <span class="tag">
-                          ${tag}
-                        </span>
-                      `
+                      ? `<span class="tag">${escapeHtml(tag)}</span>`
                       : ""
                   }
 
                   ${
                     image
                       ? `
-                        <br>
-
                         <img
                           class="rule-image"
-                          src="${image}"
+                          src="${escapeAttr(image)}"
                           alt=""
+                          loading="lazy"
                         >
                       `
                       : ""
                   }
-
                 </div>
-
               </div>
-
             </article>
           `;
-        })
-        .join("");
+        }).join("");
+    }
   }
 
-
-  /*
-    ÍNDICE DA CATEGORIA
-  */
-
-  const ruleToc =
-    $("ruleToc");
-
+  /* ÍNDICE */
+  const ruleToc = $("ruleToc");
 
   if (ruleToc) {
+    if (!rules.length) {
+      ruleToc.innerHTML = "";
+    } else {
+      ruleToc.innerHTML =
+        `
+          <strong>NESTA CATEGORIA</strong>
+        ` +
+        rules
+          .map((rule, index) => {
+            const code = rule.code || "";
+            const title = rule.title || "Regra";
 
-    ruleToc.innerHTML =
-      `
-        <strong>
-          NESTA CATEGORIA
-        </strong>
-      ` +
-      rules
-        .map((rule, index) => {
+            return `
+              <button
+                type="button"
+                data-scroll-rule="${index}"
+              >
+                ${escapeHtml(code)}
+                ${
+                  code && title
+                    ? " — "
+                    : ""
+                }
+                ${escapeHtml(title)}
+              </button>
+            `;
+          })
+          .join("");
 
-          const code =
-            rule.code || "";
-
-          const title =
-            rule.title ||
-            "Regra";
-
-          return `
-            <button
-              type="button"
-              data-scroll-rule="${index}"
-            >
-              ${code}
-              ${
-                code && title
-                  ? " — "
-                  : ""
-              }
-              ${title}
-            </button>
-          `;
-        })
-        .join("");
-
-
-    /*
-      Clique no índice
-    */
-
-    ruleToc
-      .querySelectorAll(
-        "[data-scroll-rule]"
-      )
-      .forEach(button => {
-
-        button.addEventListener(
-          "click",
-          () => {
-
+      ruleToc
+        .querySelectorAll("[data-scroll-rule]")
+        .forEach(button => {
+          button.addEventListener("click", () => {
             const index =
               button.dataset.scrollRule;
 
@@ -818,25 +756,118 @@ function renderCategory(id) {
               );
 
             if (element) {
-
               element.scrollIntoView({
                 behavior: "smooth",
                 block: "center"
               });
             }
-          }
-        );
-      });
+          });
+        });
+    }
   }
+
+  renderCategoryNavigation(categoryIndex);
 }
 
+/* =========================================================
+   PRÓXIMA / ANTERIOR
+========================================================= */
+
+function renderCategoryNavigation(currentIndex) {
+  const navigation =
+    $("categoryNavigation");
+
+  if (!navigation) return;
+
+  const total =
+    state.data.categories.length;
+
+  const previousIndex =
+    currentIndex > 0
+      ? currentIndex - 1
+      : null;
+
+  const nextIndex =
+    currentIndex < total - 1
+      ? currentIndex + 1
+      : null;
+
+  const previousCategory =
+    previousIndex !== null
+      ? state.data.categories[previousIndex]
+      : null;
+
+  const nextCategory =
+    nextIndex !== null
+      ? state.data.categories[nextIndex]
+      : null;
+
+  navigation.innerHTML = `
+    <div class="category-nav-side">
+      ${
+        previousCategory
+          ? `
+            <button
+              type="button"
+              class="category-nav-button previous"
+              data-route="${escapeAttr(categoryId(previousCategory, previousIndex))}"
+            >
+              <span>← ANTERIOR</span>
+              <strong>
+                ${escapeHtml(
+                  previousCategory.short ||
+                  previousCategory.name ||
+                  "Categoria anterior"
+                )}
+              </strong>
+            </button>
+          `
+          : `
+            <div></div>
+          `
+      }
+    </div>
+
+    <button
+      type="button"
+      class="category-nav-map"
+      data-route="inicio"
+    >
+      VOLTAR AO MAPA
+    </button>
+
+    <div class="category-nav-side next-side">
+      ${
+        nextCategory
+          ? `
+            <button
+              type="button"
+              class="category-nav-button next"
+              data-route="${escapeAttr(categoryId(nextCategory, nextIndex))}"
+            >
+              <span>PRÓXIMA →</span>
+              <strong>
+                ${escapeHtml(
+                  nextCategory.short ||
+                  nextCategory.name ||
+                  "Próxima categoria"
+                )}
+              </strong>
+            </button>
+          `
+          : `
+            <div></div>
+          `
+      }
+    </div>
+  `;
+}
 
 /* =========================================================
    PESQUISA
 ========================================================= */
 
 function search(query, target) {
-
   if (!target) return;
 
   const q =
@@ -844,20 +875,14 @@ function search(query, target) {
       .trim()
       .toLowerCase();
 
-
   if (!q) {
-
-    target.innerHTML =
-      "";
-
+    target.innerHTML = "";
     return;
   }
-
 
   const results =
     allRules()
       .filter(rule => {
-
         const searchable = `
           ${rule.cat?.short || ""}
           ${rule.cat?.name || ""}
@@ -866,315 +891,235 @@ function search(query, target) {
           ${rule.title || ""}
           ${rule.text || ""}
           ${rule.tag || ""}
-        `
-          .toLowerCase();
+        `.toLowerCase();
 
         return searchable.includes(q);
       })
       .slice(0, 30);
 
-
   target.innerHTML =
     results.length
-
       ? results
           .map(rule => {
+            const categoryRoute =
+              categoryId(
+                rule.cat,
+                rule.catIndex
+              );
 
             return `
               <div
                 class="result"
-                data-route="${rule.cat.id}"
+                data-route="${escapeAttr(categoryRoute)}"
               >
-
                 <small>
-                  ${
+                  ${escapeHtml(
                     rule.cat.short ||
                     rule.cat.name ||
                     ""
-                  }
-
+                  )}
                   ·
-
-                  ${
+                  ${escapeHtml(
                     rule.code ||
                     rule.cat.code ||
                     ""
-                  }
+                  )}
                 </small>
 
                 <h3>
-                  ${rule.title || ""}
+                  ${escapeHtml(rule.title || "")}
                 </h3>
 
                 <p>
-                  ${rule.text || ""}
+                  ${escapeHtml(
+                    String(rule.text || "")
+                      .replace(/[#>*_`]/g, "")
+                      .slice(0, 240)
+                  )}
                 </p>
-
               </div>
             `;
           })
           .join("")
-
       : `
           <div class="result">
-
-            <h3>
-              Nenhuma regra encontrada.
-            </h3>
-
-            <p>
-              Tente outra palavra.
-            </p>
-
+            <h3>Nenhuma regra encontrada.</h3>
+            <p>Tente outra palavra.</p>
           </div>
         `;
-}
 
+  target
+    .querySelectorAll("[data-route]")
+    .forEach(result => {
+      result.addEventListener("click", () => {
+        const routeId =
+          result.dataset.route;
+
+        route(routeId);
+
+        history.replaceState(
+          null,
+          "",
+          "#" + routeId
+        );
+      });
+    });
+}
 
 /* =========================================================
    ROTAS
 ========================================================= */
 
 function route(id) {
-
   document
     .querySelectorAll(".page")
     .forEach(page => {
-
-      page.classList.remove(
-        "active"
-      );
+      page.classList.remove("active");
     });
 
-
   if (id === "inicio") {
-
-    if ($("inicio")) {
-
-      $("inicio")
-        .classList.add("active");
-    }
-
+    $("inicio")?.classList.add("active");
 
   } else if (id === "pesquisa") {
-
-    if ($("searchPage")) {
-
-      $("searchPage")
-        .classList.add("active");
-    }
-
+    $("searchPage")?.classList.add("active");
 
     setTimeout(() => {
-
-      if ($("searchInput")) {
-
-        $("searchInput").focus();
-      }
-
+      $("searchInput")?.focus();
     }, 50);
 
-
   } else {
+    const exists =
+      categoryIndexById(id) >= 0;
 
-    if ($("categoryPage")) {
-
-      $("categoryPage")
-        .classList.add("active");
+    if (!exists) {
+      $("inicio")?.classList.add("active");
+      id = "inicio";
+    } else {
+      $("categoryPage")?.classList.add("active");
+      renderCategory(id);
     }
-
-    renderCategory(id);
   }
 
-
-  /*
-    MENU ATIVO
-  */
-
   document
-    .querySelectorAll(
-      ".sidebar nav button"
-    )
+    .querySelectorAll(".sidebar nav button")
     .forEach(button => {
-
       button.classList.toggle(
         "active",
         button.dataset.route === id
       );
     });
 
+  $("sidebar")?.classList.remove("open");
 
-  /*
-    FECHA MENU MOBILE
-  */
-
-  if ($("sidebar")) {
-
-    $("sidebar")
-      .classList.remove("open");
-  }
-
-
-  window.scrollTo(
-    0,
-    0
-  );
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }
-
 
 /* =========================================================
    CLIQUES DE NAVEGAÇÃO
 ========================================================= */
 
-document.addEventListener(
-  "click",
-  event => {
+document.addEventListener("click", event => {
+  const target =
+    event.target.closest("[data-route]");
 
-    const target =
-      event.target.closest(
-        "[data-route]"
-      );
+  if (!target) return;
 
-
-    if (!target) return;
-
-
-    /*
-      Não interfere em links externos
-      nem em elementos que não sejam
-      botões de navegação.
-    */
-
-    event.preventDefault();
-
-
-    const routeId =
-      target.dataset.route;
-
-
-    if (!routeId) return;
-
-
-    route(routeId);
-
-
-    history.replaceState(
-      null,
-      "",
-      "#" + routeId
-    );
+  if (
+    target.tagName === "A" &&
+    target.getAttribute("target") === "_blank"
+  ) {
+    return;
   }
-);
 
+  event.preventDefault();
+
+  const routeId =
+    target.dataset.route;
+
+  if (!routeId) return;
+
+  route(routeId);
+
+  history.replaceState(
+    null,
+    "",
+    "#" + routeId
+  );
+});
 
 /* =========================================================
    PESQUISA
 ========================================================= */
 
-if ($("searchOpen")) {
+$("searchOpen")?.addEventListener("click", () => {
+  $("searchOverlay")?.classList.add("open");
+  $("overlaySearch")?.focus();
+});
 
-  $("searchOpen").onclick =
-    () => {
+$("searchClose")?.addEventListener("click", () => {
+  $("searchOverlay")?.classList.remove("open");
+});
 
-      if ($("searchOverlay")) {
+$("searchOverlay")?.addEventListener("click", event => {
+  if (event.target === $("searchOverlay")) {
+    $("searchOverlay")?.classList.remove("open");
+  }
+});
 
-        $("searchOverlay")
-          .classList.add("open");
-      }
+$("overlaySearch")?.addEventListener("input", event => {
+  search(
+    event.target.value,
+    $("overlayResults")
+  );
+});
 
+$("searchInput")?.addEventListener("input", event => {
+  search(
+    event.target.value,
+    $("searchResults")
+  );
+});
 
-      if ($("overlaySearch")) {
-
-        $("overlaySearch")
-          .focus();
-      }
-    };
-}
-
-
-if ($("searchClose")) {
-
-  $("searchClose").onclick =
-    () => {
-
-      if ($("searchOverlay")) {
-
-        $("searchOverlay")
-          .classList.remove("open");
-      }
-    };
-}
-
-
-if ($("overlaySearch")) {
-
-  $("overlaySearch").oninput =
-    event => {
-
-      search(
-        event.target.value,
-        $("overlayResults")
-      );
-    };
-}
-
-
-if ($("searchInput")) {
-
-  $("searchInput").oninput =
-    event => {
-
-      search(
-        event.target.value,
-        $("searchResults")
-      );
-    };
-}
-
+/* ESC fecha pesquisa */
+document.addEventListener("keydown", event => {
+  if (
+    event.key === "Escape" &&
+    $("searchOverlay")?.classList.contains("open")
+  ) {
+    $("searchOverlay").classList.remove("open");
+  }
+});
 
 /* =========================================================
    MENU MOBILE
 ========================================================= */
 
-if ($("mobileMenu")) {
-
-  $("mobileMenu").onclick =
-    () => {
-
-      if ($("sidebar")) {
-
-        $("sidebar")
-          .classList.toggle("open");
-      }
-    };
-}
-
+$("mobileMenu")?.addEventListener("click", () => {
+  $("sidebar")?.classList.toggle("open");
+});
 
 /* =========================================================
    HASH
 ========================================================= */
 
-window.addEventListener(
-  "hashchange",
-  () => {
-
-    route(
-      location.hash.replace("#", "") ||
-      "inicio"
-    );
-  }
-);
-
+window.addEventListener("hashchange", () => {
+  route(
+    location.hash.replace("#", "") ||
+    "inicio"
+  );
+});
 
 /* =========================================================
    CURSOR PERSONALIZADO
+   Mantém a LOGO no cursor + rastro.
 ========================================================= */
 
 function setupCursor() {
-
   const config =
     state.site?.cursor || {};
-
 
   const cursor =
     $("customCursor");
@@ -1182,229 +1127,127 @@ function setupCursor() {
   const dot =
     $("cursorDot");
 
+  if (!cursor) return;
 
-  /*
-    Se o cursor estiver desativado,
-    remove os elementos visuais.
-  */
+  if (config.enabled === false) {
+    document.documentElement.classList.remove(
+      "viena-cursor-active"
+    );
 
-  if (
-    config.enabled === false
-  ) {
-
-    if (cursor) {
-
-      cursor.style.display =
-        "none";
-    }
+    cursor.style.display = "none";
 
     if (dot) {
-
-      dot.style.display =
-        "none";
+      dot.style.display = "none";
     }
 
     return;
   }
 
+  document.documentElement.classList.add(
+    "viena-cursor-active"
+  );
 
-  if (!cursor) return;
-
-
-  /*
-    IMAGEM DO CURSOR
-
-    Prioridade:
-    1. imagem configurada no Admin
-    2. logo da cidade
-    3. logo padrão
-  */
+  cursor.style.display = "block";
 
   const cursorImage =
     assetUrl(config.image) ||
     assetUrl(state.site?.logo) ||
     "./logo-viena.png";
 
+  const size =
+    Math.max(
+      12,
+      Math.min(
+        96,
+        Number(config.size) || 34
+      )
+    );
 
+  cursor.style.width = `${size}px`;
+  cursor.style.height = `${size}px`;
   cursor.style.backgroundImage =
     `url("${cursorImage}")`;
 
+  const trailEnabled =
+    config.trail_enabled !== false;
 
-  /*
-    TAMANHO
-  */
+  const trailColor =
+    config.trail_color ||
+    "#e50914";
 
-  const size =
-    Number(config.size) || 34;
-
-
-  cursor.style.width =
-    `${size}px`;
-
-  cursor.style.height =
-    `${size}px`;
-
-
-  cursor.style.backgroundSize =
-    "contain";
-
-  cursor.style.backgroundPosition =
-    "center";
-
-  cursor.style.backgroundRepeat =
-    "no-repeat";
-
-
-  /*
-    NÃO DEIXA O CURSOR NATIVO
-    INTERFERIR
-  */
-
-  cursor.style.pointerEvents =
-    "none";
-
-
-  if (dot) {
-
-    dot.style.pointerEvents =
-      "none";
-  }
-
-
-  /*
-    POSIÇÃO
-  */
+  const trailCount =
+    Math.max(
+      2,
+      Math.min(
+        30,
+        Number(config.trail_count) || 10
+      )
+    );
 
   let mouseX = -100;
   let mouseY = -100;
-
   let cursorX = -100;
   let cursorY = -100;
+  let lastTrail = 0;
 
+  document.addEventListener("mousemove", event => {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
 
-  document.addEventListener(
-    "mousemove",
-    event => {
-
-      mouseX =
-        event.clientX;
-
-      mouseY =
-        event.clientY;
-
-
-      if (dot) {
-
-        dot.style.transform =
-          `translate3d(
-            ${mouseX}px,
-            ${mouseY}px,
-            0
-          )`;
-      }
-
-
-      createTrail(
-        mouseX,
-        mouseY
-      );
+    if (dot) {
+      dot.style.transform =
+        `translate3d(${mouseX}px, ${mouseY}px, 0)`;
     }
-  );
 
-
-  /*
-    MOVIMENTO SUAVE
-  */
+    createTrail(
+      mouseX,
+      mouseY
+    );
+  });
 
   function animateCursor() {
-
     cursorX +=
-      (mouseX - cursorX) *
-      0.18;
+      (mouseX - cursorX) * 0.20;
 
     cursorY +=
-      (mouseY - cursorY) *
-      0.18;
-
+      (mouseY - cursorY) * 0.20;
 
     cursor.style.transform =
-      `
-        translate3d(
-          ${cursorX - size / 2}px,
-          ${cursorY - size / 2}px,
-          0
-        )
-      `;
-
+      `translate3d(
+        ${cursorX - size / 2}px,
+        ${cursorY - size / 2}px,
+        0
+      )`;
 
     requestAnimationFrame(
       animateCursor
     );
   }
 
-
   animateCursor();
 
-
-  /*
-    RASTRO
-  */
-
-  const trailEnabled =
-    config.trail_enabled !== false;
-
-
-  const trailColor =
-    config.trail_color ||
-    "#e50914";
-
-
-  const trailCount =
-    Number(config.trail_count) ||
-    10;
-
-
-  let lastTrail =
-    0;
-
-
   function createTrail(x, y) {
-
     if (!trailEnabled) return;
 
-
-    const now =
-      Date.now();
-
-
-    /*
-      Evita criar partículas demais.
-    */
+    const now = Date.now();
 
     if (
       now - lastTrail <
-      35
+      Math.max(
+        18,
+        80 - trailCount * 2
+      )
     ) {
       return;
     }
 
-
-    lastTrail =
-      now;
-
+    lastTrail = now;
 
     const particle =
-      document.createElement(
-        "span"
-      );
-
+      document.createElement("span");
 
     particle.className =
       "cursor-trail";
-
-
-    particle.style.position =
-      "fixed";
 
     particle.style.left =
       `${x}px`;
@@ -1412,100 +1255,103 @@ function setupCursor() {
     particle.style.top =
       `${y}px`;
 
-    particle.style.width =
-      "5px";
-
-    particle.style.height =
-      "5px";
-
-    particle.style.borderRadius =
-      "50%";
-
     particle.style.background =
       trailColor;
 
-    particle.style.pointerEvents =
-      "none";
-
-    particle.style.zIndex =
-      "99998";
-
-    particle.style.transform =
-      "translate(-50%, -50%)";
-
-    particle.style.opacity =
-      "0.9";
-
-    particle.style.transition =
-      "opacity .5s ease, transform .5s ease";
-
+    particle.style.setProperty(
+      "--trail-size",
+      `${3 + Math.random() * 4}px`
+    );
 
     document.body.appendChild(
       particle
     );
 
+    requestAnimationFrame(() => {
+      particle.classList.add("fade");
+    });
 
-    requestAnimationFrame(
-      () => {
-
-        particle.style.opacity =
-          "0";
-
-        particle.style.transform =
-          "translate(-50%, -50%) scale(.2)";
-      }
-    );
-
-
-    setTimeout(
-      () => {
-
-        particle.remove();
-
-      },
-      550
-    );
+    setTimeout(() => {
+      particle.remove();
+    }, 650);
   }
 }
 
+/* =========================================================
+   LETRINHAS CAINDO
+========================================================= */
+
+function setupFallingLetters() {
+  const container =
+    $("fallingLetters");
+
+  if (!container) return;
+
+  const letters =
+    "VIENA • CÓDIGO DA RUA • RP • 01 • 02 • 03 • ";
+
+  const amount =
+    window.innerWidth < 700
+      ? 18
+      : 34;
+
+  container.innerHTML = "";
+
+  for (let i = 0; i < amount; i++) {
+    const span =
+      document.createElement("span");
+
+    span.className =
+      "falling-letter";
+
+    span.textContent =
+      letters[
+        Math.floor(
+          Math.random() * letters.length
+        )
+      ];
+
+    span.style.left =
+      `${Math.random() * 100}%`;
+
+    span.style.animationDuration =
+      `${8 + Math.random() * 15}s`;
+
+    span.style.animationDelay =
+      `${-Math.random() * 18}s`;
+
+    span.style.fontSize =
+      `${9 + Math.random() * 13}px`;
+
+    span.style.opacity =
+      `${0.04 + Math.random() * 0.09}`;
+
+    container.appendChild(
+      span
+    );
+  }
+}
 
 /* =========================================================
    ERRO DE CARREGAMENTO
 ========================================================= */
 
-load().catch(
-  error => {
+load().catch(error => {
+  console.error(
+    "Erro ao carregar o site:",
+    error
+  );
 
-    console.error(
-      "Erro ao carregar o site:",
-      error
-    );
-
-
-    document.body.insertAdjacentHTML(
-      "beforeend",
-      `
-        <div
-          style="
-            position:fixed;
-            bottom:0;
-            left:0;
-            right:0;
-            background:#e50914;
-            color:#fff;
-            padding:12px;
-            text-align:center;
-            z-index:999999;
-            font-family:Arial,sans-serif;
-          "
-        >
-          Não foi possível carregar o conteúdo.
-          Verifique se
-          content/site.json e
-          content/rules.json
-          foram enviados corretamente.
-        </div>
-      `
-    );
-  }
-);
+  document.body.insertAdjacentHTML(
+    "beforeend",
+    `
+      <div class="load-error">
+        Não foi possível carregar o conteúdo.
+        Verifique se
+        content/site.json e
+        content/rules.json
+        foram enviados corretamente.
+      </div>
+    `
+  );
+});

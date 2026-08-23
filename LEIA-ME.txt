@@ -1,65 +1,52 @@
-# VIENA — ATUALIZAÇÃO
+# VIENA — Atualização do Código da Rua
 
-Esta pasta contém os arquivos que devem substituir os arquivos atuais do site.
+Substitua os arquivos correspondentes:
 
-## Arquivos
+- `index.html` → raiz do projeto
+- `style.css` → raiz do projeto
+- `app.js` → raiz do projeto
+- `config.yml` → raiz do projeto
 
-- `index.html`
-- `style.css`
-- `app.js`
-- `admin/config.yml`
+## O que foi adicionado
 
-## IMPORTANTE
+1. Texto das regras com Markdown.
+2. Negrito com `**texto**`.
+3. Itálico com `*texto*`.
+4. Títulos com `#`, `##`, `###`.
+5. Listas com `-`.
+6. Listas numeradas com `1.`.
+7. Caixas especiais:
+   - `> ⚠️ **ATENÇÃO**`
+   - `> ℹ️ **OBSERVAÇÃO**`
+   - `> ❌ **PROIBIDO**`
+   - `> ✅ **PERMITIDO**`
+8. Botões `ANTERIOR` e `PRÓXIMA` no final de cada categoria.
+9. Botão `VOLTAR AO MAPA` entre eles.
+10. Letras/símbolos vermelhos caindo pela tela.
+11. Cursor com a logo configurada no Admin.
+12. Rastro do cursor preservado.
+13. Imagem da categoria NÃO aparece no Mapa da Rua.
+14. Campos do Admin configurados como opcionais.
+15. Se o ID da categoria ficar vazio, o site cria um ID automaticamente.
 
-NÃO substitua:
+## Exemplo para uma regra
 
-- `content/site.json`
-- `content/rules.json`
-- `uploads/`
+```md
+# ANTI RP
 
-Esses arquivos já possuem os dados e imagens cadastrados.
+Ter condutas que vão contra o bom andamento do RP.
 
-## O que foi corrigido
+> ⚠️ **ATENÇÃO**
+>
+> É proibido qualquer ato de corrupção na Polícia ou Hospital.
 
-### 1. Regra nova do Admin
+> ℹ️ **OBSERVAÇÃO**
+>
+> Organizações previamente aprovadas pela Administração poderão possuir RPs específicos.
 
-O `app.js` agora busca `site.json` e `rules.json` diretamente do GitHub RAW primeiro.
+- Respeite o contexto.
+- Preserve o RP.
+- Não abuse de permissões.
+```
 
-Isso evita que o GitHub Pages continue entregando uma versão antiga do JSON depois que você salva uma regra nova pelo Admin.
-
-### 2. Admin mais simples
-
-O texto da regra agora usa campo de texto simples em vez do editor Markdown avançado.
-
-Para criar uma regra:
-
-1. Abra `Regras`.
-2. Abra `Categorias e Regras`.
-3. Abra a categoria desejada.
-4. Abra `📌 Regras desta categoria`.
-5. Clique para adicionar uma regra.
-6. Preencha:
-   - Código
-   - Título
-   - Texto
-   - Tag
-   - Imagem opcional
-7. Salve.
-
-### 3. Imagem da capa
-
-A imagem escolhida em `Imagem de fundo da capa` continua sendo usada como imagem de fundo de toda a área inicial.
-
-### 4. Cursor
-
-O cursor continua usando a imagem escolhida no Admin e o rastro continua funcionando em todas as áreas da página.
-
-### 5. Navegação
-
-O cursor e os cliques funcionam no menu, cards, botões, pesquisa, resultados e índice das regras.
-
-## Não apague os dados atuais
-
-O objetivo desta atualização é trocar apenas a estrutura do site e do painel.
-
-As regras e imagens existentes devem permanecer nos arquivos atuais.
+Não precisa mexer no JavaScript para criar novas regras. Depois de publicar pelo Admin, o site lê o `content/rules.json` automaticamente.
