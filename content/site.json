@@ -25,7 +25,7 @@
     "show_search": false,
     "show_updates": false,
     "show_notice": false,
-    "show_hero_image": false,
+    "show_hero_image": true,
     "show_admin_link": false
   },
   "cursor": {
