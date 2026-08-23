@@ -31,7 +31,7 @@
   "cursor": {
     "enabled": true,
     "image": "/uploads/SPRAY PNG.png",
-    "size": 25,
+    "size": 30,
     "trail_enabled": true,
     "trail_color": "#e60a0a",
     "trail_count": 14
