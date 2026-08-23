@@ -267,6 +267,24 @@
           "title": "Drop Policial",
           "text": "O chamado **drop** contra policiais somente poderá ocorrer dentro das condições permitidas para a situação.\n\n**Regra:**\n- O drop contra policiais somente poderá ser realizado **3 minutos após a voz de parada**.\n- A situação deverá possuir contexto de RP.\n- O início do confronto não poderá ocorrer apenas com o objetivo de forçar um PVP.\n\n> 🚨 ATENÇÃO\n> O tempo é contado a partir do momento em que a **voz de parada é realizada**, respeitando as demais regras de abordagem e confronto.",
           "tag": "POLÍCIA"
+        },
+        {
+          "code": "03.10",
+          "title": "Armas em Abordagens",
+          "text": "A presença de um indivíduo armado pode alterar o nível de risco de uma abordagem, porém a polícia deverá considerar **quantidade, contexto e risco à vida** antes de iniciar um confronto.\n\n**Durante a abordagem:**\n- Um indivíduo armado poderá representar situação de risco.\n- O policial deverá avaliar a quantidade de agentes presentes.\n- Quando houver superioridade policial, deverá ser dada voz e oportunidade para que o indivíduo obedeça.\n- Em situações equilibradas, poderá ocorrer confronto caso os requisitos da abordagem sejam atendidos.\n- Quando a quantidade de indivíduos armados for superior à policial, deverá ser solicitado suporte.\n\n> ⚠️ ATENÇÃO\n> Estar armado **não significa que o policial deverá iniciar um confronto automaticamente**. A conduta deverá respeitar o contexto da abordagem e as regras de **Amor à Vida**.",
+          "tag": "POLÍCIA"
+        },
+        {
+          "code": "03.11",
+          "title": "Reload Completo",
+          "text": "Durante um confronto, o carregamento da arma deverá ser realizado de forma completa.\n\n**É proibido:**\n- Cancelar propositalmente a animação de reload.\n- Manipular o carregamento para obter vantagem.\n- Interromper o reload para utilizar a arma imediatamente de maneira indevida.\n\n> ❌ PROIBIDO\n> O reload deve ser concluído por completo antes que a arma volte a ser utilizada.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "03.12",
+          "title": "Gravação de Ações",
+          "text": "Ações de rua e ações blipadas devem ser registradas em vídeo pelos participantes quando houver possibilidade de solicitação ou necessidade de análise administrativa.\n\n**Regras:**\n- A gravação deve acompanhar a ação de forma suficiente para demonstrar o contexto.\n- Caso a Staff solicite a gravação para alinhamento ou análise, o jogador deverá apresentá-la.\n- A ausência da gravação quando ela for necessária poderá dificultar a defesa da situação.\n\n> 📌 OBSERVAÇÃO\n> Em situações de denúncia, a gravação deve permitir compreender **o que aconteceu antes, durante e depois da ocorrência**, evitando cortes que retirem o contexto da situação.",
+          "tag": "AÇÃO"
         }
       ]
     },
