@@ -246,13 +246,13 @@
         },
         {
           "code": "03.06",
-          "title": "PERÍMETRO FECHADO",
-          "text": "O perímetro fechado representa uma área sob controle da polícia durante uma ocorrência.\n\n**Enquanto o perímetro estiver fechado:**\n- É proibido resgatar corpos.\n- É proibido retornar à ação após ser abatido.\n- É proibido eliminar oficiais exclusivamente para possibilitar um resgate.\n- Jogadores que entrarem na área devem estar cientes dos riscos envolvidos.\n\nO resgate de corpos somente poderá ocorrer **após a polícia finalizar os procedimentos e deixar o local**.\n\n> 🚨 REGRA DE PERÍMETRO\n> Enquanto o perímetro estiver fechado, **a prioridade é a ocorrência em andamento**. Interferências externas poderão ser tratadas como uma nova situação de risco.",
+          "title": "Perímetro Fechado",
+          "text": "O perímetro fechado representa uma área sob controle da polícia durante uma ocorrência.\n\n**Enquanto o perímetro estiver fechado:**\n- É proibido resgatar corpos.\n- É proibido retornar à ação após ser abatido.\n- É proibido eliminar oficiais exclusivamente para possibilitar um resgate.\n- Jogadores que entrarem na área devem estar cientes dos riscos envolvidos.\n\nO resgate de corpos somente poderá ocorrer **após a polícia finalizar os procedimentos e deixar o local**.\n\n> 🚨 **REGRA DE PERÍMETRO**\n> Enquanto o perímetro estiver fechado, **a prioridade é a ocorrência em andamento**. Interferências externas poderão ser tratadas como uma nova situação de risco.",
           "tag": "AÇÃO"
         },
         {
           "code": "03.07",
-          "title": "PERÍMETRO ABERTO",
+          "title": "Perímetro Aberto",
           "text": "Após a polícia anunciar a abertura do perímetro, a região passa a ser considerada **área de risco**.\n\n**Regras:**\n- O resgate de corpos passa a ser permitido, respeitando os riscos do local.\n- Jogadores abatidos durante a ação não podem retornar imediatamente à ocorrência.\n- Caso a polícia ainda esteja realizando procedimentos no local, o resgate deverá aguardar a finalização.\n- A abertura do perímetro não autoriza automaticamente novos confrontos.\n\n> ⚠️ OBSERVAÇÃO\n> Em comunidades ou áreas consideradas de risco, a abertura do perímetro será válida para toda a área correspondente, respeitando as determinações da ocorrência.",
           "tag": "AÇÃO"
         },
