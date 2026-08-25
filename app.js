@@ -3,281 +3,62 @@ const state = {
   data: null
 };
 
+
 /* =========================================================
    UTILIDADES
 ========================================================= */
 
 const $ = id => document.getElementById(id);
 
-function escapeHtml(value){
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-}
 
-function escapeAttr(value){
-  return escapeHtml(value).replace(/`/g,"&#096;");
-}
+/*
+  Corrige caminhos de imagens vindos do Admin.
 
-function assetUrl(path){
-  if(!path) return "";
-  const value = String(path).trim();
+  O Sveltia salva normalmente:
+  /uploads/imagem.png
 
-  if(
-    value.startsWith("http://") ||
-    value.startsWith("https://") ||
-    value.startsWith("data:")
-  ){
-    return value;
+  No GitHub Pages precisamos:
+  ./uploads/imagem.png
+*/
+function assetUrl(path) {
+
+  if (!path) return "";
+
+  if (
+    path.startsWith("http://") ||
+    path.startsWith("https://") ||
+    path.startsWith("data:")
+  ) {
+    return path;
   }
 
-  /* Sveltia salva /uploads/arquivo.png.
-     No GitHub Pages usamos ./uploads/arquivo.png */
-  return value.replace(/^\/+/,"./");
+  return path.replace(/^\/+/, "./");
 }
 
-function slugify(value){
-  return String(value || "")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g,"")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g,"-")
-    .replace(/^-+|-+$/g,"")
-    .slice(0,80);
-}
-
-/* Nunca dependa de id preenchido no Admin.
-   Se estiver vazio, cria automaticamente. */
-function categoryId(category,index){
-  return String(
-    category?.id ||
-    slugify(category?.name || category?.short) ||
-    `categoria-${index+1}`
-  );
-}
-
-function categoryIndexById(id){
-  return (state.data?.categories || []).findIndex(
-    (category,index) => categoryId(category,index) === String(id)
-  );
-}
-
-/* =========================================================
-   MARKDOWN SIMPLES
-   Suporta:
-   **negrito**
-   *itálico*
-   # títulos
-   - listas
-   1. listas numeradas
-   > caixas
-========================================================= */
-
-function inlineMarkdown(value){
-  let text = escapeHtml(value);
-
-  text = text.replace(
-    /!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g,
-    '<img src="$2" alt="$1" class="md-inline-image">'
-  );
-
-  text = text.replace(
-    /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-    '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
-  );
-
-  text = text.replace(/`([^`]+)`/g,"<code>$1</code>");
-  text = text.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>");
-  text = text.replace(/__([^_]+)__/g,"<strong>$1</strong>");
-  text = text.replace(
-    /(^|[^\*])\*([^*]+)\*(?!\*)/g,
-    "$1<em>$2</em>"
-  );
-  text = text.replace(
-    /(^|[^_])_([^_]+)_(?!_)/g,
-    "$1<em>$2</em>"
-  );
-
-  return text;
-}
-
-function renderMarkdown(markdown){
-  if(!markdown) return "";
-
-  const lines = String(markdown)
-    .replace(/\r\n/g,"\n")
-    .split("\n");
-
-  const output = [];
-  let inList = false;
-  let listType = null;
-  let inQuote = false;
-  let quoteLines = [];
-
-  function closeList(){
-    if(!inList) return;
-    output.push(listType === "ol" ? "</ol>" : "</ul>");
-    inList = false;
-    listType = null;
-  }
-
-  function closeQuote(){
-    if(!inQuote) return;
-
-    const raw = quoteLines.join("\n").trim();
-
-    let type = "info";
-    let icon = "ℹ";
-    let title = "OBSERVAÇÃO";
-
-    if(/^(⚠️|⚠|ATENÇÃO|ATENCAO)/i.test(raw)){
-      type = "warning";
-      icon = "⚠";
-      title = "ATENÇÃO";
-    }else if(/^(❌|⛔|PROIBIDO|ERRO)/i.test(raw)){
-      type = "danger";
-      icon = "!";
-      title = "PROIBIDO";
-    }else if(/^(✅|PERMITIDO|OK)/i.test(raw)){
-      type = "success";
-      icon = "✓";
-      title = "PERMITIDO";
-    }
-
-    let content = raw
-      .replace(/^(⚠️|⚠|ℹ️|❌|⛔|✅)\s*/u,"")
-      .replace(
-        /^(ATENÇÃO|ATENCAO|OBSERVAÇÃO|OBSERVACAO|PROIBIDO|PERMITIDO|ERRO|OK)\s*:?\s*/i,
-        ""
-      )
-      .trim();
-
-    const firstLine = content.split("\n")[0] || "";
-    const titleMatch = firstLine.match(/^\*\*(.+?)\*\*:?\s*(.*)$/);
-
-    if(titleMatch){
-      title = titleMatch[1];
-      content = [
-        titleMatch[2],
-        ...content.split("\n").slice(1)
-      ].filter(Boolean).join("\n");
-    }
-
-    output.push(`
-      <div class="rule-callout ${type}">
-        <div class="callout-icon">${icon}</div>
-        <div class="callout-content">
-          <strong>${escapeHtml(title)}</strong>
-          ${content ? `<div>${renderMarkdown(content)}</div>` : ""}
-        </div>
-      </div>
-    `);
-
-    inQuote = false;
-    quoteLines = [];
-  }
-
-  for(const line of lines){
-    const trimmed = line.trim();
-
-    if(trimmed.startsWith(">")){
-      closeList();
-
-      if(!inQuote){
-        inQuote = true;
-        quoteLines = [];
-      }
-
-      quoteLines.push(trimmed.replace(/^>\s?/,""));
-      continue;
-    }
-
-    if(inQuote) closeQuote();
-
-    if(!trimmed){
-      closeList();
-      continue;
-    }
-
-    const heading = trimmed.match(/^(#{1,4})\s+(.+)$/);
-
-    if(heading){
-      closeList();
-      const level = heading[1].length;
-      output.push(
-        `<h${level+2} class="md-heading">${inlineMarkdown(heading[2])}</h${level+2}>`
-      );
-      continue;
-    }
-
-    const unordered = trimmed.match(/^[-*+]\s+(.+)$/);
-
-    if(unordered){
-      if(!inList || listType !== "ul"){
-        closeList();
-        output.push("<ul>");
-        inList = true;
-        listType = "ul";
-      }
-
-      output.push(`<li>${inlineMarkdown(unordered[1])}</li>`);
-      continue;
-    }
-
-    const ordered = trimmed.match(/^\d+\.\s+(.+)$/);
-
-    if(ordered){
-      if(!inList || listType !== "ol"){
-        closeList();
-        output.push("<ol>");
-        inList = true;
-        listType = "ol";
-      }
-
-      output.push(`<li>${inlineMarkdown(ordered[1])}</li>`);
-      continue;
-    }
-
-    closeList();
-    output.push(`<p>${inlineMarkdown(line)}</p>`);
-  }
-
-  if(inQuote) closeQuote();
-  closeList();
-
-  return output.join("");
-}
 
 /* =========================================================
    CARREGAMENTO
 ========================================================= */
 
-async function load(){
-  const [siteResponse,rulesResponse] = await Promise.all([
-    fetch("./content/site.json").then(r => {
-      if(!r.ok) throw new Error("content/site.json não encontrado");
-      return r.json();
-    }),
-    fetch("./content/rules.json").then(r => {
-      if(!r.ok) throw new Error("content/rules.json não encontrado");
-      return r.json();
-    })
-  ]);
+async function load() {
+
+  const [siteResponse, rulesResponse] =
+    await Promise.all([
+      fetch("./content/site.json").then(r => r.json()),
+      fetch("./content/rules.json").then(r => r.json())
+    ]);
 
   state.site = siteResponse || {};
   state.data = rulesResponse || {
-    categories:[],
-    updates:[]
+    categories: [],
+    updates: []
   };
 
-  if(!Array.isArray(state.data.categories)){
+  if (!Array.isArray(state.data.categories)) {
     state.data.categories = [];
   }
 
-  if(!Array.isArray(state.data.updates)){
+  if (!Array.isArray(state.data.updates)) {
     state.data.updates = [];
   }
 
@@ -285,869 +66,1396 @@ async function load(){
   renderNav();
   renderHome();
   setupCursor();
-  setupFallingLetters();
 
-  route(location.hash.replace("#","") || "inicio");
+  route(
+    location.hash.replace("#", "") || "inicio"
+  );
 }
 
+
 /* =========================================================
-   CONFIGURAÇÕES DO SITE
+   SITE / CONFIGURAÇÕES
 ========================================================= */
 
-function applySite(){
+function applySite() {
+
   const s = state.site || {};
   const t = s.theme || {};
 
-  for(const [key,value] of Object.entries(t)){
-    if(!value) continue;
+  /*
+    CORES
+  */
+
+  for (const [key, value] of Object.entries(t)) {
+
+    if (!value) continue;
 
     document.documentElement.style.setProperty(
-      "--" + (key === "accent_light" ? "accent2" : key),
+      "--" +
+      (
+        key === "accent_light"
+          ? "accent2"
+          : key
+      ),
       value
     );
   }
 
-  const logo = assetUrl(s.logo) || "./logo-viena.png";
 
-  if($("headerLogo")){
+  /*
+    LOGO
+  */
+
+  const logo =
+    assetUrl(s.logo) ||
+    "./logo-viena.png";
+
+  if ($("headerLogo")) {
+
     $("headerLogo").src = logo;
-    $("headerLogo").alt = s.site_name || "Viena Roleplay";
+
+    $("headerLogo").alt =
+      s.site_name ||
+      "Viena Roleplay";
   }
 
-  if($("favicon")){
-    $("favicon").href = assetUrl(s.favicon) || logo;
+
+  /*
+    FAVICON
+  */
+
+  if ($("favicon")) {
+
+    $("favicon").href =
+      assetUrl(s.favicon) ||
+      logo;
   }
 
-  if($("brandTitle")){
-    $("brandTitle").textContent = s.site_title || "CÓDIGO DA RUA";
+
+  /*
+    TÍTULOS
+  */
+
+  if ($("brandTitle")) {
+
+    $("brandTitle").textContent =
+      s.site_title ||
+      "CÓDIGO DA RUA";
   }
 
-  if($("brandSite")){
+  if ($("brandSite")) {
+
     $("brandSite").textContent =
-      (s.site_name || "VIENA ROLEPLAY").toUpperCase();
+      (
+        s.site_name ||
+        "VIENA ROLEPLAY"
+      ).toUpperCase();
   }
 
-  if($("heroEyebrow")){
-    $("heroEyebrow").textContent = s.hero_eyebrow || "";
+
+  /*
+    HERO
+  */
+
+  if ($("heroEyebrow")) {
+
+    $("heroEyebrow").textContent =
+      s.hero_eyebrow ||
+      "";
   }
 
-  if($("heroTitle")){
-    $("heroTitle").textContent = s.hero_title || "";
+  if ($("heroTitle")) {
+
+    $("heroTitle").textContent =
+      s.hero_title ||
+      "";
   }
 
-  if($("heroText")){
-    $("heroText").textContent = s.hero_text || "";
+  if ($("heroText")) {
+
+    $("heroText").textContent =
+      s.hero_text ||
+      "";
   }
 
-  if($("noticeTitle")){
-    $("noticeTitle").textContent = s.notice_title || "";
+
+  /*
+    AVISO
+  */
+
+  if ($("noticeTitle")) {
+
+    $("noticeTitle").textContent =
+      s.notice_title ||
+      "";
   }
 
-  if($("noticeText")){
-    $("noticeText").textContent = s.notice_text || "";
+  if ($("noticeText")) {
+
+    $("noticeText").textContent =
+      s.notice_text ||
+      "";
   }
 
-  if($("footerText")){
-    $("footerText").textContent = s.footer_text || "";
+
+  /*
+    RODAPÉ
+  */
+
+  if ($("footerText")) {
+
+    $("footerText").textContent =
+      s.footer_text ||
+      "";
   }
 
-  if($("discordBtn")){
-    $("discordBtn").href = s.discord_url || "#";
+
+  /*
+    DISCORD
+  */
+
+  if ($("discordBtn")) {
+
+    $("discordBtn").href =
+      s.discord_url ||
+      "#";
+
+    $("discordBtn").target =
+      "_blank";
+
+    $("discordBtn").rel =
+      "noopener noreferrer";
   }
 
-  /* PESQUISA: fica sempre disponível no site.
-     O botão não pode desaparecer por causa de um valor antigo
-     ou ausente no site.json. */
-  const layout = { show_search:true, ...(s.layout || {}) };
-  layout.show_search = true;
 
-  if($("notice")){
+  /*
+    ELEMENTOS VISÍVEIS
+  */
+
+  const layout =
+    s.layout || {};
+
+
+  if ($("notice")) {
+
     $("notice").style.display =
-      layout.show_notice === false ? "none" : "flex";
+      layout.show_notice === false
+        ? "none"
+        : "flex";
   }
 
-  if($("updatesWrap")){
+
+  if ($("updatesWrap")) {
+
     $("updatesWrap").style.display =
-      layout.show_updates === false ? "none" : "block";
+      layout.show_updates === false
+        ? "none"
+        : "block";
   }
 
-  if($("searchOpen")){
+
+  if ($("searchOpen")) {
+
     $("searchOpen").style.display =
-      layout.show_search === false ? "none" : "block";
+      layout.show_search === false
+        ? "none"
+        : "block";
   }
 
-  /* HERO: imagem fica no fundo, nunca em card separado */
-  const hero = $("hero");
-  const heroImage = assetUrl(s.hero_image);
 
-  if(hero){
-    if(heroImage && layout.show_hero_image !== false){
-      hero.style.setProperty("--hero-image",`url("${heroImage}")`);
-      hero.classList.add("has-image");
-    }else{
-      hero.style.setProperty("--hero-image","none");
-      hero.classList.remove("has-image");
-    }
+  /*
+    IMAGEM DA CAPA
+  */
+
+  const heroImage =
+    assetUrl(s.hero_image);
+
+
+  /*
+    Mantém a imagem como fundo da área HERO.
+    Isso evita transformar a imagem em um card
+    separado.
+  */
+
+  const hero =
+    document.querySelector(".hero");
+
+
+  if (
+    hero &&
+    heroImage &&
+    layout.show_hero_image !== false
+  ) {
+
+    hero.style.backgroundImage =
+      `url("${heroImage}")`;
+
+    hero.classList.add(
+      "has-hero-background"
+    );
+  }
+
+
+  /*
+    Mantém o elemento antigo escondido.
+    A imagem agora fica no fundo.
+  */
+
+  if ($("heroArt")) {
+
+    $("heroArt").style.display =
+      "none";
+  }
+
+
+  /*
+    Caso exista heroImage no HTML,
+    também atualiza para manter compatibilidade.
+  */
+
+  if ($("heroImage") && heroImage) {
+
+    $("heroImage").src =
+      heroImage;
   }
 }
+
 
 /* =========================================================
    MENU LATERAL
 ========================================================= */
 
-function renderNav(){
+function renderNav() {
+
   const nav = $("nav");
-  if(!nav) return;
+  if (!nav) return;
 
-  nav.innerHTML = state.data.categories.map((category,index) => {
-    const id = categoryId(category,index);
-    const code = category.code || String(index+1).padStart(2,"0");
-    const short =
-      category.short ||
-      category.name ||
-      `Categoria ${index+1}`;
+  nav.innerHTML = state.data.categories.map(category => {
+    const id = category.id || "";
+    const code = category.code || "";
+    const short = category.short || category.name || "";
+    const subcategories = Array.isArray(category.subcategories)
+      ? category.subcategories
+      : [];
 
-    return `
-      <button
-        data-route="${escapeAttr(id)}"
-        type="button"
-      >
-        <span>${escapeHtml(code)}</span>
-        ${escapeHtml(short)}
-      </button>
-    `;
-  }).join("");
-}
-
-/* =========================================================
-   MAPA DA RUA
-   A IMAGEM DA CATEGORIA NÃO APARECE AQUI.
-========================================================= */
-
-function renderHome(){
-  const home = $("homeCategories");
-
-  if(home){
-    home.innerHTML = state.data.categories.map((category,index) => {
-      const id = categoryId(category,index);
-      const code =
-        category.code ||
-        String(index+1).padStart(2,"0");
-
-      const title =
-        category.short ||
-        category.name ||
-        `Categoria ${index+1}`;
-
-      const description = category.desc || "";
-
+    if (!subcategories.length) {
       return `
-        <article
-          class="cat-card"
-          data-route="${escapeAttr(id)}"
-          tabindex="0"
-          role="button"
-        >
-          <div class="num">${escapeHtml(code)} / VIENA</div>
-          <h3>${escapeHtml(title)}</h3>
-          ${description ? `<p>${escapeHtml(description)}</p>` : ""}
-        </article>
+        <button data-route="${id}" type="button" class="nav-category">
+          <span>${code}</span>
+          ${short}
+        </button>
       `;
-    }).join("");
-
-    home.querySelectorAll(".cat-card").forEach(card => {
-      card.addEventListener("keydown",event => {
-        if(event.key === "Enter" || event.key === " "){
-          event.preventDefault();
-          card.click();
-        }
-      });
-    });
-  }
-
-  const updatesList = $("updatesList");
-  if(!updatesList) return;
-
-  updatesList.innerHTML = (state.data.updates || []).map(item => {
-    const date = item.date || "";
-    const title = item.title || "";
-    const text = item.text || "";
-    const tag = item.tag || "";
+    }
 
     return `
-      <div class="update">
-        ${date ? `<time>${escapeHtml(date)}</time>` : "<time></time>"}
-        ${
-          title || text
-            ? `<strong>${escapeHtml(title)}${title && text ? " — " : ""}${escapeHtml(text)}</strong>`
-            : "<strong></strong>"
-        }
-        ${tag ? `<span>${escapeHtml(tag)}</span>` : "<span></span>"}
+      <div class="nav-category-group" data-category-group="${id}">
+        <button
+          class="nav-category nav-category-toggle"
+          type="button"
+          data-toggle-category="${id}"
+          aria-expanded="false"
+        >
+          <span>${code}</span>
+          ${short}
+          <b class="nav-chevron">⌄</b>
+        </button>
+
+        <div class="nav-subcategories" data-subnav="${id}">
+          ${subcategories.map((sub, subIndex) => {
+            const subId = sub.id || `sub-${subIndex + 1}`;
+            const subName = sub.name || sub.title || `Subcategoria ${subIndex + 1}`;
+            const icon = sub.icon || "◈";
+            const rules = Array.isArray(sub.rules) ? sub.rules : [];
+
+            return `
+              <div class="nav-subcategory">
+                <button
+                  type="button"
+                  class="nav-subcategory-head"
+                  data-toggle-subcategory="${id}::${subId}"
+                  aria-expanded="false"
+                >
+                  <span class="nav-sub-icon">${icon}</span>
+                  <span class="nav-sub-name">${subName}</span>
+                  <span class="nav-sub-chevron">⌄</span>
+                </button>
+
+                <div class="nav-sub-rules" data-subrules="${id}::${subId}">
+                  ${rules.map((rule, ruleIndex) => `
+                    <button
+                      type="button"
+                      class="nav-rule-link"
+                      data-rule-route="${id}::${subId}::${ruleIndex}"
+                    >
+                      <span>${rule.code || String(ruleIndex + 1).padStart(2, "0")}</span>
+                      ${rule.title || "Regra"}
+                    </button>
+                  `).join("")}
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
       </div>
     `;
   }).join("");
+
+  nav.querySelectorAll("[data-toggle-category]").forEach(button => {
+    button.addEventListener("click", () => {
+      const id = button.dataset.toggleCategory;
+      const box = nav.querySelector(`[data-subnav="${CSS.escape(id)}"]`);
+      const open = button.getAttribute("aria-expanded") === "true";
+
+      nav.querySelectorAll("[data-toggle-category]").forEach(other => {
+        other.setAttribute("aria-expanded", "false");
+        const otherId = other.dataset.toggleCategory;
+        const otherBox = nav.querySelector(`[data-subnav="${CSS.escape(otherId)}"]`);
+        if (otherBox) otherBox.classList.remove("open");
+      });
+
+      if (!open && box) {
+        button.setAttribute("aria-expanded", "true");
+        box.classList.add("open");
+      }
+    });
+  });
+
+  nav.querySelectorAll("[data-toggle-subcategory]").forEach(button => {
+    button.addEventListener("click", () => {
+      const key = button.dataset.toggleSubcategory;
+      const box = nav.querySelector(`[data-subrules="${CSS.escape(key)}"]`);
+      const open = button.getAttribute("aria-expanded") === "true";
+
+      button.setAttribute("aria-expanded", String(!open));
+      if (box) box.classList.toggle("open", !open);
+    });
+  });
+
+  nav.querySelectorAll("[data-rule-route]").forEach(button => {
+    button.addEventListener("click", event => {
+      event.preventDefault();
+      const [categoryId, subId, ruleIndex] = button.dataset.ruleRoute.split("::");
+      route(categoryId, { subId, ruleIndex: Number(ruleIndex) });
+      history.replaceState(null, "", `#${categoryId}`);
+    });
+  });
 }
+
+
+/* =========================================================
+   MAPA DA RUA
+========================================================= */
+
+function renderHome() {
+
+  /*
+    IMPORTANTE:
+
+    AQUI NÃO EXISTE MAIS <img>.
+
+    A imagem cadastrada na categoria NÃO aparece
+    no mapa.
+
+    O mapa mostra somente:
+    - código
+    - nome
+    - descrição
+  */
+
+  const home =
+    $("homeCategories");
+
+  if (home) {
+
+    home.innerHTML =
+      state.data.categories
+        .map(c => {
+
+          const id =
+            c.id || "";
+
+          const code =
+            c.code || "";
+
+          const title =
+            c.short ||
+            c.name ||
+            "";
+
+          const description =
+            c.desc ||
+            "";
+
+          return `
+            <article
+              class="cat-card"
+              data-route="${id}"
+            >
+
+              <div class="num">
+                ${code} / VIENA
+              </div>
+
+              <h3>
+                ${title}
+              </h3>
+
+              ${
+                description
+                  ? `
+                    <p>
+                      ${description}
+                    </p>
+                  `
+                  : ""
+              }
+
+            </article>
+          `;
+        })
+        .join("");
+  }
+
+
+  /*
+    ÚLTIMAS ALTERAÇÕES
+  */
+
+  const updatesList =
+    $("updatesList");
+
+  if (!updatesList) return;
+
+  updatesList.innerHTML =
+    (state.data.updates || [])
+      .map(item => {
+
+        const date =
+          item.date || "";
+
+        const title =
+          item.title || "";
+
+        const text =
+          item.text || "";
+
+        const tag =
+          item.tag || "";
+
+        return `
+          <div class="update">
+
+            ${
+              date
+                ? `
+                  <time>
+                    ${date}
+                  </time>
+                `
+                : ""
+            }
+
+            ${
+              title || text
+                ? `
+                  <strong>
+                    ${title}
+                    ${
+                      title && text
+                        ? " — "
+                        : ""
+                    }
+                    ${text}
+                  </strong>
+                `
+                : ""
+            }
+
+            ${
+              tag
+                ? `
+                  <span>
+                    ${tag}
+                  </span>
+                `
+                : ""
+            }
+
+          </div>
+        `;
+      })
+      .join("");
+}
+
 
 /* =========================================================
    TODAS AS REGRAS
 ========================================================= */
 
-function allRules(){
-  return state.data.categories.flatMap((category,categoryIndex) => {
-    const rules = Array.isArray(category.rules)
-      ? category.rules
+function allRules() {
+
+  return state.data.categories.flatMap(category => {
+    const normalRules = Array.isArray(category.rules)
+      ? category.rules.map((rule, index) => ({
+          cat: category,
+          subcategory: null,
+          ruleIndex: index,
+          ...rule
+        }))
       : [];
 
-    return rules.map((rule,ruleIndex) => ({
-      cat:category,
-      catIndex:categoryIndex,
-      ruleIndex,
-      ...rule
-    }));
+    const subRules = Array.isArray(category.subcategories)
+      ? category.subcategories.flatMap(subcategory => {
+          const rules = Array.isArray(subcategory.rules)
+            ? subcategory.rules
+            : [];
+
+          return rules.map((rule, index) => ({
+            cat: category,
+            subcategory,
+            ruleIndex: index,
+            ...rule
+          }));
+        })
+      : [];
+
+    return [...normalRules, ...subRules];
   });
 }
+
 
 /* =========================================================
    PÁGINA DA CATEGORIA
 ========================================================= */
 
-function renderCategory(id){
-  const categoryIndex = categoryIndexById(id);
+function renderCategory(id, focus = {}) {
 
-  if(categoryIndex < 0) return;
+  const category = state.data.categories.find(item => item.id === id);
+  if (!category) return;
 
-  const category = state.data.categories[categoryIndex];
-
-  if($("catCode")){
-    $("catCode").textContent =
-      category.code ? `CÓDIGO ${category.code}` : "";
+  if ($("catCode")) {
+    $("catCode").textContent = category.code ? `CÓDIGO ${category.code}` : "";
   }
 
-  if($("catTitle")){
-    $("catTitle").textContent =
-      category.name ||
-      category.short ||
-      `Categoria ${categoryIndex+1}`;
+  if ($("catTitle")) {
+    $("catTitle").textContent = category.name || category.short || "";
   }
 
-  if($("catDesc")){
+  if ($("catDesc")) {
     $("catDesc").textContent = category.desc || "";
   }
 
-  /* Imagem da categoria:
-     NÃO vai para o mapa.
-     Aqui ela fica como fundo da capa da categoria. */
   const categoryImage = assetUrl(category.image);
-  const categoryHero = $("categoryHero");
-
-  if(categoryHero){
-    if(categoryImage){
-      categoryHero.style.setProperty(
-        "--category-image",
-        `url("${categoryImage}")`
-      );
-      categoryHero.classList.add("has-image");
-    }else{
-      categoryHero.style.setProperty("--category-image","none");
-      categoryHero.classList.remove("has-image");
+  if ($("catImage")) {
+    if (categoryImage) {
+      $("catImage").src = categoryImage;
+      $("catImage").hidden = false;
+    } else {
+      $("catImage").hidden = true;
+      $("catImage").removeAttribute("src");
     }
   }
 
-  const rules = Array.isArray(category.rules)
-    ? category.rules
-    : [];
+  const categoryHero = $("categoryHero");
+  if (categoryHero) {
+    if (categoryImage) {
+      categoryHero.style.backgroundImage = `url("${categoryImage}")`;
+      categoryHero.classList.add("has-category-background");
+    } else {
+      categoryHero.style.backgroundImage = "";
+      categoryHero.classList.remove("has-category-background");
+    }
+  }
+
+  const normalRules = Array.isArray(category.rules) ? category.rules : [];
+  const subcategories = Array.isArray(category.subcategories) ? category.subcategories : [];
+
+  const sections = [];
+
+  if (normalRules.length) {
+    sections.push({
+      id: "geral",
+      name: "REGRAS GERAIS",
+      icon: "◈",
+      rules: normalRules,
+      type: "normal"
+    });
+  }
+
+  subcategories.forEach((subcategory, index) => {
+    sections.push({
+      id: subcategory.id || `sub-${index + 1}`,
+      name: subcategory.name || subcategory.title || `SUBCATEGORIA ${index + 1}`,
+      icon: subcategory.icon || "◈",
+      rules: Array.isArray(subcategory.rules) ? subcategory.rules : [],
+      type: "subcategory"
+    });
+  });
+
+  const allSectionRules = sections.flatMap(section =>
+    section.rules.map((rule, index) => ({ ...rule, section, index }))
+  );
 
   const ruleList = $("ruleList");
-
-  if(ruleList){
-    if(!rules.length){
-      ruleList.innerHTML = `
-        <div class="empty-rules">
-          <strong>NENHUMA REGRA CADASTRADA</strong>
-          <p>Esta categoria ainda não possui regras publicadas.</p>
+  if (ruleList) {
+    ruleList.innerHTML = sections.map(section => `
+      <section class="rule-section" id="section-${section.id}">
+        <div class="rule-section-head">
+          <div class="rule-section-icon">${section.icon}</div>
+          <div>
+            <span class="rule-section-label">VIENA / ${category.short || category.name || "CATEGORIA"}</span>
+            <h2>${section.name}</h2>
+          </div>
         </div>
-      `;
-    }else{
-      ruleList.innerHTML = rules.map((rule,index) => {
-        const code = rule.code || "";
-        const title = rule.title || "";
-        const text = rule.text || "";
-        const tag = rule.tag || "";
-        const image = assetUrl(rule.image);
 
-        return `
-          <article class="rule" id="rule-${index}">
-            <div class="rule-top">
-              <div class="rule-num">${escapeHtml(code)}</div>
+        ${section.rules.length
+          ? section.rules.map((rule, index) => {
+              const code = rule.code || "";
+              const title = rule.title || "";
+              const text = rule.text || "";
+              const tag = rule.tag || "";
+              const image = assetUrl(rule.image);
+              const ruleId = `rule-${section.id}-${index}`;
 
-              <div class="rule-content">
-                ${title ? `<h3>${escapeHtml(title)}</h3>` : ""}
-                ${text ? `<div class="rule-markdown">${renderMarkdown(text)}</div>` : ""}
-                ${tag ? `<span class="tag">${escapeHtml(tag)}</span>` : ""}
-                ${
-                  image
-                    ? `<img class="rule-image"
-                              src="${escapeAttr(image)}"
-                              alt=""
-                              loading="lazy"
-                              onerror="this.style.display='none'">`
-                    : ""
-                }
-              </div>
-            </div>
-          </article>
-        `;
-      }).join("");
-    }
+              return `
+                <article class="rule" id="${ruleId}">
+                  <div class="rule-top">
+                    <div class="rule-num">${code}</div>
+                    <div>
+                      ${title ? `<h3>${title}</h3>` : ""}
+                      ${text ? `<p>${text}</p>` : ""}
+                      ${tag ? `<span class="tag">${tag}</span>` : ""}
+                      ${image ? `<br><img class="rule-image" src="${image}" alt="">` : ""}
+                    </div>
+                  </div>
+                </article>
+              `;
+            }).join("")
+          : `<p class="empty-rules">Esta subcategoria ainda não possui regras cadastradas.</p>`
+        }
+      </section>
+    `).join("");
   }
 
-  /* ÍNDICE */
   const ruleToc = $("ruleToc");
-
-  if(ruleToc){
-    if(!rules.length){
-      ruleToc.innerHTML = "";
-    }else{
-      ruleToc.innerHTML =
-        `<strong>NESTA CATEGORIA</strong>` +
-        rules.map((rule,index) => {
-          const code = rule.code || "";
-          const title = rule.title || "Regra";
-
-          return `
-            <button type="button" data-scroll-rule="${index}">
-              ${escapeHtml(code)}
-              ${code && title ? " — " : ""}
-              ${escapeHtml(title)}
+  if (ruleToc) {
+    ruleToc.innerHTML = `
+      <strong>NESTA CATEGORIA</strong>
+      ${sections.map(section => `
+        <div class="toc-section">
+          <span>${section.icon} ${section.name}</span>
+          ${section.rules.map((rule, index) => `
+            <button type="button" data-scroll-rule="${section.id}:${index}">
+              ${rule.code || String(index + 1).padStart(2, "0")}${rule.title ? ` — ${rule.title}` : ""}
             </button>
-          `;
-        }).join("");
+          `).join("")}
+        </div>
+      `).join("")}
+    `;
 
-      ruleToc.querySelectorAll("[data-scroll-rule]").forEach(button => {
-        button.addEventListener("click",() => {
-          const element = document.getElementById(
-            `rule-${button.dataset.scrollRule}`
-          );
-
-          if(element){
-            element.scrollIntoView({
-              behavior:"smooth",
-              block:"center"
-            });
-          }
-        });
+    ruleToc.querySelectorAll("[data-scroll-rule]").forEach(button => {
+      button.addEventListener("click", () => {
+        const [sectionId, index] = button.dataset.scrollRule.split(":");
+        const element = document.getElementById(`rule-${sectionId}-${index}`);
+        if (element) element.scrollIntoView({ behavior: "smooth", block: "center" });
       });
+    });
+  }
+
+  if (focus.subId) {
+    const key = `${id}::${focus.subId}`;
+    const sidebarButton = document.querySelector(`[data-toggle-subcategory="${CSS.escape(key)}"]`);
+    if (sidebarButton) {
+      sidebarButton.setAttribute("aria-expanded", "true");
+      const box = document.querySelector(`[data-subrules="${CSS.escape(key)}"]`);
+      if (box) box.classList.add("open");
     }
   }
 
-  renderCategoryNavigation(categoryIndex);
+  if (Number.isInteger(focus.ruleIndex) && focus.subId) {
+    setTimeout(() => {
+      const element = document.getElementById(`rule-${focus.subId}-${focus.ruleIndex}`);
+      if (element) element.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 80);
+  }
 }
 
-/* =========================================================
-   PRÓXIMA / ANTERIOR
-========================================================= */
-
-function renderCategoryNavigation(currentIndex){
-  const navigation = $("categoryNavigation");
-  if(!navigation) return;
-
-  const total = state.data.categories.length;
-
-  const previousIndex =
-    currentIndex > 0 ? currentIndex-1 : null;
-
-  const nextIndex =
-    currentIndex < total-1 ? currentIndex+1 : null;
-
-  const previousCategory =
-    previousIndex !== null
-      ? state.data.categories[previousIndex]
-      : null;
-
-  const nextCategory =
-    nextIndex !== null
-      ? state.data.categories[nextIndex]
-      : null;
-
-  navigation.innerHTML = `
-    <div class="category-nav-side">
-      ${
-        previousCategory
-          ? `
-            <button
-              type="button"
-              class="category-nav-button previous"
-              data-route="${escapeAttr(categoryId(previousCategory,previousIndex))}"
-            >
-              <span>← ANTERIOR</span>
-              <strong>${escapeHtml(
-                previousCategory.short ||
-                previousCategory.name ||
-                "Categoria anterior"
-              )}</strong>
-            </button>
-          `
-          : ""
-      }
-    </div>
-
-    <button
-      type="button"
-      class="category-nav-map"
-      data-route="inicio"
-    >
-      VOLTAR AO MAPA
-    </button>
-
-    <div class="category-nav-side next-side">
-      ${
-        nextCategory
-          ? `
-            <button
-              type="button"
-              class="category-nav-button next"
-              data-route="${escapeAttr(categoryId(nextCategory,nextIndex))}"
-            >
-              <span>PRÓXIMA →</span>
-              <strong>${escapeHtml(
-                nextCategory.short ||
-                nextCategory.name ||
-                "Próxima categoria"
-              )}</strong>
-            </button>
-          `
-          : ""
-      }
-    </div>
-  `;
-}
 
 /* =========================================================
    PESQUISA
 ========================================================= */
 
-function search(query,target){
-  if(!target) return;
+function search(query, target) {
 
-  const q = String(query || "").trim().toLowerCase();
+  if (!target) return;
 
-  if(!q){
-    target.innerHTML = "";
+  const q =
+    String(query || "")
+      .trim()
+      .toLowerCase();
+
+
+  if (!q) {
+
+    target.innerHTML =
+      "";
+
     return;
   }
 
-  const results = allRules()
-    .filter(rule => {
-      const searchable = `
-        ${rule.cat?.short || ""}
-        ${rule.cat?.name || ""}
-        ${rule.cat?.code || ""}
-        ${rule.code || ""}
-        ${rule.title || ""}
-        ${rule.text || ""}
-        ${rule.tag || ""}
-      `.toLowerCase();
 
-      return searchable.includes(q);
-    })
-    .slice(0,30);
+  const results =
+    allRules()
+      .filter(rule => {
 
-  target.innerHTML = results.length
-    ? results.map(rule => {
-        const routeId = categoryId(rule.cat,rule.catIndex);
+        const searchable = `
+          ${rule.cat?.short || ""}
+          ${rule.cat?.name || ""}
+          ${rule.cat?.code || ""}
+          ${rule.code || ""}
+          ${rule.title || ""}
+          ${rule.text || ""}
+          ${rule.tag || ""}
+        `
+          .toLowerCase();
 
-        return `
-          <div class="result" data-route="${escapeAttr(routeId)}">
-            <small>
-              ${escapeHtml(
-                rule.cat.short ||
-                rule.cat.name ||
-                ""
-              )}
-              ·
-              ${escapeHtml(
-                rule.code ||
-                rule.cat.code ||
-                ""
-              )}
-            </small>
+        return searchable.includes(q);
+      })
+      .slice(0, 30);
 
-            <h3>${escapeHtml(rule.title || "")}</h3>
 
-            <p>${escapeHtml(
-              String(rule.text || "")
-                .replace(/[#>*_`]/g,"")
-                .slice(0,240)
-            )}</p>
+  target.innerHTML =
+    results.length
+
+      ? results
+          .map(rule => {
+
+            return `
+              <div
+                class="result"
+                data-route="${rule.cat.id}"
+              >
+
+                <small>
+                  ${
+                    rule.cat.short ||
+                    rule.cat.name ||
+                    ""
+                  }
+
+                  ·
+
+                  ${
+                    rule.code ||
+                    rule.cat.code ||
+                    ""
+                  }
+                </small>
+
+                <h3>
+                  ${rule.title || ""}
+                </h3>
+
+                <p>
+                  ${rule.text || ""}
+                </p>
+
+              </div>
+            `;
+          })
+          .join("")
+
+      : `
+          <div class="result">
+
+            <h3>
+              Nenhuma regra encontrada.
+            </h3>
+
+            <p>
+              Tente outra palavra.
+            </p>
+
           </div>
         `;
-      }).join("")
-    : `
-      <div class="result">
-        <h3>Nenhuma regra encontrada.</h3>
-        <p>Tente outra palavra.</p>
-      </div>
-    `;
-
-  target.querySelectorAll("[data-route]").forEach(result => {
-    result.addEventListener("click",() => {
-      const routeId = result.dataset.route;
-      route(routeId);
-      history.replaceState(null,"","#" + routeId);
-    });
-  });
 }
+
 
 /* =========================================================
    ROTAS
 ========================================================= */
 
-function route(id){
-  document.querySelectorAll(".page").forEach(page => {
-    page.classList.remove("active");
-  });
+function route(id, focus = {}) {
 
-  if(id === "inicio"){
-    $("inicio")?.classList.add("active");
-  }else if(id === "pesquisa"){
-    $("searchPage")?.classList.add("active");
+  document
+    .querySelectorAll(".page")
+    .forEach(page => {
+
+      page.classList.remove(
+        "active"
+      );
+    });
+
+
+  if (id === "inicio") {
+
+    if ($("inicio")) {
+
+      $("inicio")
+        .classList.add("active");
+    }
+
+
+  } else if (id === "pesquisa") {
+
+    if ($("searchPage")) {
+
+      $("searchPage")
+        .classList.add("active");
+    }
+
 
     setTimeout(() => {
-      $("searchInput")?.focus();
-    },50);
-  }else{
-    const exists = categoryIndexById(id) >= 0;
 
-    if(!exists){
-      $("inicio")?.classList.add("active");
-      id = "inicio";
-    }else{
-      $("categoryPage")?.classList.add("active");
-      renderCategory(id);
+      if ($("searchInput")) {
+
+        $("searchInput").focus();
+      }
+
+    }, 50);
+
+
+  } else {
+
+    if ($("categoryPage")) {
+
+      $("categoryPage")
+        .classList.add("active");
     }
+
+    renderCategory(id, focus);
   }
 
-  document.querySelectorAll(".sidebar nav button").forEach(button => {
-    button.classList.toggle(
-      "active",
-      button.dataset.route === id
-    );
-  });
 
-  $("sidebar")?.classList.remove("open");
+  /*
+    MENU ATIVO
+  */
 
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
+  document
+    .querySelectorAll(
+      ".sidebar nav button"
+    )
+    .forEach(button => {
+
+      button.classList.toggle(
+        "active",
+        button.dataset.route === id
+      );
+    });
+
+
+  /*
+    FECHA MENU MOBILE
+  */
+
+  if ($("sidebar")) {
+
+    $("sidebar")
+      .classList.remove("open");
+  }
+
+
+  window.scrollTo(
+    0,
+    0
+  );
 }
+
 
 /* =========================================================
    CLIQUES DE NAVEGAÇÃO
 ========================================================= */
 
-document.addEventListener("click",event => {
-  const target = event.target.closest("[data-route]");
-  if(!target) return;
+document.addEventListener(
+  "click",
+  event => {
 
-  if(
-    target.tagName === "A" &&
-    target.getAttribute("target") === "_blank"
-  ){
-    return;
+    const target =
+      event.target.closest(
+        "[data-route]"
+      );
+
+
+    if (!target) return;
+
+
+    /*
+      Não interfere em links externos
+      nem em elementos que não sejam
+      botões de navegação.
+    */
+
+    event.preventDefault();
+
+
+    const routeId =
+      target.dataset.route;
+
+
+    if (!routeId) return;
+
+
+    route(routeId);
+
+
+    history.replaceState(
+      null,
+      "",
+      "#" + routeId
+    );
   }
+);
 
-  event.preventDefault();
-
-  const routeId = target.dataset.route;
-  if(!routeId) return;
-
-  route(routeId);
-
-  history.replaceState(
-    null,
-    "",
-    "#" + routeId
-  );
-});
 
 /* =========================================================
    PESQUISA
 ========================================================= */
 
-$("searchOpen")?.addEventListener("click",() => {
-  $("searchOverlay")?.classList.add("open");
-  $("overlaySearch")?.focus();
-});
+if ($("searchOpen")) {
 
-$("searchClose")?.addEventListener("click",() => {
-  $("searchOverlay")?.classList.remove("open");
-});
+  $("searchOpen").onclick =
+    () => {
 
-$("searchOverlay")?.addEventListener("click",event => {
-  if(event.target === $("searchOverlay")){
-    $("searchOverlay")?.classList.remove("open");
-  }
-});
+      if ($("searchOverlay")) {
 
-$("overlaySearch")?.addEventListener("input",event => {
-  search(event.target.value,$("overlayResults"));
-});
+        $("searchOverlay")
+          .classList.add("open");
+      }
 
-$("searchInput")?.addEventListener("input",event => {
-  search(event.target.value,$("searchResults"));
-});
 
-document.addEventListener("keydown",event => {
-  if(
-    event.key === "Escape" &&
-    $("searchOverlay")?.classList.contains("open")
-  ){
-    $("searchOverlay").classList.remove("open");
-  }
-});
+      if ($("overlaySearch")) {
+
+        $("overlaySearch")
+          .focus();
+      }
+    };
+}
+
+
+if ($("searchClose")) {
+
+  $("searchClose").onclick =
+    () => {
+
+      if ($("searchOverlay")) {
+
+        $("searchOverlay")
+          .classList.remove("open");
+      }
+    };
+}
+
+
+if ($("overlaySearch")) {
+
+  $("overlaySearch").oninput =
+    event => {
+
+      search(
+        event.target.value,
+        $("overlayResults")
+      );
+    };
+}
+
+
+if ($("searchInput")) {
+
+  $("searchInput").oninput =
+    event => {
+
+      search(
+        event.target.value,
+        $("searchResults")
+      );
+    };
+}
+
 
 /* =========================================================
    MENU MOBILE
 ========================================================= */
 
-$("mobileMenu")?.addEventListener("click",() => {
-  $("sidebar")?.classList.toggle("open");
-});
+if ($("mobileMenu")) {
+
+  $("mobileMenu").onclick =
+    () => {
+
+      if ($("sidebar")) {
+
+        $("sidebar")
+          .classList.toggle("open");
+      }
+    };
+}
+
 
 /* =========================================================
    HASH
 ========================================================= */
 
-window.addEventListener("hashchange",() => {
-  route(
-    location.hash.replace("#","") || "inicio"
-  );
-});
+window.addEventListener(
+  "hashchange",
+  () => {
+
+    route(
+      location.hash.replace("#", "") ||
+      "inicio"
+    );
+  }
+);
+
 
 /* =========================================================
    CURSOR PERSONALIZADO
-   - sem bolinha
-   - usa a imagem do Admin
-   - rastro de tinta aparece SEM clicar
 ========================================================= */
 
-function setupCursor(){
-  const config = state.site?.cursor || {};
-  const cursor = $("customCursor");
-  if(!cursor) return;
+function setupCursor() {
 
-  if(window.__vienaCursorCleanup){
-    window.__vienaCursorCleanup();
-  }
+  const config =
+    state.site?.cursor || {};
 
-  if(config.enabled === false){
-    document.documentElement.classList.remove("viena-cursor-active");
-    cursor.style.display = "none";
+
+  const cursor =
+    $("customCursor");
+
+  const dot =
+    $("cursorDot");
+
+
+  /*
+    Se o cursor estiver desativado,
+    remove os elementos visuais.
+  */
+
+  if (
+    config.enabled === false
+  ) {
+
+    if (cursor) {
+
+      cursor.style.display =
+        "none";
+    }
+
+    if (dot) {
+
+      dot.style.display =
+        "none";
+    }
+
     return;
   }
 
-  document.documentElement.classList.add("viena-cursor-active");
-  cursor.style.display = "block";
+
+  if (!cursor) return;
+
+
+  /*
+    IMAGEM DO CURSOR
+
+    Prioridade:
+    1. imagem configurada no Admin
+    2. logo da cidade
+    3. logo padrão
+  */
 
   const cursorImage =
     assetUrl(config.image) ||
     assetUrl(state.site?.logo) ||
     "./logo-viena.png";
 
-  const size = Math.max(12,Math.min(96,Number(config.size) || 34));
-  cursor.style.width = `${size}px`;
-  cursor.style.height = `${size}px`;
-  cursor.style.backgroundImage = `url("${cursorImage}")`;
 
-  const trailEnabled = config.trail_enabled !== false;
-  const trailType = config.trail_type || "paint";
-  const trailColor = config.trail_color || "#e50914";
-  const trailCount = Math.max(2,Math.min(30,Number(config.trail_count) || 10));
+  cursor.style.backgroundImage =
+    `url("${cursorImage}")`;
 
-  let mouseX = window.innerWidth / 2;
-  let mouseY = window.innerHeight / 2;
-  let cursorX = mouseX;
-  let cursorY = mouseY;
-  let lastTrail = 0;
 
-  const moveHandler = event => {
-    mouseX = event.clientX;
-    mouseY = event.clientY;
+  /*
+    TAMANHO
+  */
 
-    if(!trailEnabled || trailType === "none") return;
+  const size =
+    Number(config.size) || 34;
 
-    const now = performance.now();
-    const interval = Math.max(10,48 - trailCount * 1.25);
-    if(now - lastTrail < interval) return;
-    lastTrail = now;
 
-    const previousX = window.__vienaLastX ?? mouseX;
-    const previousY = window.__vienaLastY ?? mouseY;
-    const dx = mouseX - previousX;
-    const dy = mouseY - previousY;
-    const distance = Math.max(1,Math.hypot(dx,dy));
-    const angle = Math.atan2(dy,dx) * 180 / Math.PI;
+  cursor.style.width =
+    `${size}px`;
 
-    window.__vienaLastX = mouseX;
-    window.__vienaLastY = mouseY;
+  cursor.style.height =
+    `${size}px`;
 
-    const paint = document.createElement("span");
-    paint.className = `cursor-paint cursor-paint-${trailType}`;
-    paint.style.left = `${mouseX}px`;
-    paint.style.top = `${mouseY}px`;
-    paint.style.background = trailColor;
-    paint.style.setProperty("--angle",`${angle}deg`);
 
-    const width = 10 + Math.min(22,distance * .45) + Math.random() * 9;
-    const height = 4 + Math.random() * 5;
-    paint.style.width = `${width}px`;
-    paint.style.height = `${height}px`;
-    paint.style.marginLeft = `${-width/2}px`;
-    paint.style.marginTop = `${-height/2}px`;
-    paint.style.opacity = `${Math.min(.85,.38 + trailCount/35)}`;
-    paint.style.transform = `rotate(${angle + (Math.random()*24-12)}deg)`;
+  cursor.style.backgroundSize =
+    "contain";
 
-    document.body.appendChild(paint);
+  cursor.style.backgroundPosition =
+    "center";
 
-    const maxPaint = trailCount * 2 + 8;
-    const paints = document.querySelectorAll(".cursor-paint");
-    if(paints.length > maxPaint){
-      for(let i=0;i<paints.length-maxPaint;i++) paints[i].remove();
-    }
+  cursor.style.backgroundRepeat =
+    "no-repeat";
 
-    setTimeout(() => paint.remove(),760);
-  };
 
-  document.addEventListener("mousemove",moveHandler,{passive:true});
+  /*
+    NÃO DEIXA O CURSOR NATIVO
+    INTERFERIR
+  */
 
-  function animateCursor(){
-    cursorX += (mouseX - cursorX) * .28;
-    cursorY += (mouseY - cursorY) * .28;
-    cursor.style.transform = `translate3d(${cursorX - size/2}px,${cursorY - size/2}px,0)`;
-    window.__vienaCursorFrame = requestAnimationFrame(animateCursor);
+  cursor.style.pointerEvents =
+    "none";
+
+
+  if (dot) {
+
+    dot.style.pointerEvents =
+      "none";
   }
+
+
+  /*
+    POSIÇÃO
+  */
+
+  let mouseX = -100;
+  let mouseY = -100;
+
+  let cursorX = -100;
+  let cursorY = -100;
+
+
+  document.addEventListener(
+    "mousemove",
+    event => {
+
+      mouseX =
+        event.clientX;
+
+      mouseY =
+        event.clientY;
+
+
+      if (dot) {
+
+        dot.style.transform =
+          `translate3d(
+            ${mouseX}px,
+            ${mouseY}px,
+            0
+          )`;
+      }
+
+
+      createTrail(
+        mouseX,
+        mouseY
+      );
+    }
+  );
+
+
+  /*
+    MOVIMENTO SUAVE
+  */
+
+  function animateCursor() {
+
+    cursorX +=
+      (mouseX - cursorX) *
+      0.18;
+
+    cursorY +=
+      (mouseY - cursorY) *
+      0.18;
+
+
+    cursor.style.transform =
+      `
+        translate3d(
+          ${cursorX - size / 2}px,
+          ${cursorY - size / 2}px,
+          0
+        )
+      `;
+
+
+    requestAnimationFrame(
+      animateCursor
+    );
+  }
+
 
   animateCursor();
 
-  window.__vienaCursorCleanup = () => {
-    document.removeEventListener("mousemove",moveHandler);
-    cancelAnimationFrame(window.__vienaCursorFrame);
-    document.querySelectorAll(".cursor-paint").forEach(el => el.remove());
-    window.__vienaLastX = null;
-    window.__vienaLastY = null;
-  };
-}
 
-/* =========================================================
-   LETRINHAS CAINDO
-========================================================= */
+  /*
+    RASTRO
+  */
 
-function setupFallingLetters(){
-  const container = $("fallingLetters");
-  if(!container) return;
+  const trailEnabled =
+    config.trail_enabled !== false;
 
-  const config = state.site?.cursor?.falling_particles || {};
-  const enabled = config.enabled !== false;
 
-  container.innerHTML = "";
-  if(!enabled) return;
+  const trailColor =
+    config.trail_color ||
+    "#e50914";
 
-  const type = config.type || "letters";
-  const amount = Math.max(5,Math.min(80,Number(config.count) || (window.innerWidth < 700 ? 18 : 34)));
-  const size = Math.max(6,Math.min(40,Number(config.size) || 14));
-  const color = config.color || "#e50914";
-  const image = assetUrl(config.image) || assetUrl(state.site?.logo) || "./logo-viena.png";
-  const letters = "VIENA • CÓDIGO DA RUA • RP • 01 • 02 • 03 •";
 
-  for(let i=0;i<amount;i++){
-    const span = document.createElement("span");
-    span.className = "falling-particle";
+  const trailCount =
+    Number(config.trail_count) ||
+    10;
 
-    let particleType = type;
-    if(type === "mixed"){
-      particleType = Math.random() < .5 ? "letters" : "logo";
+
+  let lastTrail =
+    0;
+
+
+  function createTrail(x, y) {
+
+    if (!trailEnabled) return;
+
+
+    const now =
+      Date.now();
+
+
+    /*
+      Evita criar partículas demais.
+    */
+
+    if (
+      now - lastTrail <
+      35
+    ) {
+      return;
     }
 
-    if(particleType === "logo"){
-      const img = document.createElement("img");
-      img.src = image;
-      img.alt = "";
-      img.draggable = false;
-      img.style.width = `${size + Math.random()*size}px`;
-      img.style.height = "auto";
-      span.classList.add("falling-logo");
-      span.appendChild(img);
-    }else if(particleType === "spark"){
-      span.classList.add("falling-spark");
-      span.textContent = Math.random() < .5 ? "✦" : "•";
-      span.style.fontSize = `${size + Math.random()*size/2}px`;
-    }else{
-      span.classList.add("falling-letter");
-      span.textContent = letters[Math.floor(Math.random()*letters.length)];
-      span.style.fontSize = `${size + Math.random()*size/2}px`;
-    }
 
-    span.style.left = `${Math.random()*100}%`;
-    span.style.animationDuration = `${8 + Math.random()*15}s`;
-    span.style.animationDelay = `${-Math.random()*18}s`;
-    span.style.setProperty("--particle-color",color);
-    span.style.opacity = `${.04 + Math.random()*.10}`;
-    container.appendChild(span);
+    lastTrail =
+      now;
+
+
+    const particle =
+      document.createElement(
+        "span"
+      );
+
+
+    particle.className =
+      "cursor-trail";
+
+
+    particle.style.position =
+      "fixed";
+
+    particle.style.left =
+      `${x}px`;
+
+    particle.style.top =
+      `${y}px`;
+
+    particle.style.width =
+      "5px";
+
+    particle.style.height =
+      "5px";
+
+    particle.style.borderRadius =
+      "50%";
+
+    particle.style.background =
+      trailColor;
+
+    particle.style.pointerEvents =
+      "none";
+
+    particle.style.zIndex =
+      "99998";
+
+    particle.style.transform =
+      "translate(-50%, -50%)";
+
+    particle.style.opacity =
+      "0.9";
+
+    particle.style.transition =
+      "opacity .5s ease, transform .5s ease";
+
+
+    document.body.appendChild(
+      particle
+    );
+
+
+    requestAnimationFrame(
+      () => {
+
+        particle.style.opacity =
+          "0";
+
+        particle.style.transform =
+          "translate(-50%, -50%) scale(.2)";
+      }
+    );
+
+
+    setTimeout(
+      () => {
+
+        particle.remove();
+
+      },
+      550
+    );
   }
 }
 
-window.addEventListener("resize",() => {
-  clearTimeout(window.__vienaResizeTimer);
-  window.__vienaResizeTimer = setTimeout(
-    setupFallingLetters,
-    200
-  );
-});
 
 /* =========================================================
-   ERRO
+   ERRO DE CARREGAMENTO
 ========================================================= */
 
-load().catch(error => {
-  console.error("Erro ao carregar o site:",error);
+load().catch(
+  error => {
 
-  document.body.insertAdjacentHTML(
-    "beforeend",
-    `
-      <div class="load-error">
-        Não foi possível carregar o conteúdo.
-        Verifique se <strong>content/site.json</strong> e
-        <strong>content/rules.json</strong> existem no projeto.
-      </div>
-    `
-  );
-});
+    console.error(
+      "Erro ao carregar o site:",
+      error
+    );
 
-/* =========================================================
-   EDITOR VISUAL — PRÉVIA AO VIVO
-   Permite ao editor enviar dados não salvos para esta mesma página.
-========================================================= */
-window.addEventListener("message", event => {
-  const payload = event.data;
-  if (!payload || payload.type !== "viena-preview") return;
-  if (!payload.site || !payload.data) return;
 
-  state.site = payload.site;
-  state.data = payload.data;
-
-  try {
-    applySite();
-    renderNav();
-    renderHome();
-    setupCursor();
-    setupFallingLetters();
-
-    const current = location.hash.replace("#", "") || "inicio";
-    if (current !== "inicio" && current !== "pesquisa") {
-      renderCategory(current);
-    }
-  } catch (error) {
-    console.error("Erro ao atualizar prévia:", error);
+    document.body.insertAdjacentHTML(
+      "beforeend",
+      `
+        <div
+          style="
+            position:fixed;
+            bottom:0;
+            left:0;
+            right:0;
+            background:#e50914;
+            color:#fff;
+            padding:12px;
+            text-align:center;
+            z-index:999999;
+            font-family:Arial,sans-serif;
+          "
+        >
+          Não foi possível carregar o conteúdo.
+          Verifique se
+          content/site.json e
+          content/rules.json
+          foram enviados corretamente.
+        </div>
+      `
+    );
   }
-});
+);
