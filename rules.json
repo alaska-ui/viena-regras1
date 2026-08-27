@@ -1001,30 +1001,30 @@
         },
         {
           "id": "punicoes",
-          "name": "Punições",
+          "name": "Sistema de Punição",
           "icon": "⚖️",
           "rules": [
             {
-              "title": "Critérios de Punição",
-              "text": "A punição é definida considerando **gravidade, intenção, impacto no RP, histórico e reincidência**.\n\nUma mesma infração pode receber medidas diferentes quando o contexto demonstrar níveis distintos de gravidade.\n\n> ℹ️ **OBSERVAÇÃO**\n> A tabela é uma referência de enquadramento. Infrações graves, reincidência ou situações excepcionais podem justificar escalonamento da medida.",
+              "title": "Escalonamento de Advertências",
+              "text": "As advertências são acumulativas e representam o histórico disciplinar do jogador dentro da Viena.\n\n| REGISTRO | CONSEQUÊNCIA |\n| --- | --- |\n| **1ª Advertência** | **Banimento de 24 horas** |\n| **2ª Advertência** | **Banimento de 48 horas** |\n| **3ª Advertência** | **Banimento permanente** |\n\n> 🚨 **NA MIRA**\n> Reincidência não é tratada como uma ocorrência isolada.",
               "tag": "PUNIÇÃO",
               "code": "12.04"
             },
             {
-              "title": "Tabela de Punições",
-              "text": "| Nível | Classificação | Aplicação geral | Medidas possíveis |\n| --- | --- | --- | --- |\n| **01** | Leve | Condutas de baixo impacto ou primeira ocorrência sem prejuízo grave ao RP. | Orientação, registro ou advertência. |\n| **02** | Moderada | Infração com impacto perceptível, descumprimento claro ou reincidência leve. | Advertência e/ou banimento temporário. |\n| **03** | Grave | Conduta intencional, reincidente ou com impacto elevado no RP e em terceiros. | Banimento temporário, remoção de benefícios e outras medidas cabíveis. |\n| **04** | Gravíssima | Exploits graves, mercado negro, evasão de punição, Dark RP grave ou situações de tolerância zero. | Banimento prolongado ou permanente, conforme a regra específica. |\n\n> ⚠️ **ATENÇÃO**\n> Quando uma regra possuir punição específica, **a regra específica prevalece sobre esta tabela geral**.",
+              "title": "Tabela de Infrações",
+              "text": "| INFRAÇÃO | PUNIÇÃO | BANIMENTO |\n| --- | --- | --- |\n| Assalto fora de horário | Advertência | Temporário |\n| Interferir em ações | Advertência | Temporário |\n| Matar em Safe Zone | Advertência | Temporário |\n| Anti Amor à Vida | Advertência | Temporário |\n| Combat Logging | Advertência | Temporário |\n| Power Gaming | Advertência | Temporário |\n| Abuso de Bug | ADV / Ban | Situacional |\n| Revenge Kill | Advertência | Temporário |\n| Metagaming | Advertência | Temporário |\n| Spawn Kill | Advertência | Temporário |\n| Forçar RP | Advertência | Temporário |\n| Cop Bait | Advertência | Temporário |\n| Flaming | Advertência | Temporário |\n| Dark RP | — | **Permanente** |\n| Anti-RP | Advertência | Temporário |\n| Ratão | Advertência | Temporário |\n| VDM | Advertência | Temporário |\n| RDM | Advertência | Temporário |\n| Diversos | ADV / Ban | Temporário |\n| Hacker | — | **Permanente** |\n\n> ⚠️ **ATENÇÃO**\n> Enquadramentos situacionais dependem da gravidade, contexto e evidências analisadas pela Staff.",
               "tag": "PUNIÇÃO",
               "code": "12.05"
             },
             {
-              "title": "Escalonamento e Reincidência",
-              "text": "A reincidência permite o agravamento da punição, principalmente quando o jogador demonstra repetição consciente da mesma conduta ou histórico recente de infrações semelhantes.\n\n**Podem agravar a análise:**\n- Reincidência;\n- Tentativa de ocultar a infração;\n- Manipulação de provas;\n- Prejuízo coletivo a uma ação;\n- Intenção clara de quebrar o RP;\n- Recusa em colaborar com procedimento administrativo quando exigido.",
+              "title": "Infrações de Tolerância Zero",
+              "text": "Uso de **hack**, abuso grave de bugs, griefing e outras práticas equivalentes de extrema gravidade podem resultar em **banimento direto e permanente, sem direito a unban**.",
               "tag": "PUNIÇÃO",
               "code": "12.06"
             },
             {
-              "title": "Infrações com Tratamento Específico",
-              "text": "Algumas condutas possuem tratamento mais rigoroso por sua natureza.\n\n**Exemplos já previstos nas regras da Viena:**\n- Mercado Negro;\n- Programas ilegais e vantagens externas;\n- Evasão de banimento;\n- Manipulação deliberada de provas;\n- Dark RP em situações graves.\n\n> ❌ **TOLERÂNCIA ZERO**\n> Quando a própria regra indicar banimento permanente ou tratamento específico, a Administração seguirá aquela previsão.",
+              "title": "Unban e Retirada de Advertência",
+              "text": "O valor de **unban** acompanha a quantidade de banimentos anteriores do jogador. Em reincidência, o valor é multiplicado pela quantidade correspondente.\n\nA retirada de **advertência** segue a mesma lógica: o valor considera quantas vezes o jogador já foi advertido.\n\n**Exemplo:** na segunda ocorrência, o valor correspondente é multiplicado por **2**.\n\n> ⏱️ **PRAZO**\n> A advertência poderá ser retirada dentro do prazo de **1 semana**.\n\n> 🚫 **BLOQUEIO**\n> Não é permitido retirar uma advertência enquanto o jogador estiver sendo denunciado.",
               "tag": "PUNIÇÃO",
               "code": "12.07"
             }
@@ -1036,26 +1036,26 @@
           "icon": "📨",
           "rules": [
             {
-              "title": "Abertura da Denúncia",
-              "text": "Toda denúncia deve ser aberta **pelo canal ou sistema oficial disponibilizado pela Viena** e apresentar uma situação específica para análise.\n\n**Informe de forma objetiva:**\n- O que aconteceu;\n- Quem está envolvido, quando for possível identificar;\n- Onde a situação ocorreu;\n- Qual conduta ou regra você deseja que a Staff avalie;\n- As provas correspondentes à situação.\n\n> ⚠️ **ATENÇÃO**\n> Descrições vagas, informações fora do contexto ou denúncias abertas sem indicar o que deve ser analisado poderão ser devolvidas para correção ou encerradas quando impossibilitarem a avaliação.",
+              "title": "Prazo para Denunciar",
+              "text": "O denunciante possui **até 24 horas após o ocorrido** para registrar a denúncia pelos canais oficiais da Viena.\n\n> ⚠️ **ATENÇÃO**\n> Denúncias enviadas fora do prazo poderão ser encerradas sem análise, salvo situações excepcionais avaliadas pela Administração.",
               "tag": "DENÚNCIA",
               "code": "12.08"
             },
             {
-              "title": "Uma Situação por Denúncia",
-              "text": "Cada denúncia deve tratar **uma situação principal**. Ocorrências diferentes, envolvendo contextos distintos, devem ser separadas para manter a análise organizada.\n\n> ℹ️ **OBSERVAÇÃO**\n> Várias infrações ocorridas dentro da mesma ação podem ser analisadas juntas quando fazem parte do mesmo contexto.",
-              "tag": "DENÚNCIA",
+              "title": "Requisitos da Denúncia",
+              "text": "A denúncia deve ser clara, objetiva e permitir a identificação da situação analisada.\n\n**É necessário apresentar:**\n- ID do denunciado no clipe e no atendimento;\n- Áudio do **microfone + jogo**;\n- Contexto suficiente da ocorrência;\n- O máximo possível de provas relacionadas ao fato;\n- Solicitação de devolução de itens, quando houver.\n\n> 🎥 **CONTEXTO**\n> Como referência, envie clipes contendo aproximadamente **30 a 60 segundos anteriores** ao encerramento da ação. Em discussões, a gravação deve demonstrar o início e o fim do conflito.",
+              "tag": "PROVA",
               "code": "12.09"
             },
             {
-              "title": "Identificação da Infração",
-              "text": "Não é obrigatório conhecer o nome técnico exato da regra para denunciar, porém o denunciante deve explicar **qual comportamento deseja que seja avaliado**.\n\n**Exemplo:**\n- Em vez de escrever apenas `VDM`, explique que o jogador utilizou o veículo propositalmente para atropelar durante determinada situação.\n\n> 💡 **IMPORTANTE**\n> A classificação final da infração é responsabilidade da Staff responsável pela análise.",
+              "title": "Denúncia Própria",
+              "text": "A denúncia deve partir de quem foi diretamente envolvido ou prejudicado pela situação apresentada.\n\n> ℹ️ **OBSERVAÇÃO**\n> Denúncias abertas somente a partir da visão de um terceiro que presenciou outra pessoa sofrendo uma quebra de regra não serão consideradas válidas.",
               "tag": "DENÚNCIA",
               "code": "12.10"
             },
             {
-              "title": "Conduta no Atendimento",
-              "text": "O ticket de denúncia é um ambiente administrativo e deve ser tratado com respeito.\n\n**Não é permitido:**\n- Ofender ou provocar envolvidos;\n- Pressionar membros da Staff por resultado;\n- Criar discussões paralelas dentro do atendimento;\n- Abrir múltiplos tickets para a mesma ocorrência com o objetivo de obter outra decisão.\n\n> ⚠️ **ATENÇÃO**\n> Condutas inadequadas durante o atendimento também podem ser avaliadas separadamente.",
+              "title": "Conduta no Ticket",
+              "text": "Denunciante e denunciado devem manter **coerência, respeito e empatia** durante todo o atendimento.\n\nDiscussões, provocações, ofensas ou tentativas de transformar o ticket em conflito pessoal podem gerar medida administrativa própria.",
               "tag": "ATENDIMENTO",
               "code": "12.11"
             }
@@ -1067,32 +1067,32 @@
           "icon": "🎥",
           "rules": [
             {
-              "title": "Provas Válidas",
-              "text": "As provas devem permitir que a Staff compreenda **o contexto real da situação**, e não somente o momento da possível infração.\n\n**Podem ser utilizadas:**\n- Clipes e vídeos;\n- Prints, quando forem suficientes para o fato analisado;\n- Registros do servidor;\n- Outras evidências verificáveis aceitas pela Administração.\n\n> ⚠️ **ATENÇÃO**\n> Sempre que o contexto anterior ou posterior puder alterar a interpretação da situação, a Staff poderá solicitar um trecho maior.",
+              "title": "Contra-Prova",
+              "text": "O denunciado possui **24 horas após o ocorrido** para apresentar sua contra-prova quando ela for necessária à análise.",
               "tag": "PROVA",
               "code": "12.12"
             },
             {
-              "title": "Contexto Completo",
-              "text": "Clipes excessivamente cortados, editados ou iniciados somente no momento favorável ao denunciante podem ser considerados insuficientes.\n\n**A prova deve preservar, quando necessário:**\n- O início da interação;\n- Vozes e comunicações relevantes;\n- A sequência dos acontecimentos;\n- O momento posterior à infração, quando ele ajudar a esclarecer o caso.\n\n> ❌ **PROIBIDO**\n> Omitir deliberadamente partes essenciais da situação para alterar a interpretação dos fatos poderá ser tratado como manipulação de prova.",
+              "title": "Integridade das Provas",
+              "text": "Vídeos deliberadamente cortados, editados, forjados ou manipulados para prejudicar outro jogador poderão invalidar a denúncia.\n\n> ❌ **PROIBIDO**\n> Manipular evidências ou omitir propositalmente partes essenciais do contexto pode resultar em advertência ao responsável.",
               "tag": "PROVA",
               "code": "12.13"
             },
             {
-              "title": "Links e Arquivos",
-              "text": "É responsabilidade de quem apresenta a prova manter o arquivo ou link **acessível durante a análise**.\n\nProvas removidas, privadas, expiradas, corrompidas ou inacessíveis podem impedir a continuidade do atendimento.\n\n> 💡 **DICA**\n> Antes de enviar, abra o link em uma janela anônima ou desconectada para confirmar que a Staff conseguirá visualizá-lo.",
+              "title": "Tela de Morto",
+              "text": "Denúncias apresentadas apenas com **tela de morto**, sem elementos suficientes para demonstrar a quebra de regra, não serão utilizadas para aplicação de punição.",
               "tag": "PROVA",
               "code": "12.14"
             },
             {
-              "title": "Provas Manipuladas",
-              "text": "É proibido falsificar, editar de forma enganosa, forjar ou ocultar evidências com a intenção de influenciar uma decisão administrativa.\n\n> ❌ **PROIBIDO**\n> A manipulação deliberada de provas pode gerar punição própria, independentemente do resultado da denúncia original.",
-              "tag": "ADMINISTRAÇÃO",
+              "title": "Logs e Identificação",
+              "text": "Em ocorrências envolvendo morte ou dano, a Staff poderá consultar os **logs do servidor** para auxiliar na identificação dos envolvidos.\n\nEm situações de Dark RP, a Administração também poderá utilizar elementos disponíveis no próprio servidor, como voz ou personagem, quando necessários à apuração.",
+              "tag": "ANÁLISE",
               "code": "12.15"
             },
             {
-              "title": "Análise do Contexto",
-              "text": "A Staff não deve analisar somente uma frase, disparo ou colisão isoladamente quando o restante da ação puder modificar o entendimento do caso.\n\nA decisão poderá considerar **contexto, intenção, sequência da ação, risco apresentado, reincidência e impacto no RP**.\n\n> ℹ️ **OBSERVAÇÃO**\n> Uma denúncia pode ser aceita, negada parcialmente ou resultar em enquadramento diferente daquele solicitado pelo denunciante.",
+              "title": "Análise Integral",
+              "text": "Toda denúncia será analisada de forma imparcial e considerando o contexto completo.\n\n> ⚖️ **VALE PARA OS DOIS LADOS**\n> Se as provas demonstrarem que o próprio denunciante também quebrou uma regra durante a ocorrência, ele poderá ser punido independentemente de ter sido quem abriu a denúncia.",
               "tag": "ANÁLISE",
               "code": "12.16"
             }
@@ -1104,22 +1104,28 @@
           "icon": "📋",
           "rules": [
             {
-              "title": "Decisão Administrativa",
-              "text": "Após analisar as provas disponíveis, a Staff responsável registrará o entendimento da ocorrência e, quando aplicável, a punição correspondente.\n\n> ⚠️ **ATENÇÃO**\n> A decisão deve ser baseada no conjunto de evidências e nas regras vigentes no momento da ocorrência.",
+              "title": "Prazo para Veredito",
+              "text": "Após o envio das provas e contra-provas necessárias, o responsável pelo atendimento possui **até 48 horas** para apresentar o veredito final.",
               "tag": "ADMINISTRAÇÃO",
               "code": "12.17"
             },
             {
-              "title": "Revisão de Punição",
-              "text": "Caso exista canal oficial para revisão ou recurso, o pedido deve ser realizado **de forma organizada e com fundamento**, apresentando informação nova, erro de análise ou ponto relevante que não tenha sido considerado.\n\n**Não constitui revisão válida:**\n- Apenas discordar do resultado;\n- Reabrir repetidamente o mesmo caso sem novos elementos;\n- Pressionar membros da equipe no privado;\n- Criar exposição pública para tentar modificar a decisão.",
-              "tag": "REVISÃO",
+              "title": "Não Existe Pacificação",
+              "text": "Uma quebra de regra comprovada não deixa de existir porque denunciante e denunciado decidiram se resolver posteriormente. Quando a ocorrência já estiver sob análise administrativa, caberá à Staff determinar o procedimento aplicável.",
+              "tag": "ADMINISTRAÇÃO",
               "code": "12.18"
             },
             {
-              "title": "Denúncia de Má-Fé",
-              "text": "Denúncias propositalmente falsas, acusações fabricadas ou tentativas de utilizar o sistema de denúncias para perseguir outro jogador podem gerar punição.\n\n> ❌ **PROIBIDO**\n> O sistema de denúncias existe para proteger o RP e não pode ser utilizado como ferramenta de vingança OOC.",
+              "title": "Denúncias sem Fundamento",
+              "text": "Denúncias criadas com a intenção de prejudicar outro jogador, sem fundamento legítimo ou sem respeito ao sistema administrativo poderão ser recusadas.\n\n> ❌ **MÁ-FÉ**\n> Quando comprovada tentativa deliberada de manipular o sistema de denúncias, o responsável poderá receber punição.",
               "tag": "CONDUTA",
               "code": "12.19"
+            },
+            {
+              "title": "Advertência de Facção",
+              "text": "Uma advertência de facção poderá ser aplicada quando **4 ou mais membros** estiverem diretamente envolvidos na mesma quebra de conduta.\n\nPara caracterização coletiva, os envolvidos devem ter contribuído ativamente para a infração.\n\n> ⚠️ **ATENÇÃO**\n> Situações excepcionais poderão receber avaliação administrativa específica conforme o contexto.",
+              "tag": "FACÇÃO",
+              "code": "12.20"
             }
           ]
         }
