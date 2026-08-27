@@ -289,63 +289,6 @@
       ]
     },
     {
-      "id": "absolutas",
-      "code": "08",
-      "name": "CÓDIGO ABSOLUTO",
-      "short": "Regras Absolutas",
-      "desc": "Existem limites que não fazem parte do jogo — sustentam a própria comunidade. Aqui estão as condutas administrativas de tolerância máxima da Viena, aplicáveis a situações que comprometem a segurança, a integridade e a permanência dos cidadãos na cidade.",
-      "rules": [
-        {
-          "code": "08.01",
-          "title": "Programas Ilegais",
-          "text": "É expressamente proibido utilizar programas, aplicativos, arquivos ou modificações externas capazes de conceder **vantagem indevida dentro da cidade**.\n\n**Inclui, entre outros:**\n- Hacks, cheats ou injetores;\n- Modificações que removam ou alterem elementos do mapa para obter vantagem;\n- Recursos que facilitem localização, mira, visão ou movimentação;\n- Arquivos ou ferramentas desenvolvidos para contornar limitações do jogo;\n- Qualquer recurso externo que interfira injustamente na gameplay.\n\n> ❌ **TOLERÂNCIA ZERO**\n> A utilização de recursos ilegais poderá resultar em **banimento permanente**, conforme as evidências e a análise administrativa.",
-          "tag": "SEGURANÇA"
-        },
-        {
-          "code": "08.02",
-          "title": "Verificação Administrativa",
-          "text": "Quando existirem indícios consistentes de utilização de recursos ilegais, a Administração poderá solicitar uma **verificação para análise do caso**, conforme os procedimentos internos da Viena.\n\nDurante o procedimento, o jogador deverá colaborar com as orientações fornecidas pela equipe responsável.\n\n**É proibido:**\n- Tentar impedir ou manipular a verificação;\n- Apagar ou alterar deliberadamente evidências relacionadas ao caso durante a análise;\n- Reiniciar ou encerrar propositalmente o procedimento para impedir sua conclusão;\n- Utilizar qualquer método com a intenção de burlar a análise administrativa.\n\n> ⚠️ **ATENÇÃO**\n> A recusa ou tentativa deliberada de impedir uma verificação poderá ser considerada na decisão administrativa e resultar em punição conforme a gravidade do caso.",
-          "tag": "ADMINISTRAÇÃO"
-        },
-        {
-          "code": "08.03",
-          "title": "Evasão de Banimento",
-          "text": "É proibido utilizar contas, dispositivos, métodos ou recursos alternativos com o objetivo de **retornar à Viena enquanto existir um banimento ativo**.\n\nTambém é proibido tentar contornar uma punição utilizando terceiros ou qualquer outro meio destinado a ocultar a identidade do jogador punido.\n\n> ❌ **PROIBIDO**\n> Retornar à cidade burlando um banimento poderá gerar novas medidas administrativas e impedir futuras possibilidades de retorno.",
-          "tag": "PUNIÇÃO"
-        },
-        {
-          "code": "08.04",
-          "title": "Auxílio à Evasão",
-          "text": "É proibido auxiliar conscientemente um jogador a **burlar ou ocultar um banimento ativo**.\n\n**Pode ser considerado auxílio:**\n- Fornecer meios para que o jogador retorne à cidade burlando a punição;\n- Emprestar ou disponibilizar recursos com essa finalidade;\n- Ocultar deliberadamente informações relevantes sobre uma evasão;\n- Participar ativamente de uma tentativa de contornar medidas administrativas.\n\n> ⚠️ **ATENÇÃO**\n> A punição dependerá do nível de participação, das evidências disponíveis e da intenção identificada pela Administração.",
-          "tag": "ADMINISTRAÇÃO"
-        },
-        {
-          "code": "08.05",
-          "title": "Mercado Negro",
-          "text": "É proibida qualquer negociação externa envolvendo **dinheiro real, benefícios, itens, moedas, propriedades ou vantagens pertencentes à Viena** fora dos meios oficialmente disponibilizados pela cidade.\n\n**Não é permitido:**\n- Vender dinheiro da cidade por dinheiro real;\n- Comercializar itens ou benefícios por pagamentos externos;\n- Revender benefícios obtidos através de donate;\n- Intermediar negociações externas envolvendo patrimônio da cidade;\n- Utilizar plataformas externas para comercializar vantagens in-game.\n\n> ❌ **TOLERÂNCIA ZERO**\n> A prática de Mercado Negro poderá resultar em **banimento permanente**, além da remoção dos itens, valores ou benefícios envolvidos na negociação.",
-          "tag": "ECONOMIA"
-        },
-        {
-          "code": "08.06",
-          "title": "Negociações Externas",
-          "text": "A Viena não reconhece nem intermedeia negociações realizadas entre jogadores **fora dos sistemas e canais oficialmente disponibilizados pela cidade**.\n\nA Administração poderá intervir quando a negociação envolver quebra de regra, Mercado Negro, exploração de sistemas ou qualquer prática proibida.\n\n> ℹ️ **OBSERVAÇÃO**\n> A Viena não se responsabiliza por golpes, perdas ou acordos realizados fora dos meios oficiais. Negociações proibidas continuam sujeitas às punições previstas nas regras.",
-          "tag": "ECONOMIA"
-        },
-        {
-          "code": "08.07",
-          "title": "Benefícios e Donate",
-          "text": "Benefícios adquiridos através dos meios oficiais da Viena devem respeitar **as condições, limitações e finalidade estabelecidas para cada benefício**.\n\nA aquisição de um benefício não concede autorização para:\n- Quebrar regras da cidade;\n- Explorar mecânicas de maneira indevida;\n- Utilizar vantagens para prejudicar deliberadamente outros jogadores;\n- Comercializar externamente o benefício;\n- Exigir tratamento administrativo diferente dos demais cidadãos.\n\n> ⚠️ **ATENÇÃO**\n> Benefícios podem possuir regras específicas de utilização. O descumprimento dessas condições poderá resultar em suspensão ou remoção do benefício, além de outras punições quando aplicáveis.",
-          "tag": "DONATE"
-        },
-        {
-          "code": "08.08",
-          "title": "Ocultação e Manipulação de Provas",
-          "text": "É proibido falsificar, manipular ou ocultar deliberadamente informações com o objetivo de **interferir em uma análise administrativa**.\n\n**Inclui:**\n- Editar provas para alterar o contexto real de uma situação;\n- Apresentar informações falsas à Staff;\n- Omitir propositalmente partes essenciais de uma ocorrência quando solicitado o contexto completo;\n- Forjar prints, vídeos, registros ou informações;\n- Tentar induzir a equipe responsável ao erro através de evidências manipuladas.\n\n> ❌ **PROIBIDO**\n> A tentativa deliberada de manipular uma análise poderá gerar punição própria, independentemente do resultado da denúncia ou ocorrência original.",
-          "tag": "ADMINISTRAÇÃO"
-        }
-      ]
-    },
-    {
       "id": "corridas",
       "name": "CÓDIGO VERMELHO",
       "short": "Corridas Ilegais",
