@@ -1,18 +1,27 @@
-VIENA — PESQUISA POR TAGS V5
+VIENA — REVISÃO DE REGRAS V7
 
-SUBSTITUA NA RAIZ:
+SUBSTITUA:
+- rules.json
 - app.js
 - style.css
 
-O rules.json foi incluído apenas como cópia da versão V4.
-Se você NÃO alterou regras depois do V4, pode substituir também.
-Se já editou regras no Sveltia, NÃO substitua rules.json.
+Essa versão mantém:
+- Sidebar maior
+- Menu sanfonado
+- Pesquisa por tags
+- Cursor/rastro
+- Subcategorias
 
 NOVO:
-- Filtro de tags embaixo da barra de pesquisa.
-- Pode combinar texto + tag.
-- Clicar na TAG no final de qualquer regra abre a pesquisa já filtrada.
-- Resultados mostram a TAG.
-- Clicar no resultado abre exatamente a regra e destaca ela na página.
-- "TODAS" remove o filtro.
-- Tags são criadas automaticamente a partir do rules.json.
+- Tribunal da Rua completo
+- Como fazer denúncias
+- Regras de provas e análise
+- Revisão/recurso
+- Tabela geral de punições
+- Suporte visual a tabelas Markdown
+- Airdrop — intervenção policial
+- Auditoria das áreas ainda incompletas
+
+ATENÇÃO:
+A tabela de punições utiliza NÍVEIS e medidas possíveis, sem inventar duração fixa de banimento.
+Se a Viena possuir uma tabela oficial em dias (ex.: RDM = X dias), ela pode ser inserida depois.

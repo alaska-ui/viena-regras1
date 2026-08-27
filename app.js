@@ -116,6 +116,60 @@ function renderMarkdown(markdown){
   let listType = null;
   let inQuote = false;
   let quoteLines = [];
+  let inTable = false;
+  let tableRows = [];
+
+  function splitTableRow(line){
+    return String(line || "")
+      .trim()
+      .replace(/^\|/,"")
+      .replace(/\|$/,"")
+      .split("|")
+      .map(cell => cell.trim());
+  }
+
+  function isTableSeparator(line){
+    const cells = splitTableRow(line);
+    return cells.length > 0 &&
+      cells.every(cell => /^:?-{3,}:?$/.test(cell));
+  }
+
+  function closeTable(){
+    if(!inTable) return;
+
+    if(tableRows.length >= 2 && isTableSeparator(tableRows[1])){
+      const header = splitTableRow(tableRows[0]);
+      const body = tableRows.slice(2).map(splitTableRow);
+
+      output.push(`
+        <div class="md-table-wrap">
+          <table class="md-table">
+            <thead>
+              <tr>
+                ${header.map(cell => `<th>${inlineMarkdown(cell)}</th>`).join("")}
+              </tr>
+            </thead>
+            <tbody>
+              ${body.map(row => `
+                <tr>
+                  ${header.map((_,index) =>
+                    `<td>${inlineMarkdown(row[index] || "")}</td>`
+                  ).join("")}
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `);
+    }else{
+      tableRows.forEach(row => {
+        output.push(`<p>${inlineMarkdown(row)}</p>`);
+      });
+    }
+
+    inTable = false;
+    tableRows = [];
+  }
 
   function closeList(){
     if(!inList) return;
@@ -180,8 +234,32 @@ function renderMarkdown(markdown){
     quoteLines = [];
   }
 
-  for(const line of lines){
+  for(let lineIndex = 0; lineIndex < lines.length; lineIndex++){
+    const line = lines[lineIndex];
     const trimmed = line.trim();
+
+    const nextLine = lines[lineIndex + 1]?.trim() || "";
+    const startsTable =
+      trimmed.includes("|") &&
+      nextLine.includes("|") &&
+      isTableSeparator(nextLine);
+
+    if(startsTable && !inTable){
+      closeList();
+      if(inQuote) closeQuote();
+      inTable = true;
+      tableRows = [trimmed];
+      continue;
+    }
+
+    if(inTable){
+      if(trimmed.includes("|") && trimmed){
+        tableRows.push(trimmed);
+        continue;
+      }
+
+      closeTable();
+    }
 
     if(trimmed.startsWith(">")){
       closeList();
@@ -246,6 +324,7 @@ function renderMarkdown(markdown){
   }
 
   if(inQuote) closeQuote();
+  closeTable();
   closeList();
 
   return output.join("");

@@ -1,0 +1,39 @@
+REVISÃO V7 — FOCO SAKURA / PONTOS INCOMPLETOS
+
+CORRIGIDO NESTA VERSÃO
+- Denúncias: fluxo completo de abertura.
+- Uma situação por denúncia.
+- Identificação objetiva do que deve ser analisado.
+- Conduta dentro do ticket.
+- Provas válidas e contexto completo.
+- Links/arquivos acessíveis.
+- Manipulação de provas.
+- Forma de análise da Staff.
+- Decisão administrativa.
+- Revisão/recurso.
+- Denúncia de má-fé.
+- Critérios de punição.
+- Tabela geral de punições.
+- Reincidência e agravantes.
+- Infrações de tratamento específico.
+- Airdrop: intervenção policial somente com disparos, sem camper e sem abordagem só por loot.
+- Ações especiais: regra-guia sem inventar detalhes não confirmados.
+- Site agora renderiza tabelas Markdown.
+
+AUDITORIA DAS OUTRAS ÁREAS
+1. REGRAS ABSOLUTAS — boa cobertura.
+2. REGRAS BÁSICAS — boa cobertura; é uma das áreas mais completas.
+3. REGRAS GERAIS — boa após regras de personagem/segundo slot.
+4. SAFE ZONES — suficiente, mas depende da lista oficial de locais seguros da Viena.
+5. COMBATE & CONFRONTO — boa cobertura; regras específicas de ações ainda podem complementar.
+6. AÇÕES — AINDA É A ÁREA MAIS INCOMPLETA.
+   Faltam parâmetros oficiais da Viena para assaltos, reféns, Helicrash, ações blipadas, quantidade de participantes/efetivo e outras modalidades.
+7. ILEGAL — estrutura boa, porém faltam números/regras próprias de facções se a Viena possuir limites de membros, advertências de facção, guerras e invasões.
+8. POLÍCIA & LEGAL — boa base; Airdrop foi acrescentado. Ainda podem faltar procedimentos internos específicos do Legal.
+9. VEÍCULOS — cobertura básica suficiente; pode crescer com regras específicas de perseguição.
+10. CORRIDAS — boa cobertura.
+11. EVENTOS — suficiente como regra geral.
+12. DENÚNCIAS & PUNIÇÕES — corrigida e ampliada nesta V7.
+
+IMPORTANTE
+Não foram inventados números de efetivo, tempos ou punições em dias que não estavam confirmados nas bases disponíveis.

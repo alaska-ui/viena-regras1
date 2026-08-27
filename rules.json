@@ -601,6 +601,19 @@
               "tag": "COMBATE"
             }
           ]
+        },
+        {
+          "id": "acoes-especiais",
+          "name": "Ações Especiais",
+          "icon": "📦",
+          "rules": [
+            {
+              "title": "Ações com Regramento Próprio",
+              "text": "Airdrop, Helicrash e outras ações especiais podem possuir **regras adicionais específicas** divulgadas pela Administração.\n\nQuando existir regra própria para uma ação, ela deve ser lida em conjunto com as regras gerais de combate, interferência, loot e atuação policial.\n\n> ⚠️ **ATENÇÃO**\n> Nenhuma ação especial anula RDM, VDM, Metagaming, Combat Logging ou demais regras fundamentais da cidade.",
+              "tag": "AÇÃO",
+              "code": "06.04"
+            }
+          ]
         }
       ],
       "rules": []
@@ -756,6 +769,12 @@
               "title": "Operações contra corridas",
               "text": "Operações podem ser planejadas para interromper eventos clandestinos, realizar cercos, identificar organizadores e apreender veículos conforme o RP.",
               "tag": "OPERAÇÃO"
+            },
+            {
+              "title": "Airdrop — Intervenção Policial",
+              "text": "A queda do Airdrop ou a simples presença de jogadores no local **não autoriza intervenção policial automática**.\n\nA atuação policial no Airdrop somente poderá ocorrer quando houver **disparos dentro da área da ação**, respeitando o contexto da ocorrência.\n\n**A polícia não pode:**\n- Permanecer camperando o local apenas aguardando disparos;\n- Abordar um cidadão somente porque ele acabou de lootear a caixa;\n- Utilizar a queda do Airdrop, isoladamente, como justificativa para abordagem ou operação.\n\n> 🚨 **ATENÇÃO**\n> Sem disparos dentro da área, a presença no Airdrop não é, por si só, motivo para intervenção policial.",
+              "tag": "POLÍCIA",
+              "code": "08.11"
             }
           ]
         }
@@ -953,7 +972,7 @@
       "code": "12",
       "name": "TRIBUNAL DA RUA",
       "short": "Denúncias & Punições",
-      "desc": "Como reportar situações e como a Administração classifica infrações.",
+      "desc": "O Tribunal da Rua reúne o procedimento oficial para denúncias, análise de provas, revisões e aplicação de punições dentro da Viena.",
       "subcategories": [
         {
           "id": "denuncias",
@@ -986,28 +1005,121 @@
           "icon": "⚖️",
           "rules": [
             {
-              "code": "12.04",
-              "title": "Bandeira Amarela",
-              "text": "Advertência formal aplicada em infrações leves ou como registro administrativo.",
-              "tag": "PUNIÇÃO"
+              "title": "Critérios de Punição",
+              "text": "A punição é definida considerando **gravidade, intenção, impacto no RP, histórico e reincidência**.\n\nUma mesma infração pode receber medidas diferentes quando o contexto demonstrar níveis distintos de gravidade.\n\n> ℹ️ **OBSERVAÇÃO**\n> A tabela é uma referência de enquadramento. Infrações graves, reincidência ou situações excepcionais podem justificar escalonamento da medida.",
+              "tag": "PUNIÇÃO",
+              "code": "12.04"
             },
             {
-              "code": "12.05",
-              "title": "Bandeira Vermelha",
-              "text": "Suspensão temporária de determinadas atividades ou acesso, conforme a gravidade da infração.",
-              "tag": "PUNIÇÃO"
+              "title": "Tabela de Punições",
+              "text": "| Nível | Classificação | Aplicação geral | Medidas possíveis |\n| --- | --- | --- | --- |\n| **01** | Leve | Condutas de baixo impacto ou primeira ocorrência sem prejuízo grave ao RP. | Orientação, registro ou advertência. |\n| **02** | Moderada | Infração com impacto perceptível, descumprimento claro ou reincidência leve. | Advertência e/ou banimento temporário. |\n| **03** | Grave | Conduta intencional, reincidente ou com impacto elevado no RP e em terceiros. | Banimento temporário, remoção de benefícios e outras medidas cabíveis. |\n| **04** | Gravíssima | Exploits graves, mercado negro, evasão de punição, Dark RP grave ou situações de tolerância zero. | Banimento prolongado ou permanente, conforme a regra específica. |\n\n> ⚠️ **ATENÇÃO**\n> Quando uma regra possuir punição específica, **a regra específica prevalece sobre esta tabela geral**.",
+              "tag": "PUNIÇÃO",
+              "code": "12.05"
             },
             {
-              "code": "12.06",
-              "title": "Bandeira Preta",
-              "text": "Banimento aplicado em infrações graves, reincidência ou situações previstas pela administração.",
-              "tag": "PUNIÇÃO"
+              "title": "Escalonamento e Reincidência",
+              "text": "A reincidência permite o agravamento da punição, principalmente quando o jogador demonstra repetição consciente da mesma conduta ou histórico recente de infrações semelhantes.\n\n**Podem agravar a análise:**\n- Reincidência;\n- Tentativa de ocultar a infração;\n- Manipulação de provas;\n- Prejuízo coletivo a uma ação;\n- Intenção clara de quebrar o RP;\n- Recusa em colaborar com procedimento administrativo quando exigido.",
+              "tag": "PUNIÇÃO",
+              "code": "12.06"
             },
             {
-              "title": "Critério de Punição",
-              "text": "A punição aplicada pela Administração considera **contexto, intenção, gravidade, impacto no RP e reincidência**.\n\nUma situação poderá resultar em advertência, suspensão, remoção de benefício, banimento temporário ou permanente, conforme o caso.\n\n> ⚠️ **ATENÇÃO**\n> A ausência de uma punição fixa escrita ao lado de uma regra não significa ausência de penalidade. A decisão será fundamentada na infração e nas evidências analisadas.",
+              "title": "Infrações com Tratamento Específico",
+              "text": "Algumas condutas possuem tratamento mais rigoroso por sua natureza.\n\n**Exemplos já previstos nas regras da Viena:**\n- Mercado Negro;\n- Programas ilegais e vantagens externas;\n- Evasão de banimento;\n- Manipulação deliberada de provas;\n- Dark RP em situações graves.\n\n> ❌ **TOLERÂNCIA ZERO**\n> Quando a própria regra indicar banimento permanente ou tratamento específico, a Administração seguirá aquela previsão.",
               "tag": "PUNIÇÃO",
               "code": "12.07"
+            }
+          ]
+        },
+        {
+          "id": "como-denunciar",
+          "name": "Como Denunciar",
+          "icon": "📨",
+          "rules": [
+            {
+              "title": "Abertura da Denúncia",
+              "text": "Toda denúncia deve ser aberta **pelo canal ou sistema oficial disponibilizado pela Viena** e apresentar uma situação específica para análise.\n\n**Informe de forma objetiva:**\n- O que aconteceu;\n- Quem está envolvido, quando for possível identificar;\n- Onde a situação ocorreu;\n- Qual conduta ou regra você deseja que a Staff avalie;\n- As provas correspondentes à situação.\n\n> ⚠️ **ATENÇÃO**\n> Descrições vagas, informações fora do contexto ou denúncias abertas sem indicar o que deve ser analisado poderão ser devolvidas para correção ou encerradas quando impossibilitarem a avaliação.",
+              "tag": "DENÚNCIA",
+              "code": "12.08"
+            },
+            {
+              "title": "Uma Situação por Denúncia",
+              "text": "Cada denúncia deve tratar **uma situação principal**. Ocorrências diferentes, envolvendo contextos distintos, devem ser separadas para manter a análise organizada.\n\n> ℹ️ **OBSERVAÇÃO**\n> Várias infrações ocorridas dentro da mesma ação podem ser analisadas juntas quando fazem parte do mesmo contexto.",
+              "tag": "DENÚNCIA",
+              "code": "12.09"
+            },
+            {
+              "title": "Identificação da Infração",
+              "text": "Não é obrigatório conhecer o nome técnico exato da regra para denunciar, porém o denunciante deve explicar **qual comportamento deseja que seja avaliado**.\n\n**Exemplo:**\n- Em vez de escrever apenas `VDM`, explique que o jogador utilizou o veículo propositalmente para atropelar durante determinada situação.\n\n> 💡 **IMPORTANTE**\n> A classificação final da infração é responsabilidade da Staff responsável pela análise.",
+              "tag": "DENÚNCIA",
+              "code": "12.10"
+            },
+            {
+              "title": "Conduta no Atendimento",
+              "text": "O ticket de denúncia é um ambiente administrativo e deve ser tratado com respeito.\n\n**Não é permitido:**\n- Ofender ou provocar envolvidos;\n- Pressionar membros da Staff por resultado;\n- Criar discussões paralelas dentro do atendimento;\n- Abrir múltiplos tickets para a mesma ocorrência com o objetivo de obter outra decisão.\n\n> ⚠️ **ATENÇÃO**\n> Condutas inadequadas durante o atendimento também podem ser avaliadas separadamente.",
+              "tag": "ATENDIMENTO",
+              "code": "12.11"
+            }
+          ]
+        },
+        {
+          "id": "provas-analise",
+          "name": "Provas & Análise",
+          "icon": "🎥",
+          "rules": [
+            {
+              "title": "Provas Válidas",
+              "text": "As provas devem permitir que a Staff compreenda **o contexto real da situação**, e não somente o momento da possível infração.\n\n**Podem ser utilizadas:**\n- Clipes e vídeos;\n- Prints, quando forem suficientes para o fato analisado;\n- Registros do servidor;\n- Outras evidências verificáveis aceitas pela Administração.\n\n> ⚠️ **ATENÇÃO**\n> Sempre que o contexto anterior ou posterior puder alterar a interpretação da situação, a Staff poderá solicitar um trecho maior.",
+              "tag": "PROVA",
+              "code": "12.12"
+            },
+            {
+              "title": "Contexto Completo",
+              "text": "Clipes excessivamente cortados, editados ou iniciados somente no momento favorável ao denunciante podem ser considerados insuficientes.\n\n**A prova deve preservar, quando necessário:**\n- O início da interação;\n- Vozes e comunicações relevantes;\n- A sequência dos acontecimentos;\n- O momento posterior à infração, quando ele ajudar a esclarecer o caso.\n\n> ❌ **PROIBIDO**\n> Omitir deliberadamente partes essenciais da situação para alterar a interpretação dos fatos poderá ser tratado como manipulação de prova.",
+              "tag": "PROVA",
+              "code": "12.13"
+            },
+            {
+              "title": "Links e Arquivos",
+              "text": "É responsabilidade de quem apresenta a prova manter o arquivo ou link **acessível durante a análise**.\n\nProvas removidas, privadas, expiradas, corrompidas ou inacessíveis podem impedir a continuidade do atendimento.\n\n> 💡 **DICA**\n> Antes de enviar, abra o link em uma janela anônima ou desconectada para confirmar que a Staff conseguirá visualizá-lo.",
+              "tag": "PROVA",
+              "code": "12.14"
+            },
+            {
+              "title": "Provas Manipuladas",
+              "text": "É proibido falsificar, editar de forma enganosa, forjar ou ocultar evidências com a intenção de influenciar uma decisão administrativa.\n\n> ❌ **PROIBIDO**\n> A manipulação deliberada de provas pode gerar punição própria, independentemente do resultado da denúncia original.",
+              "tag": "ADMINISTRAÇÃO",
+              "code": "12.15"
+            },
+            {
+              "title": "Análise do Contexto",
+              "text": "A Staff não deve analisar somente uma frase, disparo ou colisão isoladamente quando o restante da ação puder modificar o entendimento do caso.\n\nA decisão poderá considerar **contexto, intenção, sequência da ação, risco apresentado, reincidência e impacto no RP**.\n\n> ℹ️ **OBSERVAÇÃO**\n> Uma denúncia pode ser aceita, negada parcialmente ou resultar em enquadramento diferente daquele solicitado pelo denunciante.",
+              "tag": "ANÁLISE",
+              "code": "12.16"
+            }
+          ]
+        },
+        {
+          "id": "decisoes-revisoes",
+          "name": "Decisões & Revisões",
+          "icon": "📋",
+          "rules": [
+            {
+              "title": "Decisão Administrativa",
+              "text": "Após analisar as provas disponíveis, a Staff responsável registrará o entendimento da ocorrência e, quando aplicável, a punição correspondente.\n\n> ⚠️ **ATENÇÃO**\n> A decisão deve ser baseada no conjunto de evidências e nas regras vigentes no momento da ocorrência.",
+              "tag": "ADMINISTRAÇÃO",
+              "code": "12.17"
+            },
+            {
+              "title": "Revisão de Punição",
+              "text": "Caso exista canal oficial para revisão ou recurso, o pedido deve ser realizado **de forma organizada e com fundamento**, apresentando informação nova, erro de análise ou ponto relevante que não tenha sido considerado.\n\n**Não constitui revisão válida:**\n- Apenas discordar do resultado;\n- Reabrir repetidamente o mesmo caso sem novos elementos;\n- Pressionar membros da equipe no privado;\n- Criar exposição pública para tentar modificar a decisão.",
+              "tag": "REVISÃO",
+              "code": "12.18"
+            },
+            {
+              "title": "Denúncia de Má-Fé",
+              "text": "Denúncias propositalmente falsas, acusações fabricadas ou tentativas de utilizar o sistema de denúncias para perseguir outro jogador podem gerar punição.\n\n> ❌ **PROIBIDO**\n> O sistema de denúncias existe para proteger o RP e não pode ser utilizado como ferramenta de vingança OOC.",
+              "tag": "CONDUTA",
+              "code": "12.19"
             }
           ]
         }
@@ -1016,6 +1128,12 @@
     }
   ],
   "updates": [
+    {
+      "date": "27 AGO 2026",
+      "title": "Tribunal da Rua",
+      "text": "Fluxo de denúncias, provas, revisões e tabela geral de punições ampliados.",
+      "tag": "ADMIN"
+    },
     {
       "date": "27 AGO 2026",
       "title": "Organização do Código da Rua",
@@ -1033,12 +1151,6 @@
       "title": "Código Vermelho",
       "text": "Estrutura inicial das regras de corridas ilegais.",
       "tag": "CORRIDAS"
-    },
-    {
-      "date": "18 AGO 2026",
-      "title": "Tribunal da Rua",
-      "text": "Sistema de classificação de penalidades.",
-      "tag": "ADMIN"
     },
     {
       "date": "18 AGO 2026",

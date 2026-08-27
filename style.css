@@ -1798,3 +1798,61 @@ footer{
     font-size:12px !important;
   }
 }
+
+
+/* =========================================================
+   VIENA — TABELAS MARKDOWN V7
+========================================================= */
+
+.md-table-wrap{
+  width:100%;
+  overflow-x:auto;
+  margin:18px 0 8px;
+  border:1px solid #292929;
+  background:#0d0d0d;
+}
+
+.md-table{
+  width:100%;
+  min-width:680px;
+  border-collapse:collapse;
+  font-size:11px;
+  line-height:1.55;
+}
+
+.md-table th,
+.md-table td{
+  padding:12px 13px;
+  border-right:1px solid #252525;
+  border-bottom:1px solid #252525;
+  vertical-align:top;
+  text-align:left;
+}
+
+.md-table th:last-child,
+.md-table td:last-child{
+  border-right:0;
+}
+
+.md-table thead th{
+  color:#fff;
+  background:#151515;
+  font-size:9px;
+  font-weight:850;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+
+.md-table tbody tr:hover{
+  background:rgba(255,255,255,.025);
+}
+
+.md-table strong{
+  color:#fff;
+}
+
+@media(max-width:700px){
+  .md-table{
+    min-width:620px;
+  }
+}
