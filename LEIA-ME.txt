@@ -1,52 +1,18 @@
-# VIENA — Atualização do Código da Rua
+CORREÇÃO DA FONTE DAS REGRAS — VIENA
 
-Substitua os arquivos correspondentes:
+O novo rules.json organizado já está na raiz do repositório.
 
-- `index.html` → raiz do projeto
-- `style.css` → raiz do projeto
-- `app.js` → raiz do projeto
-- `config.yml` → raiz do projeto
+Substitua:
+1. /index.html
+2. /config.yml
+3. /admin/config.yml
 
-## O que foi adicionado
+NÃO substitua:
+- rules.json
+- content/site.json
+- app.js
+- style.css
+- uploads/
 
-1. Texto das regras com Markdown.
-2. Negrito com `**texto**`.
-3. Itálico com `*texto*`.
-4. Títulos com `#`, `##`, `###`.
-5. Listas com `-`.
-6. Listas numeradas com `1.`.
-7. Caixas especiais:
-   - `> ⚠️ **ATENÇÃO**`
-   - `> ℹ️ **OBSERVAÇÃO**`
-   - `> ❌ **PROIBIDO**`
-   - `> ✅ **PERMITIDO**`
-8. Botões `ANTERIOR` e `PRÓXIMA` no final de cada categoria.
-9. Botão `VOLTAR AO MAPA` entre eles.
-10. Letras/símbolos vermelhos caindo pela tela.
-11. Cursor com a logo configurada no Admin.
-12. Rastro do cursor preservado.
-13. Imagem da categoria NÃO aparece no Mapa da Rua.
-14. Campos do Admin configurados como opcionais.
-15. Se o ID da categoria ficar vazio, o site cria um ID automaticamente.
-
-## Exemplo para uma regra
-
-```md
-# ANTI RP
-
-Ter condutas que vão contra o bom andamento do RP.
-
-> ⚠️ **ATENÇÃO**
->
-> É proibido qualquer ato de corrupção na Polícia ou Hospital.
-
-> ℹ️ **OBSERVAÇÃO**
->
-> Organizações previamente aprovadas pela Administração poderão possuir RPs específicos.
-
-- Respeite o contexto.
-- Preserve o RP.
-- Não abuse de permissões.
-```
-
-Não precisa mexer no JavaScript para criar novas regras. Depois de publicar pelo Admin, o site lê o `content/rules.json` automaticamente.
+O index.html redireciona a leitura antiga de content/rules.json para /rules.json.
+Os config.yml fazem o Sveltia editar /rules.json daqui para frente.

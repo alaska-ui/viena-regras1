@@ -12,7 +12,6 @@
   <div class="noise"></div>
   <div class="falling-letters" id="fallingLetters" aria-hidden="true"></div>
 
-  <!-- Cursor: somente a imagem escolhida no Admin -->
   <div class="custom-cursor" id="customCursor" aria-hidden="true"></div>
 
   <header class="topbar">
@@ -27,7 +26,10 @@
     </a>
 
     <div class="top-actions">
-      <button id="searchOpen" class="icon-btn search-button" type="button" aria-label="Pesquisar" title="Pesquisar regras"><span class="search-symbol">⌕</span><span class="search-label">PESQUISAR</span></button>
+      <button id="searchOpen" class="icon-btn search-button" type="button" aria-label="Pesquisar" title="Pesquisar regras">
+        <span class="search-symbol">⌕</span>
+        <span class="search-label">PESQUISAR</span>
+      </button>
       <a id="discordBtn" href="#" class="discord-btn" target="_blank" rel="noopener noreferrer">DISCORD</a>
     </div>
   </header>
@@ -131,6 +133,34 @@
       <div id="overlayResults"></div>
     </div>
   </div>
+
+  <!--
+    O arquivo mestre das regras agora é /rules.json.
+    Mantemos app.js intacto e redirecionamos apenas a leitura antiga
+    de content/rules.json para o arquivo correto.
+  -->
+  <script>
+    (() => {
+      const originalFetch = window.fetch.bind(window);
+
+      window.fetch = (input, init) => {
+        const url =
+          typeof input === "string"
+            ? input
+            : (input && input.url) || "";
+
+        if (
+          url === "./content/rules.json" ||
+          url === "content/rules.json" ||
+          /\/content\/rules\.json(?:\?|$)/.test(url)
+        ) {
+          return originalFetch("./rules.json", init);
+        }
+
+        return originalFetch(input, init);
+      };
+    })();
+  </script>
 
   <script src="app.js"></script>
 </body>

@@ -11,10 +11,6 @@ output:
 
 collections:
 
-  # =====================================================
-  # SITE
-  # =====================================================
-
   - name: site
     label: "🎨 Site e Layout"
     files:
@@ -76,6 +72,7 @@ collections:
               - { name: trail_type, label: "Tipo do rastro", widget: select, required: false, options: [paint, spray, glow] }
               - { name: trail_color, label: "Cor do rastro", widget: color, required: false, default: "#e50914" }
               - { name: trail_count, label: "Quantidade de partículas", widget: number, value_type: int, min: 2, max: 30, required: false, default: 10 }
+
               - name: falling_particles
                 label: "Partículas caindo"
                 widget: object
@@ -89,16 +86,12 @@ collections:
                   - { name: count, label: "Quantidade", widget: number, value_type: int, min: 5, max: 80, required: false, default: 34 }
                   - { name: size, label: "Tamanho", widget: number, value_type: int, min: 6, max: 40, required: false, default: 14 }
 
-  # =====================================================
-  # REGRAS
-  # =====================================================
-
   - name: rules
     label: "📕 Regras"
     files:
       - name: database
         label: "Categorias, Subcategorias e Regras"
-        file: content/rules.json
+        file: rules.json
         format: json
         fields:
           - name: categories
@@ -119,11 +112,12 @@ collections:
                 widget: list
                 required: false
                 summary: "{{icon}} {{name}}"
-                hint: "Crie grupos como REGRAS BÁSICAS, COMBATE & CONFLITO etc. Cada grupo pode ter suas próprias regras."
+                hint: "Use subcategorias para organizar as regras sem deixar o menu poluído."
                 fields:
                   - { name: id, label: "ID da subcategoria", widget: string, required: false, hint: "Ex.: regras-basicas" }
                   - { name: name, label: "Nome da subcategoria", widget: string, required: false }
-                  - { name: icon, label: "Ícone", widget: string, required: false, hint: "Pode usar emoji ou símbolo. Ex.: ◈, ⚔, 🚗, ♥" }
+                  - { name: icon, label: "Ícone", widget: string, required: false, hint: "Pode usar emoji ou símbolo." }
+
                   - name: rules
                     label: "📌 Regras desta subcategoria"
                     widget: list
