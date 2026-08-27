@@ -1,0 +1,619 @@
+{
+  "categories": [
+    {
+      "id": "viena",
+      "code": "🔴| VIENA ROLEPLAY",
+      "name": "VIENA ROLEPLAY",
+      "short": "Conheça Viena",
+      "desc": "“Uma cidade se torna especial quando é capaz de unir pessoas, criar memórias e transformar simples encontros em histórias que merecem ser lembradas.”",
+      "image": "/uploads/COM GOTEJAMENTOS E CONTORNO SEM SPLASH.png",
+      "rules": [
+        {
+          "title": "Prefácio",
+          "text": "✨ Sejam muito bem-vindos à Viena Roleplay! ✨\nAqui, cada história tem valor, cada encontro pode se tornar inesquecível e cada novo começo carrega a chance de construir algo único. Nosso objetivo é oferecer um ambiente acolhedor, envolvente e cheio de possibilidades, onde o respeito, a criatividade e a boa convivência caminham lado a lado.\n\nPermitam-se viver cada momento com intensidade, interpretar com alma e enxergar Viena como um mundo vivo, feito por pessoas que desejam criar conexões, experiências e memórias verdadeiras. Conversem, façam amizades, descubram caminhos, superem desafios e ajudem a construir a essência que torna a Viena Roleplay tão especial.\n\nAs regras da Viena Roleplay são atualizadas periodicamente, fiquem sempre atentos às abas de Atualizações e Avisos. É lá que vocês encontrarão todas as informações necessárias para manter a harmonia, a organização e a melhor experiência possível para todos os jogadores.\n\nQue a sua vida na Viena seja marcada por grandes histórias, bons encontros, emoções sinceras e momentos que façam sua jornada valer a pena do começo ao fim.\n\nValorizem o respeito, saibam ouvir, convivam com empatia e façam da sua história algo bonito de viver.\n✨ O INÍCIO DE UMA NOVA HISTÓRIA ✨",
+          "tag": "Apresentação"
+        }
+      ]
+    },
+    {
+      "id": "gerais",
+      "code": "01",
+      "name": "CÓDIGO DA RUA",
+      "short": "Regras Gerais",
+      "desc": "A base de convivência de Viena. Tudo começa aqui.",
+      "rules": [
+        {
+          "code": "01.01",
+          "title": "Respeito e convivência",
+          "text": "Todos os jogadores devem manter respeito entre si. Ofensas, preconceito, perseguição ou comportamento tóxico que prejudique a experiência podem resultar em punição.",
+          "tag": "GERAL"
+        },
+        {
+          "code": "01.02",
+          "title": "Valorização da vida",
+          "text": "Seu personagem deve agir de forma coerente diante de situações de risco. A vida deve ser tratada como um bem relevante dentro do RP.",
+          "tag": "ROLEPLAY"
+        }
+      ]
+    },
+    {
+      "code": "02",
+      "name": "MANTENHA A CONDUTA",
+      "short": "Regras Básicas",
+      "desc": "As regras da Viena existem para preservar a qualidade do RP, a imersão e, principalmente, uma experiência justa para todos os cidadãos.\nToda situação será analisada considerando **contexto, intenção, gravidade e impacto no RP**. A ausência de uma situação específica neste documento não significa que ela esteja automaticamente permitida.",
+      "rules": [
+        {
+          "code": "RDM",
+          "title": "Random Death Match",
+          "text": "Consiste em matar ou tentar matar outro cidadão **sem uma justificativa válida ou construção de RP que sustente a ação**.\n\n**É considerado RDM:**\n - Realizar disparos ou ataques sem contexto;\n- Executar um cidadão sem construção prévia de RP;\n- Matar alguém sem possuir uma justificativa válida dentro da situação;\n- Iniciar uma ação letal apenas por conveniência ou diversão.\n\n> ⚠️ ATENÇÃO \n> Possuir uma discussão ou desentendimento não significa, por si só, que exista justificativa para uma ação letal. A Staff poderá analisar todo o contexto da situação.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "VDM",
+          "title": "Vehicle Death Match",
+          "text": "Consiste em utilizar qualquer veículo **intencionalmente** para atingir, ferir ou matar outro cidadão.\n\n**Aplica-se a:**\n- Carros;\n- Motos;\n- Helicópteros;\n- Aviões;\n- Bicicletas;\n- Qualquer outro veículo disponível na cidade.\n\n> 💡 OBSERVAÇÃO\n> Colisões decorrentes do desenvolvimento natural de uma perseguição ou situação de RP serão analisadas de acordo com o contexto.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "PG",
+          "title": "Power Gaming",
+          "text": "É proibido utilizar mecânicas, comandos, animações ou recursos do jogo para realizar ações **impossíveis, incoerentes ou incompatíveis com a realidade do RP**.\n\n**Exemplos:**\n- Abusar de exploits ou mecânicas;\n- Utilizar animações para obter vantagem;\n- Realizar ações incompatíveis com a situação;\n- Explorar limitações do jogo para obter vantagem;\n- Utilizar mecânicas de forma diferente de sua finalidade para beneficiar o personagem.",
+          "tag": "IMERSÃO"
+        },
+        {
+          "code": "AAV",
+          "title": "ANTI-AMOR A VIDA",
+          "text": "O personagem deve valorizar a própria vida e reagir a situações de perigo de maneira **coerente e compatível com o risco apresentado**.\n\n**Não é permitido:**\n- Entrar propositalmente em tiroteios sem necessidade;\n- Colocar a própria vida em risco gratuitamente;\n- Ignorar ameaças reais;\n- Enfrentar situações claramente letais sem justificativa;\n- Realizar ações equivalentes a um suicídio sem contexto de RP.\n\n> ⚠️ ATENÇÃO\n> Coragem não significa ignorar o risco. A Staff avaliará se a atitude do personagem era compatível com a ameaça apresentada.",
+          "tag": "IMERSÃO"
+        },
+        {
+          "code": "CL",
+          "title": "Combat Logging",
+          "text": "Consiste em sair da cidade ou desconectar **durante uma situação ativa** com o objetivo de evitar suas consequências.\n\n**É considerado CL:**\n- Sair durante uma abordagem;\n- Desconectar durante uma perseguição;\n- Sair durante uma prisão;\n- Desconectar durante um sequestro;\n- Sair durante conflitos ou ações;\n- Utilizar o quit para evitar uma punição ou consequência do RP.\n\n> ⚠️ ATENÇÃO\n> Em caso de crash, o jogador deverá retornar à cidade assim que possível, afastar-se da situação e comunicar o ocorrido à Staff, apresentando uma captura de tela que permita verificar a data e o horário.",
+          "tag": "SISTEMA"
+        },
+        {
+          "code": "MG",
+          "title": "Metagaming / Ghosting",
+          "text": "Consiste em utilizar informações obtidas **fora do RP** para interferir em situações dentro da cidade ou obter vantagem.\n\n**Exemplos:**\n- Descobrir a localização de alguém através de uma live;\n- Utilizar informações recebidas pelo Discord;\n- Receber informações de terceiros fora do RP;\n- Combinar ações externas para interferir em uma situação;\n- Utilizar uma transmissão para localizar ou acompanhar um jogador.\n\n> ❌ PROIBIDO\n> Informações obtidas através de lives, clipes, Discord ou qualquer outro meio externo não fazem parte do conhecimento do personagem.",
+          "tag": "INFORMAÇÃO"
+        },
+        {
+          "code": "SK",
+          "title": "Spawn Kill",
+          "text": "É proibido iniciar ações contra cidadãos que acabaram de entrar na cidade **com o objetivo de obter vantagem pela condição de recém-conexão**.\n\n**Inclui:**\n- Ataques;\n- Assaltos;\n- Sequestros;\n- Emboscadas próximas a locais de respawn;\n- Abordagens abusivas contra jogadores recém-conectados.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "RK",
+          "title": "Revenge Kill",
+          "text": "Após a morte do personagem, é proibido retornar à situação anterior com o objetivo de buscar vingança.\n\n**Também é proibido:**\n- Retornar ao local da morte para retaliar;\n- Enviar terceiros para realizar a vingança;\n- Continuar uma perseguição iniciada antes da morte;\n- Utilizar informações da situação anterior para provocar uma nova ação.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "SZ",
+          "title": "Safe Zone",
+          "text": "Dentro de uma Safe Zone, não é permitido **iniciar ações criminosas ou hostis**.\n\n**É proibido:**\n- Assaltar;\n- Sequestrar;\n- Roubar;\n- Sacar armas com intenção hostil;\n- Matar;\n- Iniciar abordagens criminosas.\n\n> ℹ️ OBSERVAÇÃO\n> Situações especificamente autorizadas pelas regras da cidade poderão possuir tratamento diferente.",
+          "tag": "ZONAS"
+        },
+        {
+          "code": "DRP",
+          "title": "Dark RP",
+          "text": "Dark RP compreende interpretações que ultrapassam os limites estabelecidos pela Viena, envolvendo conteúdos **extremamente ofensivos, discriminatórios, abusivos ou sensíveis**.\n\n**Exemplos:**\n- Racismo;\n- LGBTfobia;\n- Xenofobia;\n- Assédio;\n- Misoginia;\n- Intolerância religiosa;\n- Bullying;\n- Conteúdo sexual envolvendo abuso;\n- Necrofilia;\n- Outras interpretações que ultrapassem os limites aceitáveis do RP.\n\n> ❌ PROIBIDO\n> Casos graves ou que envolvam condutas extremamente abusivas poderão resultar em banimento permanente, independentemente de outras punições anteriores.",
+          "tag": "CONDUTA"
+        },
+        {
+          "code": "FRP",
+          "title": "Forçar RP",
+          "text": "É proibido obrigar outro cidadão a participar de uma situação de RP contra sua vontade ou criar situações artificiais exclusivamente para provocar uma reação.\n\n**Também se enquadra:**\n- Provocações constantes;\n- Insultos utilizados para forçar uma reação;\n- Criar situações sem contexto;\n- Insistir em uma interação apenas para gerar uma reação específica;\n- Manipular situações para obrigar outro jogador a participar de um RP.",
+          "tag": "IMERSÃO"
+        },
+        {
+          "code": "CF",
+          "title": "Cop Fear / Gang Fear",
+          "text": "O personagem deve respeitar situações de ameaça, bem como a hierarquia e o nível de risco apresentados dentro do RP.\n\nNão é permitido agir de maneira incompatível com uma situação de perigo apenas para **provocar, desafiar ou desmoralizar** autoridades ou grupos armados.\n\n> ℹ️ OBSERVAÇÃO\n> A reação do personagem deve ser compatível com o risco real apresentado na situação.",
+          "tag": "POLÍCIA"
+        },
+        {
+          "code": "CB",
+          "title": "Cop Bait",
+          "text": "É proibido criar situações artificiais com o único objetivo **de atrair policiais para iniciar ou provocar um confronto**.\n\n**Exemplos:**\n- Provocar viaturas propositalmente;\n- Criar falsas ocorrências;\n- Simular acidentes;\n- Realizar denúncias falsas;\n- Criar situações artificiais para forçar uma perseguição ou confronto.",
+          "tag": "POLÍCIA"
+        },
+        {
+          "code": "OD",
+          "title": "Ofensas no Discord",
+          "text": "O Discord oficial da Viena também faz parte da comunidade e está sujeito às regras de convivência.\n\n**Não serão tolerados:**\n- Ofensas;\n- Farpas direcionadas;\n- Perseguições;\n- Marcações abusivas;\n- Tentativas de constranger outros membros;\n- Utilização de clipes ou conteúdos para atacar membros da comunidade.\n\n> ⚠️ ATENÇÃO\n> A punição poderá ocorrer mesmo que a conduta tenha acontecido fora da cidade, quando estiver relacionada à comunidade Viena.",
+          "tag": "COMUNIDADE"
+        },
+        {
+          "code": "FSP",
+          "title": "Flood / Spam",
+          "text": "É proibido enviar mensagens, sons ou realizar ações repetitivas de maneira excessiva com o objetivo de **incomodar, atrapalhar ou poluir a experiência dos demais jogadores**.\n\n**Aplica-se a:**\n- Chat;\n- Voz;\n- Gestos;\n- Mensagens repetitivas;\n- Sons excessivos;\n- Qualquer outra forma de spam.",
+          "tag": "COMUNIDADE"
+        },
+        {
+          "code": "PI",
+          "text": "Não é permitida a divulgação de outros servidores, comunidades, marcas, links ou conteúdos externos **sem autorização da Administração**.\n\n> ❌ PROIBIDO\n> A divulgação de servidores ou comunidades concorrentes sem autorização poderá resultar em punição.",
+          "tag": "COMUNIDADE"
+        },
+        {
+          "code": "AFO",
+          "title": "Assalto Fora de Horário",
+          "text": "Assaltos devem respeitar os horários definidos pela cidade.\n\n⏰ **HORÁRIOS PERMITIDOS**\n**SUL:** 02:00 às 10:00;\n**NORTE:** 18:00 às 02:00.\n\n> ⚠️ ATENÇÃO\n> Fora dos horários estabelecidos, a ação de assalto não poderá ser iniciada.",
+          "tag": "AÇÕES"
+        },
+        {
+          "code": "AB",
+          "title": "Abuso de Bugs",
+          "text": "É proibido utilizar falhas, bugs ou vulnerabilidades do servidor para obter **qualquer tipo de vantagem**.\n\n**Exemplos:**\n- Duplicação de itens;\n- Burlar animações;\n- Gerar veículos indevidamente;\n- Atravessar paredes;\n- Acessar locais inacessíveis;\n- Explorar falhas de textura;\n- Utilizar vulnerabilidades do servidor.\n\n> ❌ PROIBIDO\n> Encontrou um bug? Não utilize. Informe a Administração para que a falha possa ser corrigida.",
+          "tag": "SISTEMA"
+        },
+        {
+          "code": "ARP",
+          "title": "Anti-RP",
+          "text": "Qualquer comportamento que quebre a imersão ou seja incompatível com o contexto da situação poderá ser considerado Anti-RP.\n\n**Exemplos:**\n- Ignorar ferimentos;\n- Rir ou agir de maneira incompatível em situações graves;\n- Utilizar termos claramente OOC durante o RP;\n- Recusar-se propositalmente a interpretar;\n- Agir como se o personagem soubesse que está dentro de um jogo.\n\n> ❌ PROIBIDO\n> **Corrupção na Polícia ou Hospital é proibida**, salvo quando houver autorização prévia da Administração para um projeto ou RP específico.",
+          "tag": "IMERSÃO"
+        },
+        {
+          "code": "FLM",
+          "title": "Flaming",
+          "text": "Ofensas, provocações ou comportamentos utilizados com a intenção de **atacar, humilhar ou constranger outro jogador** não serão tolerados.\n\n**Também se enquadram:**\n- Ofensas direcionadas;\n- Desrespeito a cidadãos;\n- Utilização de corpos para provocar outros jogadores;\n- Atitudes ofensivas após a morte de um personagem;\n- Provocações realizadas com o objetivo de gerar conflito pessoal.",
+          "tag": "CONDUTA"
+        },
+        {
+          "code": "RAT",
+          "title": "Ratão",
+          "text": "Durante uma ação, é proibido utilizar um veículo propositalmente para capotar, travar ou prejudicar outro veículo que esteja participando de uma fuga.\n\n> ℹ️ OBSERVAÇÃO\n> Colisões decorrentes do desenvolvimento natural de uma perseguição serão analisadas conforme o contexto e a intenção do jogador.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "FI",
+          "title": "Falsa Identidade",
+          "text": "É proibido se passar por outra pessoa, membro da Staff, policial ou qualquer outro cargo ou personagem com o objetivo de **enganar, manipular ou obter vantagem**.",
+          "tag": "CONDUTA"
+        },
+        {
+          "code": "AE",
+          "title": "Abuso da Economia",
+          "text": "É proibido manipular sistemas econômicos da cidade ou explorar outros jogadores para obter vantagem indevida.\n\n**Inclui:**\n- Manipulação abusiva de valores;\n- Exploração de jogadores iniciantes;\n- Transferências financeiras incompatíveis com o RP;\n- Abuso de sistemas de venda ou negociação;\n- Qualquer exploração deliberada de falhas econômicas.",
+          "tag": "ECONOMIA"
+        },
+        {
+          "code": "SAR",
+          "title": "Sequestro / Abordagem Irreal",
+          "text": "Toda abordagem ou sequestro deve possuir **contexto, coerência e construção de RP**.\n\nNão é permitido criar situações evidentemente artificiais apenas para realizar uma ação.\n\n**A Staff poderá considerar:**\n- Local;\n- Quantidade de envolvidos;\n- Contexto;\n- Preparação da ação;\n- Motivação;\n- Coerência da abordagem;\n- Desenvolvimento do RP.\n\n> ⚠️ ATENÇÃO\n> Ter a possibilidade mecânica de realizar uma ação não significa que ela seja automaticamente válida dentro do RP.",
+          "tag": "AÇÕES"
+        },
+        {
+          "code": "CI",
+          "title": "Condutas Inadequadas",
+          "text": "Qualquer comportamento abusivo, invasivo ou que ultrapasse os limites estabelecidos pela comunidade poderá ser punido.\n\n**Inclui:**\n- Insistir após uma negativa;\n- Perseguir ou intimidar jogadores;\n- Simular atos sexuais;\n- Tortura ou mutilação sem contexto permitido;\n- Desrespeitar um personagem morto;\n- Utilizar situações sensíveis para constranger outro jogador;\n- Ultrapassar deliberadamente os limites estabelecidos pela comunidade.\n\n> ℹ️ OBSERVAÇÃO\n> Em situações sensíveis ou duvidosas, procure a Staff antes de prosseguir.",
+          "tag": "CONDUTA"
+        },
+        {
+          "code": "MAP",
+          "title": "Memória Após a Morte",
+          "text": "Após a morte em uma ação ou situação de RP, o personagem não poderá utilizar informações relacionadas às **3 horas anteriores à sua morte** para continuar ou interferir naquela situação.\n\n**A regra inclui:**\n- Pessoas;\n- Veículos;\n- Roupas;\n- Vozes;\n- Locais;\n- Rotas;\n- Participantes;\n- Qualquer outro elemento diretamente relacionado ao RP anterior.\n\n> ⚠️ ATENÇÃO\n> Após retornar do “**E**”, o personagem não poderá reconhecer ou continuar a situação anterior, mesmo que o jogador possua essas informações fora do RP.\n\n🚗 **Veículos roubados**\n\nCaso um veículo seja roubado durante uma ação, o jogador poderá posteriormente encontrá-lo e iniciar um **novo RP de recuperação**, desde que não utilize a memória da ação anterior para identificá-lo ou localizá-lo.",
+          "tag": "INFORMAÇÃO"
+        },
+        {
+          "code": "OUT",
+          "title": "Outros",
+          "text": "Nem todas as situações possíveis podem ser descritas individualmente neste documento.\n\nComportamentos que não estejam expressamente previstos poderão ser avaliados pela Administração considerando:\n\n- Contexto;\n- Intenção;\n- Gravidade;\n- Impacto no RP;\n- Conduta dos envolvidos;\n- Histórico da situação.\n\n> ⚠️ ATENÇÃO\n> Uma situação não estar escrita literalmente neste documento não significa que esteja automaticamente permitida.",
+          "tag": "ADMINISTRAÇÃO"
+        },
+        {
+          "title": "Considerações Finais",
+          "text": "A Viena busca proporcionar um ambiente onde o RP seja construído de forma **justa, coerente e divertida para todos**.\n\nConhecer as regras é responsabilidade de cada cidadão.\n\nJogue com bom senso, respeite os demais jogadores e, principalmente, construa RP.\n\n> ✅ PERMITIDO\n> Criatividade, intensidade e boas histórias são sempre bem-vindas quando respeitam os limites da cidade e proporcionam uma experiência positiva para todos.\n\n🌸 **VIENA**\n**Sua história começa aqui.**"
+        }
+      ]
+    },
+    {
+      "code": "03",
+      "name": "A RUA",
+      "short": "Combate & Conflito",
+      "rules": [
+        {
+          "code": "03.01",
+          "title": "Início de Confronto",
+          "text": "Toda ação que envolva confronto armado deve possuir **contexto e construção de RP** antes que o combate seja iniciado.\n\nNão é permitido iniciar uma situação de confronto apenas para provocar uma troca de tiros ou criar uma situação de PVP sem desenvolvimento prévio.\n\n**Regras:**\n- Deve existir contexto de RP antes de iniciar um confronto.\n- Não é permitido iniciar uma ação letal sem uma justificativa válida.\n- Discussões, provocações ou desentendimentos isolados não autorizam automaticamente o início de um confronto.\n- A situação deve possuir um desenvolvimento coerente dentro do RP.\n- Situações consideradas forçadas ou criadas exclusivamente para gerar PVP poderão ser analisadas pela Staff.\n\n> ⚠️ ATENÇÃO\n> O fato de existir uma discussão ou conflito entre personagens não significa que o confronto armado esteja automaticamente autorizado. Todo o contexto da situação será considerado em uma eventual análise.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "03.02",
+          "title": "Furto de Veículos",
+          "text": "O furto de veículos deve acontecer de maneira coerente com o RP e **não pode ser utilizado como justificativa para iniciar um confronto de forma forçada**.\n\n**É permitido:**\n- Furtar veículos que estejam abandonados ou destrancados.\n- Realizar o furto sem utilização de violência.\n- Utilizar o veículo furtado dentro das limitações previstas pelas demais regras da cidade.\n\n**É proibido:**\n- Criar um RP forçado apenas para furtar um veículo.\n- Utilizar o furto como pretexto para iniciar um PVP.\n- Furtar veículos com o objetivo de utilizá-los em ações de rua quando houver proibição específica para esse tipo de veículo.\n\n> ⚠️ ATENÇÃO\n> Caso exista uma situação de “desce e quebra” sem construção de RP prévia, a situação poderá ser caracterizada como RDM.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "03.03",
+          "title": "Retorno à Ação",
+          "text": "Após ser morto ou finalizado durante uma ação, o jogador **não poderá retornar à mesma ação**.\n\n**É proibido:**\n- Retornar ao local da ação após morrer.\n- Voltar para auxiliar aliados.\n- Retornar para participar novamente do confronto.\n- Retornar exclusivamente para recuperar o próprio corpo.\n- Utilizar outro personagem ou recurso para interferir na mesma ação.\n\n> ❌ PROIBIDO\n> Morrer durante uma ação e retornar posteriormente ao local para continuar participando dela caracteriza quebra de regra.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "03.04",
+          "title": "Marcação de Corpos",
+          "text": "É proibido utilizar um corpo como forma de criar uma situação de combate contínuo ou atrair jogadores para uma emboscada.\n\n**É proibido:**\n- Marcar um corpo com a intenção de esperar jogadores que tentem realizar o resgate.\n- Utilizar um corpo como isca para iniciar novos confrontos.\n- Permanecer no local exclusivamente aguardando pessoas para gerar PVP.\n- Criar uma situação de combate sem novo contexto de RP.\n\n> ⚠️ ATENÇÃO\n> Utilizar um corpo propositalmente como isca para gerar novos confrontos poderá ser enquadrado como **Anti-RP**.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "03.05",
+          "title": "Resgate de Corpos",
+          "text": "O resgate de um corpo deve respeitar o estado da ação e o perímetro estabelecido pela polícia.\n\n**Perímetro fechado**\n- O resgate de corpos é proibido enquanto o perímetro estiver fechado.\n- É proibido matar oficiais para possibilitar o resgate.\n- O resgate somente poderá ocorrer após o encerramento da ação e a saída da polícia do local.\n\n**Perímetro aberto**\n- O resgate poderá ser realizado, desde que o jogador esteja ciente de que o local permanece hostil.\n- Caso o corpo esteja dentro de uma área policial, a tentativa de recuperação poderá resultar em **Código 5**.\n- Caso o corpo não pertença à mesma facção, a situação poderá ser caracterizada como **RDM**, conforme o contexto.\n\n> ⚠️ ATENÇÃO\n> A abertura do perímetro **não significa que a área deixou de ser perigosa**. O jogador assume os riscos ao entrar no local.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "03.06",
+          "title": "Perímetro Fechado",
+          "text": "O perímetro fechado representa uma área sob controle da polícia durante uma ocorrência.\n\n**Enquanto o perímetro estiver fechado:**\n- É proibido resgatar corpos.\n- É proibido retornar à ação após ser abatido.\n- É proibido eliminar oficiais exclusivamente para possibilitar um resgate.\n- Jogadores que entrarem na área devem estar cientes dos riscos envolvidos.\n\nO resgate de corpos somente poderá ocorrer **após a polícia finalizar os procedimentos e deixar o local**.\n\n> 🚨 **REGRA DE PERÍMETRO**\n> Enquanto o perímetro estiver fechado, **a prioridade é a ocorrência em andamento**. Interferências externas poderão ser tratadas como uma nova situação de risco.",
+          "tag": "AÇÃO"
+        },
+        {
+          "code": "03.07",
+          "title": "Perímetro Aberto",
+          "text": "Após a polícia anunciar a abertura do perímetro, a região passa a ser considerada **área de risco**.\n\n**Regras:**\n- O resgate de corpos passa a ser permitido, respeitando os riscos do local.\n- Jogadores abatidos durante a ação não podem retornar imediatamente à ocorrência.\n- Caso a polícia ainda esteja realizando procedimentos no local, o resgate deverá aguardar a finalização.\n- A abertura do perímetro não autoriza automaticamente novos confrontos.\n\n> ⚠️ OBSERVAÇÃO\n> Em comunidades ou áreas consideradas de risco, a abertura do perímetro será válida para toda a área correspondente, respeitando as determinações da ocorrência.",
+          "tag": "AÇÃO"
+        },
+        {
+          "code": "03.08",
+          "title": "Fuga Real",
+          "text": "Uma fuga deve representar uma **tentativa real de escapar da polícia** e não pode ser utilizada apenas para criar uma oportunidade de confronto.\n\n**Regras:**\n- A fuga deve possuir continuidade e intenção real de escapar.\n- Não é permitido simplesmente virar uma esquina e abandonar a perseguição.\n- A fuga deverá possuir duração mínima de 5 minutos quando a regra exigir uma fuga prolongada.\n- O jogador deve utilizar o veículo ou os meios disponíveis de maneira coerente.\nCaso a fuga termine e o jogador se renda, o RP deverá prosseguir normalmente.\n\n> ⚠️ ATENÇÃO\n> Uma fuga não é considerada válida apenas porque o jogador **virou uma esquina ou saiu do campo de visão da polícia**. Deve existir uma tentativa real de evasão.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "03.09",
+          "title": "Drop Policial",
+          "text": "O chamado **drop** contra policiais somente poderá ocorrer dentro das condições permitidas para a situação.\n\n**Regra:**\n- O drop contra policiais somente poderá ser realizado **3 minutos após a voz de parada**.\n- A situação deverá possuir contexto de RP.\n- O início do confronto não poderá ocorrer apenas com o objetivo de forçar um PVP.\n\n> 🚨 ATENÇÃO\n> O tempo é contado a partir do momento em que a **voz de parada é realizada**, respeitando as demais regras de abordagem e confronto.",
+          "tag": "POLÍCIA"
+        },
+        {
+          "code": "03.10",
+          "title": "Armas em Abordagens",
+          "text": "A presença de um indivíduo armado pode alterar o nível de risco de uma abordagem, porém a polícia deverá considerar **quantidade, contexto e risco à vida** antes de iniciar um confronto.\n\n**Durante a abordagem:**\n- Um indivíduo armado poderá representar situação de risco.\n- O policial deverá avaliar a quantidade de agentes presentes.\n- Quando houver superioridade policial, deverá ser dada voz e oportunidade para que o indivíduo obedeça.\n- Em situações equilibradas, poderá ocorrer confronto caso os requisitos da abordagem sejam atendidos.\n- Quando a quantidade de indivíduos armados for superior à policial, deverá ser solicitado suporte.\n\n> ⚠️ ATENÇÃO\n> Estar armado **não significa que o policial deverá iniciar um confronto automaticamente**. A conduta deverá respeitar o contexto da abordagem e as regras de **Amor à Vida**.",
+          "tag": "POLÍCIA"
+        },
+        {
+          "code": "03.11",
+          "title": "Reload Completo",
+          "text": "Durante um confronto, o carregamento da arma deverá ser realizado de forma completa.\n\n**É proibido:**\n- Cancelar propositalmente a animação de reload.\n- Manipular o carregamento para obter vantagem.\n- Interromper o reload para utilizar a arma imediatamente de maneira indevida.\n\n> ❌ PROIBIDO\n> O reload deve ser concluído por completo antes que a arma volte a ser utilizada.",
+          "tag": "COMBATE"
+        },
+        {
+          "code": "03.12",
+          "title": "Gravação de Ações",
+          "text": "Ações de rua e ações blipadas devem ser registradas em vídeo pelos participantes quando houver possibilidade de solicitação ou necessidade de análise administrativa.\n\n**Regras:**\n- A gravação deve acompanhar a ação de forma suficiente para demonstrar o contexto.\n- Caso a Staff solicite a gravação para alinhamento ou análise, o jogador deverá apresentá-la.\n- A ausência da gravação quando ela for necessária poderá dificultar a defesa da situação.\n\n> 📌 OBSERVAÇÃO\n> Em situações de denúncia, a gravação deve permitir compreender **o que aconteceu antes, durante e depois da ocorrência**, evitando cortes que retirem o contexto da situação.",
+          "tag": "AÇÃO"
+        }
+      ]
+    },
+    {
+      "id": "absolutas",
+      "code": "08",
+      "name": "CÓDIGO ABSOLUTO",
+      "short": "Regras Absolutas",
+      "desc": "Existem limites que não fazem parte do jogo — sustentam a própria comunidade. Aqui estão as condutas administrativas de tolerância máxima da Viena, aplicáveis a situações que comprometem a segurança, a integridade e a permanência dos cidadãos na cidade.",
+      "rules": [
+        {
+          "code": "08.01",
+          "title": "Programas Ilegais",
+          "text": "É expressamente proibido utilizar programas, aplicativos, arquivos ou modificações externas capazes de conceder **vantagem indevida dentro da cidade**.\n\n**Inclui, entre outros:**\n- Hacks, cheats ou injetores;\n- Modificações que removam ou alterem elementos do mapa para obter vantagem;\n- Recursos que facilitem localização, mira, visão ou movimentação;\n- Arquivos ou ferramentas desenvolvidos para contornar limitações do jogo;\n- Qualquer recurso externo que interfira injustamente na gameplay.\n\n> ❌ **TOLERÂNCIA ZERO**\n> A utilização de recursos ilegais poderá resultar em **banimento permanente**, conforme as evidências e a análise administrativa.",
+          "tag": "SEGURANÇA"
+        },
+        {
+          "code": "08.02",
+          "title": "Verificação Administrativa",
+          "text": "Quando existirem indícios consistentes de utilização de recursos ilegais, a Administração poderá solicitar uma **verificação para análise do caso**, conforme os procedimentos internos da Viena.\n\nDurante o procedimento, o jogador deverá colaborar com as orientações fornecidas pela equipe responsável.\n\n**É proibido:**\n- Tentar impedir ou manipular a verificação;\n- Apagar ou alterar deliberadamente evidências relacionadas ao caso durante a análise;\n- Reiniciar ou encerrar propositalmente o procedimento para impedir sua conclusão;\n- Utilizar qualquer método com a intenção de burlar a análise administrativa.\n\n> ⚠️ **ATENÇÃO**\n> A recusa ou tentativa deliberada de impedir uma verificação poderá ser considerada na decisão administrativa e resultar em punição conforme a gravidade do caso.",
+          "tag": "ADMINISTRAÇÃO"
+        },
+        {
+          "code": "08.03",
+          "title": "Evasão de Banimento",
+          "text": "É proibido utilizar contas, dispositivos, métodos ou recursos alternativos com o objetivo de **retornar à Viena enquanto existir um banimento ativo**.\n\nTambém é proibido tentar contornar uma punição utilizando terceiros ou qualquer outro meio destinado a ocultar a identidade do jogador punido.\n\n> ❌ **PROIBIDO**\n> Retornar à cidade burlando um banimento poderá gerar novas medidas administrativas e impedir futuras possibilidades de retorno.",
+          "tag": "PUNIÇÃO"
+        },
+        {
+          "code": "08.04",
+          "title": "Auxílio à Evasão",
+          "text": "É proibido auxiliar conscientemente um jogador a **burlar ou ocultar um banimento ativo**.\n\n**Pode ser considerado auxílio:**\n- Fornecer meios para que o jogador retorne à cidade burlando a punição;\n- Emprestar ou disponibilizar recursos com essa finalidade;\n- Ocultar deliberadamente informações relevantes sobre uma evasão;\n- Participar ativamente de uma tentativa de contornar medidas administrativas.\n\n> ⚠️ **ATENÇÃO**\n> A punição dependerá do nível de participação, das evidências disponíveis e da intenção identificada pela Administração.",
+          "tag": "ADMINISTRAÇÃO"
+        },
+        {
+          "code": "08.05",
+          "title": "Mercado Negro",
+          "text": "É proibida qualquer negociação externa envolvendo **dinheiro real, benefícios, itens, moedas, propriedades ou vantagens pertencentes à Viena** fora dos meios oficialmente disponibilizados pela cidade.\n\n**Não é permitido:**\n- Vender dinheiro da cidade por dinheiro real;\n- Comercializar itens ou benefícios por pagamentos externos;\n- Revender benefícios obtidos através de donate;\n- Intermediar negociações externas envolvendo patrimônio da cidade;\n- Utilizar plataformas externas para comercializar vantagens in-game.\n\n> ❌ **TOLERÂNCIA ZERO**\n> A prática de Mercado Negro poderá resultar em **banimento permanente**, além da remoção dos itens, valores ou benefícios envolvidos na negociação.",
+          "tag": "ECONOMIA"
+        },
+        {
+          "code": "08.06",
+          "title": "Negociações Externas",
+          "text": "A Viena não reconhece nem intermedeia negociações realizadas entre jogadores **fora dos sistemas e canais oficialmente disponibilizados pela cidade**.\n\nA Administração poderá intervir quando a negociação envolver quebra de regra, Mercado Negro, exploração de sistemas ou qualquer prática proibida.\n\n> ℹ️ **OBSERVAÇÃO**\n> A Viena não se responsabiliza por golpes, perdas ou acordos realizados fora dos meios oficiais. Negociações proibidas continuam sujeitas às punições previstas nas regras.",
+          "tag": "ECONOMIA"
+        },
+        {
+          "code": "08.07",
+          "title": "Benefícios e Donate",
+          "text": "Benefícios adquiridos através dos meios oficiais da Viena devem respeitar **as condições, limitações e finalidade estabelecidas para cada benefício**.\n\nA aquisição de um benefício não concede autorização para:\n- Quebrar regras da cidade;\n- Explorar mecânicas de maneira indevida;\n- Utilizar vantagens para prejudicar deliberadamente outros jogadores;\n- Comercializar externamente o benefício;\n- Exigir tratamento administrativo diferente dos demais cidadãos.\n\n> ⚠️ **ATENÇÃO**\n> Benefícios podem possuir regras específicas de utilização. O descumprimento dessas condições poderá resultar em suspensão ou remoção do benefício, além de outras punições quando aplicáveis.",
+          "tag": "DONATE"
+        },
+        {
+          "code": "08.08",
+          "title": "Ocultação e Manipulação de Provas",
+          "text": "É proibido falsificar, manipular ou ocultar deliberadamente informações com o objetivo de **interferir em uma análise administrativa**.\n\n**Inclui:**\n- Editar provas para alterar o contexto real de uma situação;\n- Apresentar informações falsas à Staff;\n- Omitir propositalmente partes essenciais de uma ocorrência quando solicitado o contexto completo;\n- Forjar prints, vídeos, registros ou informações;\n- Tentar induzir a equipe responsável ao erro através de evidências manipuladas.\n\n> ❌ **PROIBIDO**\n> A tentativa deliberada de manipular uma análise poderá gerar punição própria, independentemente do resultado da denúncia ou ocorrência original.",
+          "tag": "ADMINISTRAÇÃO"
+        }
+      ]
+    },
+    {
+      "id": "corridas",
+      "name": "CÓDIGO VERMELHO",
+      "short": "Corridas Ilegais",
+      "desc": "As ruas pertencem a quem tem coragem. Corridas clandestinas, apostas e perseguições seguem este código.",
+      "rules": [
+        {
+          "code": "02.01",
+          "title": "Organização da largada",
+          "text": "A corrida deve possuir uma largada clara. Sair antes da contagem ou sinal oficial caracteriza queima de largada e pode gerar desclassificação.",
+          "tag": "CORRIDA"
+        },
+        {
+          "code": "02.02",
+          "title": "Interferência externa",
+          "text": "É proibido utilizar jogadores ou veículos externos para bloquear, empurrar ou destruir propositalmente um competidor durante a corrida.",
+          "tag": "CORRIDA"
+        },
+        {
+          "code": "02.03",
+          "title": "Cortar caminho",
+          "text": "Cortar trechos do percurso somente é permitido quando a organização da corrida definir previamente que atalhos fazem parte da rota.",
+          "tag": "CORRIDA"
+        },
+        {
+          "code": "02.04",
+          "title": "Sabotagem",
+          "text": "Sabotagem pode existir quando houver contexto de RP e for realizada por meios permitidos. Exploits, bugs ou métodos externos são proibidos.",
+          "tag": "UNDERGROUND"
+        },
+        {
+          "code": "02.05",
+          "title": "Aposta e palavra",
+          "text": "Ao aceitar uma aposta ou desafio, o jogador deve respeitar o acordo firmado em RP. Golpes e fraudes podem gerar punição conforme o contexto.",
+          "tag": "UNDERGROUND"
+        },
+        {
+          "code": "02.06",
+          "title": "Corrida fantasma",
+          "text": "Um piloto eliminado não pode retornar à área para informar posições, bloquear adversários ou interferir na disputa.",
+          "tag": "CORRIDA"
+        },
+        {
+          "code": "02.07",
+          "title": "Polícia e perseguição",
+          "text": "Fugir de uma abordagem policial durante uma corrida é permitido quando houver contexto, mas o piloto deve respeitar as regras gerais de perseguição e direção.",
+          "tag": "HEAT"
+        },
+        {
+          "code": "02.08",
+          "title": "Direção irresponsável",
+          "text": "Velocidade alta faz parte das corridas, mas não autoriza abuso de mecânicas, colisões intencionais sem contexto ou condução impossível.",
+          "tag": "DIREÇÃO"
+        },
+        {
+          "code": "02.09",
+          "title": "Corrida oficial",
+          "text": "Corridas oficiais da cidade podem possuir regras específicas de percurso, classes, largada, premiação e desclassificação. Essas regras prevalecem para aquela competição.",
+          "tag": "EVENTO"
+        },
+        {
+          "code": "02.10",
+          "title": "Duelo de rua",
+          "text": "Desafios 1x1 podem ser realizados em locais apropriados, desde que ambos os participantes tenham aceitado o desafio e não haja interferência indevida.",
+          "tag": "STREET"
+        }
+      ]
+    },
+    {
+      "id": "policia",
+      "name": "CÓDIGO AZUL",
+      "short": "Polícia & Perseguições",
+      "desc": "Procedimentos para abordagens, perseguições e operações contra o submundo das corridas.",
+      "rules": [
+        {
+          "code": "03.01",
+          "title": "Abordagem",
+          "text": "A abordagem deve possuir motivo de RP. A autoridade deve, sempre que possível, comunicar a ordem de parada e permitir reação compatível.",
+          "tag": "POLÍCIA"
+        },
+        {
+          "code": "03.02",
+          "title": "Perseguição",
+          "text": "Perseguições devem ser conduzidas com coerência e sem transformar qualquer abordagem em combate letal automaticamente.",
+          "tag": "POLÍCIA"
+        },
+        {
+          "code": "03.03",
+          "title": "PIT",
+          "text": "O PIT deve ser utilizado de maneira proporcional e em condições que não caracterizem abuso deliberado da mecânica.",
+          "tag": "POLÍCIA"
+        },
+        {
+          "code": "03.04",
+          "title": "Uso da força",
+          "text": "O uso de força letal deve ser justificado pelo contexto e pela ameaça apresentada, respeitando a escalada da ocorrência.",
+          "tag": "POLÍCIA"
+        },
+        {
+          "code": "03.05",
+          "title": "Operações contra corridas",
+          "text": "Operações podem ser planejadas para interromper eventos clandestinos, realizar cercos, identificar organizadores e apreender veículos conforme o RP.",
+          "tag": "OPERAÇÃO"
+        }
+      ]
+    },
+    {
+      "id": "faccoes",
+      "code": "04",
+      "name": "CÓDIGO SOMBRIO",
+      "short": "Facções & Crime",
+      "desc": "Regras para organizações criminosas, oficinas, contrabando e disputas territoriais.",
+      "rules": [
+        {
+          "code": "04.01",
+          "title": "Hierarquia",
+          "text": "Organizações devem possuir liderança e funções coerentes com sua proposta, mantendo atividade e RP compatíveis.",
+          "tag": "FACÇÃO"
+        },
+        {
+          "code": "04.02",
+          "title": "Conflitos",
+          "text": "Conflitos entre organizações devem possuir motivo e escalada de RP. Matar por motivo banal não é justificativa automática.",
+          "tag": "FACÇÃO"
+        },
+        {
+          "code": "04.03",
+          "title": "Oficinas clandestinas",
+          "text": "Oficinas podem atuar como pontos de preparação, modificação e manutenção de veículos, desde que respeitem as regras de economia e RP.",
+          "tag": "CRIME"
+        },
+        {
+          "code": "04.04",
+          "title": "Contrabando",
+          "text": "Peças, veículos e itens ilegais podem integrar o RP criminoso quando houver sistemas ou autorização específicos para isso.",
+          "tag": "CRIME"
+        }
+      ]
+    },
+    {
+      "id": "economia",
+      "code": "05",
+      "name": "CÓDIGO OURO",
+      "short": "Economia & Veículos",
+      "desc": "Regras para dinheiro, comércio, veículos e o mercado de Viena.",
+      "rules": [
+        {
+          "code": "05.01",
+          "title": "Fraudes",
+          "text": "Golpes que explorem bugs, duplicações ou falhas técnicas são proibidos. Golpes de RP podem existir quando o sistema permitir e houver contexto.",
+          "tag": "ECONOMIA"
+        },
+        {
+          "code": "05.02",
+          "title": "Veículos",
+          "text": "Cada veículo deve ser utilizado de acordo com sua finalidade e características. Explorar física ou mecânica de forma impossível pode ser punido.",
+          "tag": "VEÍCULOS"
+        },
+        {
+          "code": "05.03",
+          "title": "Mercado",
+          "text": "Comércios e negociações devem respeitar preços, sistemas e limitações estabelecidas pela administração.",
+          "tag": "ECONOMIA"
+        }
+      ]
+    },
+    {
+      "id": "eventos",
+      "code": "06",
+      "name": "CÓDIGO DE PISTA",
+      "short": "Eventos & Competições",
+      "desc": "Regras para campeonatos, classes, grids, premiações e competições oficiais.",
+      "rules": [
+        {
+          "code": "06.01",
+          "title": "Classes",
+          "text": "Cada evento deve informar previamente as classes e limitações de veículos aceitas.",
+          "tag": "EVENTO"
+        },
+        {
+          "code": "06.02",
+          "title": "Grid e largada",
+          "text": "O grid deve ser definido pela organização. A largada antecipada ou mudança proposital de posição pode gerar punição ou desclassificação.",
+          "tag": "EVENTO"
+        },
+        {
+          "code": "06.03",
+          "title": "Desclassificação",
+          "text": "A organização pode desclassificar participantes que violem regras específicas do evento, desde que a decisão seja fundamentada.",
+          "tag": "EVENTO"
+        },
+        {
+          "code": "06.04",
+          "title": "Premiação",
+          "text": "A premiação deve ser divulgada antes do evento e entregue conforme os critérios anunciados.",
+          "tag": "EVENTO"
+        },
+        {
+          "code": "06.05",
+          "title": "Campeonato",
+          "text": "Campeonatos podem utilizar pontuação, ranking, etapas e penalidades acumulativas definidos previamente pela organização.",
+          "tag": "COMPETIÇÃO"
+        }
+      ]
+    },
+    {
+      "id": "denuncias",
+      "code": "07",
+      "name": "TRIBUNAL DA RUA",
+      "short": "Denúncias & Punições",
+      "desc": "Como reportar situações e como a administração classifica infrações.",
+      "rules": [
+        {
+          "code": "07.01",
+          "title": "Denúncia objetiva",
+          "text": "A denúncia deve informar o que aconteceu, quem está envolvido e qual regra o denunciante entende ter sido violada.",
+          "tag": "DENÚNCIA"
+        },
+        {
+          "code": "07.02",
+          "title": "Provas",
+          "text": "Clipes, vídeos, prints e demais provas devem apresentar contexto suficiente para a análise. Edição que esconda o contexto pode prejudicar a denúncia.",
+          "tag": "DENÚNCIA"
+        },
+        {
+          "code": "07.03",
+          "title": "Boa-fé",
+          "text": "Denúncias devem ser abertas de forma honesta. Manipulação de provas, acusações falsas ou omissão proposital de contexto podem gerar punição.",
+          "tag": "CONDUTA"
+        },
+        {
+          "code": "07.04",
+          "title": "Bandeira Amarela",
+          "text": "Advertência formal aplicada em infrações leves ou como registro administrativo.",
+          "tag": "PUNIÇÃO"
+        },
+        {
+          "code": "07.05",
+          "title": "Bandeira Vermelha",
+          "text": "Suspensão temporária de determinadas atividades ou acesso, conforme a gravidade da infração.",
+          "tag": "PUNIÇÃO"
+        },
+        {
+          "code": "07.06",
+          "title": "Bandeira Preta",
+          "text": "Banimento aplicado em infrações graves, reincidência ou situações previstas pela administração.",
+          "tag": "PUNIÇÃO"
+        }
+      ]
+    }
+  ],
+  "updates": [
+    {
+      "date": "18 AGO 2026",
+      "title": "Código Vermelho",
+      "text": "Estrutura inicial das regras de corridas ilegais.",
+      "tag": "CORRIDAS"
+    },
+    {
+      "date": "18 AGO 2026",
+      "title": "Tribunal da Rua",
+      "text": "Sistema de classificação de penalidades.",
+      "tag": "ADMIN"
+    },
+    {
+      "date": "18 AGO 2026",
+      "title": "Código da Rua",
+      "text": "Publicação da Central de Regras Viena RP.",
+      "tag": "SITE"
+    }
+  ]
+}
