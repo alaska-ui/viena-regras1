@@ -453,15 +453,70 @@ function renderNav(){
     `;
   }).join("");
 
+  function closeAllSubmenus(exceptId = null){
+    nav.querySelectorAll("[data-toggle-category]").forEach(toggle => {
+      const toggleId = toggle.dataset.toggleCategory;
+      if(exceptId && toggleId === exceptId) return;
+
+      toggle.setAttribute("aria-expanded","false");
+
+      const target = nav.querySelector(
+        `[data-subnav="${CSS.escape(toggleId)}"]`
+      );
+
+      target?.classList.remove("open");
+    });
+  }
+
+  window.__vienaOpenNavCategory = id => {
+    if(!id || id === "inicio" || id === "pesquisa"){
+      closeAllSubmenus();
+      return;
+    }
+
+    const toggle = nav.querySelector(
+      `[data-toggle-category="${CSS.escape(String(id))}"]`
+    );
+
+    const box = nav.querySelector(
+      `[data-subnav="${CSS.escape(String(id))}"]`
+    );
+
+    closeAllSubmenus(String(id));
+
+    if(toggle && box){
+      toggle.setAttribute("aria-expanded","true");
+      box.classList.add("open");
+
+      const group = toggle.closest(".nav-category-group");
+      group?.scrollIntoView({
+        block:"nearest",
+        behavior:"smooth"
+      });
+    }
+  };
+
   nav.querySelectorAll("[data-toggle-category]").forEach(button => {
     button.addEventListener("click",event => {
       event.stopPropagation();
-      const id = button.dataset.toggleCategory;
-      const box = nav.querySelector(`[data-subnav="${CSS.escape(id)}"]`);
-      const open = button.getAttribute("aria-expanded") === "true";
 
-      button.setAttribute("aria-expanded",String(!open));
-      if(box) box.classList.toggle("open",!open);
+      const id = button.dataset.toggleCategory;
+      const box = nav.querySelector(
+        `[data-subnav="${CSS.escape(id)}"]`
+      );
+
+      const open =
+        button.getAttribute("aria-expanded") === "true";
+
+      if(open){
+        button.setAttribute("aria-expanded","false");
+        box?.classList.remove("open");
+        return;
+      }
+
+      closeAllSubmenus(id);
+      button.setAttribute("aria-expanded","true");
+      box?.classList.add("open");
     });
   });
 
@@ -908,6 +963,12 @@ function route(id){
       button.dataset.route === id
     );
   });
+
+  /* Menu sanfonado:
+     abre somente a categoria atual e fecha todas as outras. */
+  if(typeof window.__vienaOpenNavCategory === "function"){
+    window.__vienaOpenNavCategory(id);
+  }
 
   $("sidebar")?.classList.remove("open");
 

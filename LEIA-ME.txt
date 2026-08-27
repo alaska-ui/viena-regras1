@@ -1,18 +1,35 @@
-CORREÇÃO DA FONTE DAS REGRAS — VIENA
+VIENA — MENU ORGANIZADO V4
 
-O novo rules.json organizado já está na raiz do repositório.
-
-Substitua:
-1. /index.html
-2. /config.yml
-3. /admin/config.yml
-
-NÃO substitua:
-- rules.json
-- content/site.json
+SUBSTITUA NA RAIZ DO REPOSITÓRIO:
 - app.js
 - style.css
-- uploads/
+- rules.json
 
-O index.html redireciona a leitura antiga de content/rules.json para /rules.json.
-Os config.yml fazem o Sveltia editar /rules.json daqui para frente.
+NÃO MEXA:
+- index.html
+- content/site.json
+- uploads/
+- logo-viena.png
+
+O QUE FOI ALTERADO:
+1. Apenas UMA categoria da sidebar fica aberta por vez.
+2. A categoria atual abre automaticamente.
+3. A sidebar possui scroll próprio.
+4. O rodapé 'QUEM VIVE VIENA FAZ HISTÓRIA.' não sobrepõe mais as categorias.
+5. A categoria 13 foi removida.
+6. 'Considerações Finais' foi incorporada diretamente ao Prefácio.
+7. Códigos foram repadronizados em XX.XX.
+8. Foram incluídas regras já definidas anteriormente:
+   - Idade mínima
+   - Criação de personagem
+   - Segundo Slot (cocudo)
+   - Interpretação do personagem
+   - Personagens secundários e vínculos
+   - Propaganda indevida
+   - Foco em streamers
+   - Full Safe Zone
+   - Critério de punição
+
+Depois do upload:
+- Aguarde o GitHub Pages concluir o deploy.
+- Pressione CTRL + F5 no site.

@@ -1305,3 +1305,127 @@ footer{
   .subcategory-heading{grid-template-columns:36px minmax(0,1fr);padding:14px}
   .subcategory-icon{width:34px;height:34px}
 }
+
+
+/* =========================================================
+   VIENA — SIDEBAR SANFONADA V4
+   Corrige sobreposição do rodapé e mantém uma navegação limpa.
+========================================================= */
+
+.sidebar{
+  display:flex !important;
+  flex-direction:column !important;
+  overflow:hidden !important;
+  padding:24px 14px 14px !important;
+}
+
+.side-label{
+  flex:0 0 auto;
+  padding:0 4px;
+}
+
+.sidebar nav{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  margin-top:18px !important;
+  padding-right:4px;
+  padding-bottom:12px;
+  scrollbar-width:thin;
+  scrollbar-color:#333 transparent;
+}
+
+.sidebar nav::-webkit-scrollbar{
+  width:5px;
+}
+
+.sidebar nav::-webkit-scrollbar-track{
+  background:transparent;
+}
+
+.sidebar nav::-webkit-scrollbar-thumb{
+  background:#333;
+  border-radius:99px;
+}
+
+.side-footer{
+  position:static !important;
+  flex:0 0 auto;
+  margin-top:8px;
+  padding:14px 4px 2px;
+  border-top:1px solid #1d1d1d;
+  background:#0a0a0a;
+  line-height:1.55 !important;
+}
+
+.nav-category-group{
+  border-bottom:1px solid rgba(255,255,255,.035);
+}
+
+.nav-category-row{
+  min-height:39px;
+}
+
+.nav-category-main{
+  padding:10px 7px 10px 8px !important;
+  font-size:11px !important;
+  line-height:1.2;
+}
+
+.nav-category-main span{
+  width:20px;
+  margin-right:8px !important;
+  text-align:right;
+  font-size:10px;
+}
+
+.nav-category-main b{
+  font-weight:750;
+  letter-spacing:.1px;
+}
+
+.nav-category-toggle{
+  width:30px;
+  font-size:14px !important;
+  opacity:.72;
+}
+
+.nav-category-toggle:hover{
+  opacity:1;
+}
+
+.nav-subcategories{
+  margin:0 5px 7px 29px !important;
+  padding:3px 0 3px 10px !important;
+  border-left:1px solid #282828 !important;
+}
+
+.nav-subcategory-link{
+  min-height:34px;
+  padding:7px 6px !important;
+  grid-template-columns:20px minmax(0,1fr) !important;
+  gap:6px !important;
+  font-size:10.5px !important;
+  font-weight:650 !important;
+  color:#8c8c8c !important;
+}
+
+.nav-subcategory-link:hover{
+  color:#fff !important;
+}
+
+.nav-sub-icon{
+  font-size:12px !important;
+  opacity:.85;
+}
+
+@media(max-width:900px){
+  .sidebar{
+    padding:20px 12px 12px !important;
+  }
+
+  .side-footer{
+    padding-bottom:4px;
+  }
+}

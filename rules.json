@@ -10,7 +10,7 @@
       "rules": [
         {
           "title": "Prefácio",
-          "text": "✨ Sejam muito bem-vindos à Viena Roleplay! ✨\nAqui, cada história tem valor, cada encontro pode se tornar inesquecível e cada novo começo carrega a chance de construir algo único. Nosso objetivo é oferecer um ambiente acolhedor, envolvente e cheio de possibilidades, onde o respeito, a criatividade e a boa convivência caminham lado a lado.\n\nPermitam-se viver cada momento com intensidade, interpretar com alma e enxergar Viena como um mundo vivo, feito por pessoas que desejam criar conexões, experiências e memórias verdadeiras. Conversem, façam amizades, descubram caminhos, superem desafios e ajudem a construir a essência que torna a Viena Roleplay tão especial.\n\nAs regras da Viena Roleplay são atualizadas periodicamente, fiquem sempre atentos às abas de Atualizações e Avisos. É lá que vocês encontrarão todas as informações necessárias para manter a harmonia, a organização e a melhor experiência possível para todos os jogadores.\n\nQue a sua vida na Viena seja marcada por grandes histórias, bons encontros, emoções sinceras e momentos que façam sua jornada valer a pena do começo ao fim.\n\nValorizem o respeito, saibam ouvir, convivam com empatia e façam da sua história algo bonito de viver.\n✨ O INÍCIO DE UMA NOVA HISTÓRIA ✨",
+          "text": "✨ Sejam muito bem-vindos à Viena Roleplay! ✨\nAqui, cada história tem valor, cada encontro pode se tornar inesquecível e cada novo começo carrega a chance de construir algo único. Nosso objetivo é oferecer um ambiente acolhedor, envolvente e cheio de possibilidades, onde o respeito, a criatividade e a boa convivência caminham lado a lado.\n\nPermitam-se viver cada momento com intensidade, interpretar com alma e enxergar Viena como um mundo vivo, feito por pessoas que desejam criar conexões, experiências e memórias verdadeiras. Conversem, façam amizades, descubram caminhos, superem desafios e ajudem a construir a essência que torna a Viena Roleplay tão especial.\n\nAs regras da Viena Roleplay são atualizadas periodicamente, fiquem sempre atentos às abas de Atualizações e Avisos. É lá que vocês encontrarão todas as informações necessárias para manter a harmonia, a organização e a melhor experiência possível para todos os jogadores.\n\nQue a sua vida na Viena seja marcada por grandes histórias, bons encontros, emoções sinceras e momentos que façam sua jornada valer a pena do começo ao fim.\n\nValorizem o respeito, saibam ouvir, convivam com empatia e façam da sua história algo bonito de viver.\n✨ O INÍCIO DE UMA NOVA HISTÓRIA ✨\n\n## Antes de começar\n\nA Viena busca proporcionar um ambiente onde o RP seja construído de forma **justa, coerente e divertida para todos**.\n\nConhecer as regras é responsabilidade de cada cidadão.\n\nJogue com bom senso, respeite os demais jogadores e, principalmente, construa RP.\n\n> ✅ PERMITIDO\n> Criatividade, intensidade e boas histórias são sempre bem-vindas quando respeitam os limites da cidade e proporcionam uma experiência positiva para todos.\n\n🌸 **VIENA**\n**Sua história começa aqui.**",
           "tag": "Apresentação"
         }
       ]
@@ -134,6 +134,12 @@
               "title": "Memória Após a Morte",
               "text": "Após a morte em uma ação ou situação de RP, o personagem não poderá utilizar informações relacionadas às **3 horas anteriores à sua morte** para continuar ou interferir naquela situação.\n\n**A regra inclui:**\n- Pessoas;\n- Veículos;\n- Roupas;\n- Vozes;\n- Locais;\n- Rotas;\n- Participantes;\n- Qualquer outro elemento diretamente relacionado ao RP anterior.\n\n> ⚠️ ATENÇÃO\n> Após retornar do “**E**”, o personagem não poderá reconhecer ou continuar a situação anterior, mesmo que o jogador possua essas informações fora do RP.\n\n🚗 **Veículos roubados**\n\nCaso um veículo seja roubado durante uma ação, o jogador poderá posteriormente encontrá-lo e iniciar um **novo RP de recuperação**, desde que não utilize a memória da ação anterior para identificá-lo ou localizá-lo.",
               "tag": "INFORMAÇÃO"
+            },
+            {
+              "title": "Foco em Streamers",
+              "text": "Perseguir, acompanhar ou iniciar repetidamente ações contra criadores de conteúdo com base em informações obtidas por live, clipes ou qualquer meio externo é proibido.\n\n> ❌ **PROIBIDO**\n> Forçar ou iniciar ações inadequadas apenas porque o jogador está transmitindo poderá ser analisado pela Staff como Metagaming, Ghosting, perseguição ou conduta abusiva, conforme o contexto.",
+              "tag": "STREAM",
+              "code": "02.07"
             }
           ]
         },
@@ -143,31 +149,31 @@
           "icon": "🔫",
           "rules": [
             {
-              "code": "02.07",
+              "code": "02.08",
               "title": "Random Death Match",
               "text": "Consiste em matar ou tentar matar outro cidadão **sem uma justificativa válida ou construção de RP que sustente a ação**.\n\n**É considerado RDM:**\n - Realizar disparos ou ataques sem contexto;\n- Executar um cidadão sem construção prévia de RP;\n- Matar alguém sem possuir uma justificativa válida dentro da situação;\n- Iniciar uma ação letal apenas por conveniência ou diversão.\n\n> ⚠️ ATENÇÃO \n> Possuir uma discussão ou desentendimento não significa, por si só, que exista justificativa para uma ação letal. A Staff poderá analisar todo o contexto da situação.",
               "tag": "COMBATE"
             },
             {
-              "code": "02.08",
+              "code": "02.09",
               "title": "Vehicle Death Match",
               "text": "Consiste em utilizar qualquer veículo **intencionalmente** para atingir, ferir ou matar outro cidadão.\n\n**Aplica-se a:**\n- Carros;\n- Motos;\n- Helicópteros;\n- Aviões;\n- Bicicletas;\n- Qualquer outro veículo disponível na cidade.\n\n> 💡 OBSERVAÇÃO\n> Colisões decorrentes do desenvolvimento natural de uma perseguição ou situação de RP serão analisadas de acordo com o contexto.",
               "tag": "COMBATE"
             },
             {
-              "code": "02.09",
+              "code": "02.10",
               "title": "Spawn Kill",
               "text": "É proibido iniciar ações contra cidadãos que acabaram de entrar na cidade **com o objetivo de obter vantagem pela condição de recém-conexão**.\n\n**Inclui:**\n- Ataques;\n- Assaltos;\n- Sequestros;\n- Emboscadas próximas a locais de respawn;\n- Abordagens abusivas contra jogadores recém-conectados.",
               "tag": "COMBATE"
             },
             {
-              "code": "02.10",
+              "code": "02.11",
               "title": "Revenge Kill",
               "text": "Após a morte do personagem, é proibido retornar à situação anterior com o objetivo de buscar vingança.\n\n**Também é proibido:**\n- Retornar ao local da morte para retaliar;\n- Enviar terceiros para realizar a vingança;\n- Continuar uma perseguição iniciada antes da morte;\n- Utilizar informações da situação anterior para provocar uma nova ação.",
               "tag": "COMBATE"
             },
             {
-              "code": "02.11",
+              "code": "02.12",
               "title": "Ratão",
               "text": "Durante uma ação, é proibido utilizar um veículo propositalmente para capotar, travar ou prejudicar outro veículo que esteja participando de uma fuga.\n\n> ℹ️ OBSERVAÇÃO\n> Colisões decorrentes do desenvolvimento natural de uma perseguição serão analisadas conforme o contexto e a intenção do jogador.",
               "tag": "COMBATE"
@@ -180,19 +186,19 @@
           "icon": "❤️",
           "rules": [
             {
-              "code": "02.12",
+              "code": "02.13",
               "title": "ANTI-AMOR A VIDA",
               "text": "O personagem deve valorizar a própria vida e reagir a situações de perigo de maneira **coerente e compatível com o risco apresentado**.\n\n**Não é permitido:**\n- Entrar propositalmente em tiroteios sem necessidade;\n- Colocar a própria vida em risco gratuitamente;\n- Ignorar ameaças reais;\n- Enfrentar situações claramente letais sem justificativa;\n- Realizar ações equivalentes a um suicídio sem contexto de RP.\n\n> ⚠️ ATENÇÃO\n> Coragem não significa ignorar o risco. A Staff avaliará se a atitude do personagem era compatível com a ameaça apresentada.",
               "tag": "IMERSÃO"
             },
             {
-              "code": "02.13",
+              "code": "02.14",
               "title": "Power Gaming",
               "text": "É proibido utilizar mecânicas, comandos, animações ou recursos do jogo para realizar ações **impossíveis, incoerentes ou incompatíveis com a realidade do RP**.\n\n**Exemplos:**\n- Abusar de exploits ou mecânicas;\n- Utilizar animações para obter vantagem;\n- Realizar ações incompatíveis com a situação;\n- Explorar limitações do jogo para obter vantagem;\n- Utilizar mecânicas de forma diferente de sua finalidade para beneficiar o personagem.",
               "tag": "IMERSÃO"
             },
             {
-              "code": "02.14",
+              "code": "02.15",
               "title": "Combat Logging",
               "text": "Consiste em sair da cidade ou desconectar **durante uma situação ativa** com o objetivo de evitar suas consequências.\n\n**É considerado CL:**\n- Sair durante uma abordagem;\n- Desconectar durante uma perseguição;\n- Sair durante uma prisão;\n- Desconectar durante um sequestro;\n- Sair durante conflitos ou ações;\n- Utilizar o quit para evitar uma punição ou consequência do RP.\n\n> ⚠️ ATENÇÃO\n> Em caso de crash, o jogador deverá retornar à cidade assim que possível, afastar-se da situação e comunicar o ocorrido à Staff, apresentando uma captura de tela que permita verificar a data e o horário.",
               "tag": "SISTEMA"
@@ -201,10 +207,10 @@
               "title": "Crash em Ação",
               "text": "Caso ocorra um crash durante uma ação em andamento, o jogador deverá registrar o ocorrido conforme o procedimento oficial da Viena e retornar quando possível.\n\n**O registro deve permitir verificar:**\n- A situação em que ocorreu o crash;\n- Data e horário;\n- Que a desconexão não foi utilizada para obter vantagem.\n\n> ℹ️ **OBSERVAÇÃO**\n> Crash comprovado não deve ser confundido com Combat Logging. A ausência de comprovação poderá ser considerada na análise administrativa.",
               "tag": "AÇÃO",
-              "code": "02.15"
+              "code": "02.16"
             },
             {
-              "code": "02.16",
+              "code": "02.17",
               "title": "Abuso de Bugs",
               "text": "É proibido utilizar falhas, bugs ou vulnerabilidades do servidor para obter **qualquer tipo de vantagem**.\n\n**Exemplos:**\n- Duplicação de itens;\n- Burlar animações;\n- Gerar veículos indevidamente;\n- Atravessar paredes;\n- Acessar locais inacessíveis;\n- Explorar falhas de textura;\n- Utilizar vulnerabilidades do servidor.\n\n> ❌ PROIBIDO\n> Encontrou um bug? Não utilize. Informe a Administração para que a falha possa ser corrigida.",
               "tag": "SISTEMA"
@@ -217,34 +223,40 @@
           "icon": "💬",
           "rules": [
             {
-              "code": "02.17",
+              "code": "02.18",
               "title": "Dark RP",
               "text": "Dark RP compreende interpretações que ultrapassam os limites estabelecidos pela Viena, envolvendo conteúdos **extremamente ofensivos, discriminatórios, abusivos ou sensíveis**.\n\n**Exemplos:**\n- Racismo;\n- LGBTfobia;\n- Xenofobia;\n- Assédio;\n- Misoginia;\n- Intolerância religiosa;\n- Bullying;\n- Conteúdo sexual envolvendo abuso;\n- Necrofilia;\n- Outras interpretações que ultrapassem os limites aceitáveis do RP.\n\n> ❌ PROIBIDO\n> Casos graves ou que envolvam condutas extremamente abusivas poderão resultar em banimento permanente, independentemente de outras punições anteriores.",
               "tag": "CONDUTA"
             },
             {
-              "code": "02.18",
+              "code": "02.19",
               "title": "Flaming",
               "text": "Ofensas, provocações ou comportamentos utilizados com a intenção de **atacar, humilhar ou constranger outro jogador** não serão tolerados.\n\n**Também se enquadram:**\n- Ofensas direcionadas;\n- Desrespeito a cidadãos;\n- Utilização de corpos para provocar outros jogadores;\n- Atitudes ofensivas após a morte de um personagem;\n- Provocações realizadas com o objetivo de gerar conflito pessoal.",
               "tag": "CONDUTA"
             },
             {
-              "code": "02.19",
+              "code": "02.20",
               "title": "Ofensas no Discord",
               "text": "O Discord oficial da Viena também faz parte da comunidade e está sujeito às regras de convivência.\n\n**Não serão tolerados:**\n- Ofensas;\n- Farpas direcionadas;\n- Perseguições;\n- Marcações abusivas;\n- Tentativas de constranger outros membros;\n- Utilização de clipes ou conteúdos para atacar membros da comunidade.\n\n> ⚠️ ATENÇÃO\n> A punição poderá ocorrer mesmo que a conduta tenha acontecido fora da cidade, quando estiver relacionada à comunidade Viena.",
               "tag": "COMUNIDADE"
             },
             {
-              "code": "02.20",
+              "code": "02.21",
               "title": "Flood / Spam",
               "text": "É proibido enviar mensagens, sons ou realizar ações repetitivas de maneira excessiva com o objetivo de **incomodar, atrapalhar ou poluir a experiência dos demais jogadores**.\n\n**Aplica-se a:**\n- Chat;\n- Voz;\n- Gestos;\n- Mensagens repetitivas;\n- Sons excessivos;\n- Qualquer outra forma de spam.",
               "tag": "COMUNIDADE"
             },
             {
-              "code": "02.21",
+              "code": "02.22",
               "title": "Condutas Inadequadas",
               "text": "Qualquer comportamento abusivo, invasivo ou que ultrapasse os limites estabelecidos pela comunidade poderá ser punido.\n\n**Inclui:**\n- Insistir após uma negativa;\n- Perseguir ou intimidar jogadores;\n- Simular atos sexuais;\n- Tortura ou mutilação sem contexto permitido;\n- Desrespeitar um personagem morto;\n- Utilizar situações sensíveis para constranger outro jogador;\n- Ultrapassar deliberadamente os limites estabelecidos pela comunidade.\n\n> ℹ️ OBSERVAÇÃO\n> Em situações sensíveis ou duvidosas, procure a Staff antes de prosseguir.",
               "tag": "CONDUTA"
+            },
+            {
+              "title": "Propaganda Indevida",
+              "text": "É proibida a divulgação de outros servidores, comunidades, links, serviços ou conteúdos promocionais sem autorização da Administração da Viena.\n\n**Inclui:**\n- Convites para outros servidores;\n- Divulgação promocional não autorizada;\n- Spam de redes, links ou comunidades externas;\n- Utilização dos canais oficiais da Viena para captação de público de terceiros.\n\n> ⚠️ **ATENÇÃO**\n> Conteúdos autorizados pela Administração ou vinculados oficialmente à Viena não se enquadram nesta regra.",
+              "tag": "COMUNIDADE",
+              "code": "02.23"
             }
           ]
         },
@@ -254,31 +266,31 @@
           "icon": "🚨",
           "rules": [
             {
-              "code": "02.22",
+              "code": "02.24",
               "title": "Cop Fear / Gang Fear",
               "text": "O personagem deve respeitar situações de ameaça, bem como a hierarquia e o nível de risco apresentados dentro do RP.\n\nNão é permitido agir de maneira incompatível com uma situação de perigo apenas para **provocar, desafiar ou desmoralizar** autoridades ou grupos armados.\n\n> ℹ️ OBSERVAÇÃO\n> A reação do personagem deve ser compatível com o risco real apresentado na situação.",
               "tag": "POLÍCIA"
             },
             {
-              "code": "02.23",
+              "code": "02.25",
               "title": "Cop Bait",
               "text": "É proibido criar situações artificiais com o único objetivo **de atrair policiais para iniciar ou provocar um confronto**.\n\n**Exemplos:**\n- Provocar viaturas propositalmente;\n- Criar falsas ocorrências;\n- Simular acidentes;\n- Realizar denúncias falsas;\n- Criar situações artificiais para forçar uma perseguição ou confronto.",
               "tag": "POLÍCIA"
             },
             {
-              "code": "02.24",
+              "code": "02.26",
               "title": "Sequestro / Abordagem Irreal",
               "text": "Toda abordagem ou sequestro deve possuir **contexto, coerência e construção de RP**.\n\nNão é permitido criar situações evidentemente artificiais apenas para realizar uma ação.\n\n**A Staff poderá considerar:**\n- Local;\n- Quantidade de envolvidos;\n- Contexto;\n- Preparação da ação;\n- Motivação;\n- Coerência da abordagem;\n- Desenvolvimento do RP.\n\n> ⚠️ ATENÇÃO\n> Ter a possibilidade mecânica de realizar uma ação não significa que ela seja automaticamente válida dentro do RP.",
               "tag": "AÇÕES"
             },
             {
-              "code": "02.25",
+              "code": "02.27",
               "title": "Assalto Fora de Horário",
               "text": "Assaltos devem respeitar os horários definidos pela cidade.\n\n⏰ **HORÁRIOS PERMITIDOS**\n**SUL:** 02:00 às 10:00;\n**NORTE:** 18:00 às 02:00.\n\n> ⚠️ ATENÇÃO\n> Fora dos horários estabelecidos, a ação de assalto não poderá ser iniciada.",
               "tag": "AÇÕES"
             },
             {
-              "code": "02.26",
+              "code": "02.28",
               "title": "Outros",
               "text": "Nem todas as situações possíveis podem ser descritas individualmente neste documento.\n\nComportamentos que não estejam expressamente previstos poderão ser avaliados pela Administração considerando:\n\n- Contexto;\n- Intenção;\n- Gravidade;\n- Impacto no RP;\n- Conduta dos envolvidos;\n- Histórico da situação.\n\n> ⚠️ ATENÇÃO\n> Uma situação não estar escrita literalmente neste documento não significa que esteja automaticamente permitida.",
               "tag": "ADMINISTRAÇÃO"
@@ -296,18 +308,55 @@
       "desc": "A base de convivência de Viena. Tudo começa aqui.",
       "subcategories": [
         {
+          "id": "personagem-identidade",
+          "name": "Personagem & Identidade",
+          "icon": "🎭",
+          "rules": [
+            {
+              "title": "Idade Mínima",
+              "text": "A idade mínima para fazer parte da Viena Roleplay é de **16 anos**.\n\n> ⚠️ **ATENÇÃO**\n> Informações falsas utilizadas para contornar o requisito de idade poderão resultar em medidas administrativas.",
+              "tag": "GERAL",
+              "code": "03.01"
+            },
+            {
+              "title": "Criação de Personagem",
+              "text": "O personagem deve possuir identidade coerente com o universo da cidade. Nomes ofensivos, evidentemente irreais ou criados apenas para provocar outros jogadores não são permitidos.\n\n**Ao criar seu personagem:**\n- Utilize nome compatível com uma pessoa real;\n- Preserve uma história e comportamento coerentes;\n- Evite nomes utilizados para sátira, ataque ou quebra deliberada de imersão.",
+              "tag": "PERSONAGEM",
+              "code": "03.02"
+            },
+            {
+              "title": "Segundo Slot",
+              "text": "O **segundo slot de personagem é destinado exclusivamente ao personagem de cocudo**, conforme a proposta definida pela Viena.\n\n> ❌ **PROIBIDO**\n> Utilizar o segundo slot como personagem alternativo para guardar itens, movimentar patrimônio, obter vantagens, criar vínculos estratégicos ou interferir na história do personagem principal.",
+              "tag": "PERSONAGEM",
+              "code": "03.03"
+            },
+            {
+              "title": "Interpretação do Personagem",
+              "text": "A identidade escolhida para o personagem deve ser interpretada com coerência durante o RP, incluindo nome, forma de tratamento e construção da personalidade.\n\nNão é obrigatório utilizar modificador de voz.\n\n> ⚠️ **ATENÇÃO**\n> Desrespeito deliberado à identidade de outros personagens, uso de personagem apenas para obter vantagem ou condutas de má-fé poderão ser analisados dentro das regras de **Dark RP e Conduta**.",
+              "tag": "PERSONAGEM",
+              "code": "03.04"
+            },
+            {
+              "title": "Personagens Secundários e Vínculos",
+              "text": "Personagens pertencentes ao mesmo jogador devem possuir histórias independentes.\n\n**É proibido:**\n- Compartilhar itens, dinheiro ou patrimônio entre personagens do mesmo jogador;\n- Criar parentesco apenas para justificar transferência de bens ou informações;\n- Utilizar conhecimento obtido por um personagem no outro;\n- Manter dois personagens setados em facções diferentes para obter vantagem;\n- Manter personagens em unidades policiais incompatíveis entre si.\n\n> ℹ️ **OBSERVAÇÃO**\n> Integrantes de unidades investigativas da polícia não podem utilizar personagem secundário setado em facção ilegal, salvo autorização administrativa específica.",
+              "tag": "PERSONAGEM",
+              "code": "03.05"
+            }
+          ]
+        },
+        {
           "id": "convivencia",
           "name": "Convivência",
           "icon": "🤝",
           "rules": [
             {
-              "code": "03.01",
+              "code": "03.06",
               "title": "Respeito e convivência",
               "text": "Todos os jogadores devem manter respeito entre si. Ofensas, preconceito, perseguição ou comportamento tóxico que prejudique a experiência podem resultar em punição.",
               "tag": "GERAL"
             },
             {
-              "code": "03.02",
+              "code": "03.07",
               "title": "Valorização da vida",
               "text": "Seu personagem deve agir de forma coerente diante de situações de risco. A vida deve ser tratada como um bem relevante dentro do RP.",
               "tag": "ROLEPLAY"
@@ -323,7 +372,7 @@
               "title": "Identificação e Sigilo",
               "text": "A identificação de cidadãos ou membros de organizações deve ocorrer por elementos obtidos dentro do RP. Informações externas não podem ser utilizadas para reconhecer pessoas mascaradas ou descobrir vínculos que o personagem não teria como conhecer.\n\n> ⚠️ **ATENÇÃO**\n> ID, Discord, tags externas, live ou qualquer informação OOC não constituem reconhecimento válido dentro da cidade.",
               "tag": "IMERSÃO",
-              "code": "03.03"
+              "code": "03.08"
             }
           ]
         },
@@ -333,7 +382,7 @@
           "icon": "💰",
           "rules": [
             {
-              "code": "03.04",
+              "code": "03.09",
               "title": "Abuso da Economia",
               "text": "É proibido manipular sistemas econômicos da cidade ou explorar outros jogadores para obter vantagem indevida.\n\n**Inclui:**\n- Manipulação abusiva de valores;\n- Exploração de jogadores iniciantes;\n- Transferências financeiras incompatíveis com o RP;\n- Abuso de sistemas de venda ou negociação;\n- Qualquer exploração deliberada de falhas econômicas.",
               "tag": "ECONOMIA"
@@ -360,6 +409,12 @@
               "title": "Safe Zone",
               "text": "Dentro de uma Safe Zone, não é permitido **iniciar ações criminosas ou hostis**.\n\n**É proibido:**\n- Assaltar;\n- Sequestrar;\n- Roubar;\n- Sacar armas com intenção hostil;\n- Matar;\n- Iniciar abordagens criminosas.\n\n> ℹ️ OBSERVAÇÃO\n> Situações especificamente autorizadas pelas regras da cidade poderão possuir tratamento diferente.",
               "tag": "ZONAS"
+            },
+            {
+              "title": "Full Safe Zone",
+              "text": "Áreas classificadas como **Full Safe Zone** possuem proteção máxima e não podem ser utilizadas para iniciar ou finalizar ações criminosas ou hostis.\n\n**É proibido:**\n- Dar voz de assalto;\n- Sequestrar;\n- Atacar ou executar jogadores;\n- Iniciar confronto;\n- Utilizar a área para obter vantagem em uma ação.\n\n> ℹ️ **OBSERVAÇÃO**\n> Hospital e Departamento Policial poderão possuir tratamento de Full Safe conforme a configuração oficial da cidade.",
+              "tag": "ZONAS",
+              "code": "04.02"
             }
           ]
         },
@@ -372,7 +427,7 @@
               "title": "Territórios e Áreas de Risco",
               "text": "Sedes, favelas, farms e demais áreas controladas por organizações podem possuir risco elevado, mas isso não autoriza ações sem contexto ou quebra das demais regras.\n\n**Não é permitido:**\n- Permanecer escondido apenas aguardando vítimas;\n- Utilizar a área como justificativa automática para RDM;\n- Criar conflitos aleatórios sem construção de RP.\n\n> ℹ️ **OBSERVAÇÃO**\n> Área de risco não significa ausência de regras.",
               "tag": "FACÇÃO",
-              "code": "04.02"
+              "code": "04.03"
             }
           ]
         }
@@ -947,34 +1002,12 @@
               "title": "Bandeira Preta",
               "text": "Banimento aplicado em infrações graves, reincidência ou situações previstas pela administração.",
               "tag": "PUNIÇÃO"
-            }
-          ]
-        }
-      ],
-      "rules": []
-    },
-    {
-      "id": "complementares",
-      "code": "13",
-      "name": "ARQUIVO DA RUA",
-      "short": "Regras Complementares",
-      "desc": "Regras já existentes na base da Viena que não se encaixaram nas seções anteriores.",
-      "subcategories": [
-        {
-          "id": "complementares",
-          "name": "Complementares",
-          "icon": "📌",
-          "rules": [
-            {
-              "title": "Prefácio",
-              "text": "✨ Sejam muito bem-vindos à Viena Roleplay! ✨\nAqui, cada história tem valor, cada encontro pode se tornar inesquecível e cada novo começo carrega a chance de construir algo único. Nosso objetivo é oferecer um ambiente acolhedor, envolvente e cheio de possibilidades, onde o respeito, a criatividade e a boa convivência caminham lado a lado.\n\nPermitam-se viver cada momento com intensidade, interpretar com alma e enxergar Viena como um mundo vivo, feito por pessoas que desejam criar conexões, experiências e memórias verdadeiras. Conversem, façam amizades, descubram caminhos, superem desafios e ajudem a construir a essência que torna a Viena Roleplay tão especial.\n\nAs regras da Viena Roleplay são atualizadas periodicamente, fiquem sempre atentos às abas de Atualizações e Avisos. É lá que vocês encontrarão todas as informações necessárias para manter a harmonia, a organização e a melhor experiência possível para todos os jogadores.\n\nQue a sua vida na Viena seja marcada por grandes histórias, bons encontros, emoções sinceras e momentos que façam sua jornada valer a pena do começo ao fim.\n\nValorizem o respeito, saibam ouvir, convivam com empatia e façam da sua história algo bonito de viver.\n✨ O INÍCIO DE UMA NOVA HISTÓRIA ✨",
-              "tag": "Apresentação",
-              "code": "13.01"
             },
             {
-              "title": "Considerações Finais",
-              "text": "A Viena busca proporcionar um ambiente onde o RP seja construído de forma **justa, coerente e divertida para todos**.\n\nConhecer as regras é responsabilidade de cada cidadão.\n\nJogue com bom senso, respeite os demais jogadores e, principalmente, construa RP.\n\n> ✅ PERMITIDO\n> Criatividade, intensidade e boas histórias são sempre bem-vindas quando respeitam os limites da cidade e proporcionam uma experiência positiva para todos.\n\n🌸 **VIENA**\n**Sua história começa aqui.**",
-              "code": "13.02"
+              "title": "Critério de Punição",
+              "text": "A punição aplicada pela Administração considera **contexto, intenção, gravidade, impacto no RP e reincidência**.\n\nUma situação poderá resultar em advertência, suspensão, remoção de benefício, banimento temporário ou permanente, conforme o caso.\n\n> ⚠️ **ATENÇÃO**\n> A ausência de uma punição fixa escrita ao lado de uma regra não significa ausência de penalidade. A decisão será fundamentada na infração e nas evidências analisadas.",
+              "tag": "PUNIÇÃO",
+              "code": "12.07"
             }
           ]
         }
@@ -983,6 +1016,12 @@
     }
   ],
   "updates": [
+    {
+      "date": "27 AGO 2026",
+      "title": "Organização do Código da Rua",
+      "text": "Menu sanfonado revisado, categoria complementar incorporada ao prefácio e regras de personagem adicionadas.",
+      "tag": "REGRAS"
+    },
     {
       "date": "27 AGO 2026",
       "title": "Reorganização Geral",
