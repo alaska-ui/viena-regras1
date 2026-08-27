@@ -1618,3 +1618,183 @@ footer{
     align-items:flex-start;
   }
 }
+
+
+/* =========================================================
+   VIENA — SIDEBAR MAIOR V6
+   Mais presença visual sem perder a organização sanfonada.
+========================================================= */
+
+:root{
+  --sidebar-width: 285px;
+}
+
+/* Sidebar mais larga */
+.sidebar{
+  width:var(--sidebar-width) !important;
+  padding:26px 16px 14px !important;
+}
+
+/* Ajusta o conteúdo principal para acompanhar a nova largura */
+.content{
+  margin-left:var(--sidebar-width) !important;
+}
+
+.topbar{
+  padding-left:18px !important;
+}
+
+/* Label superior */
+.side-label{
+  font-size:11px !important;
+  letter-spacing:2.2px !important;
+  margin-bottom:4px !important;
+}
+
+/* Categoria principal */
+.nav-category-row{
+  min-height:48px !important;
+}
+
+.nav-category-main{
+  min-height:48px !important;
+  padding:12px 8px 12px 8px !important;
+  font-size:13px !important;
+  line-height:1.25 !important;
+  letter-spacing:.05px !important;
+}
+
+.nav-category-main span{
+  width:24px !important;
+  margin-right:10px !important;
+  font-size:11px !important;
+  opacity:.72 !important;
+}
+
+.nav-category-main b{
+  font-size:13px !important;
+  font-weight:760 !important;
+  letter-spacing:.08px !important;
+}
+
+.nav-category-toggle{
+  width:34px !important;
+  min-height:48px !important;
+  font-size:16px !important;
+  opacity:.8 !important;
+}
+
+/* Mais respiro entre categorias */
+.nav-category-group{
+  border-bottom:1px solid rgba(255,255,255,.045) !important;
+}
+
+.nav-category-group + .nav-category-group{
+  margin-top:1px !important;
+}
+
+/* Subcategorias maiores */
+.nav-subcategories{
+  margin:0 5px 10px 35px !important;
+  padding:5px 0 5px 12px !important;
+  border-left:1px solid #303030 !important;
+}
+
+.nav-subcategory-link{
+  min-height:40px !important;
+  padding:9px 7px !important;
+  grid-template-columns:22px minmax(0,1fr) !important;
+  gap:8px !important;
+  font-size:12px !important;
+  font-weight:680 !important;
+  line-height:1.25 !important;
+}
+
+.nav-sub-icon{
+  font-size:14px !important;
+}
+
+.nav-sub-name{
+  font-size:12px !important;
+  line-height:1.3 !important;
+}
+
+/* Conheça Viena / primeira categoria */
+.nav-category-group:first-child .nav-category-main{
+  min-height:58px !important;
+}
+
+.nav-category-group:first-child .nav-category-main b{
+  font-size:13px !important;
+  line-height:1.2 !important;
+}
+
+/* Rodapé mais legível */
+.side-footer{
+  font-size:10px !important;
+  letter-spacing:1.2px !important;
+  padding:16px 4px 4px !important;
+}
+
+.side-footer strong{
+  font-size:11px !important;
+  letter-spacing:1.3px !important;
+}
+
+/* Scroll um pouco mais visível */
+.sidebar nav{
+  padding-right:6px !important;
+}
+
+.sidebar nav::-webkit-scrollbar{
+  width:6px !important;
+}
+
+.sidebar nav::-webkit-scrollbar-thumb{
+  background:#3a3a3a !important;
+}
+
+/* Evita corte em títulos longos */
+.nav-category-main b,
+.nav-sub-name{
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+}
+
+/* Desktop menor */
+@media(max-width:1200px){
+  :root{
+    --sidebar-width: 270px;
+  }
+
+  .nav-category-main,
+  .nav-category-main b{
+    font-size:12.5px !important;
+  }
+}
+
+/* Mobile volta a ocupar a largura apropriada */
+@media(max-width:900px){
+  :root{
+    --sidebar-width: 290px;
+  }
+
+  .sidebar{
+    width:min(86vw,var(--sidebar-width)) !important;
+  }
+
+  .content{
+    margin-left:0 !important;
+  }
+
+  .nav-category-main,
+  .nav-category-main b{
+    font-size:13px !important;
+  }
+
+  .nav-subcategory-link,
+  .nav-sub-name{
+    font-size:12px !important;
+  }
+}
