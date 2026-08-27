@@ -284,6 +284,8 @@ async function load(){
   applySite();
   renderNav();
   renderHome();
+  renderSearchTagFilters("page");
+  renderSearchTagFilters("overlay");
   setupCursor();
   setupFallingLetters();
 
@@ -690,13 +692,26 @@ function renderCategory(id){
     tocItems.push({domIndex,code,title:title || "Regra"});
 
     return `
-      <article class="rule" id="rule-${domIndex}">
+      <article
+        class="rule"
+        id="rule-${domIndex}"
+        data-rule-code="${escapeAttr(code)}"
+        data-rule-title="${escapeAttr(title)}"
+        data-rule-tag="${escapeAttr(tag)}"
+      >
         <div class="rule-top">
           <div class="rule-num">${escapeHtml(code)}</div>
           <div class="rule-content">
             ${title ? `<h3>${escapeHtml(title)}</h3>` : ""}
             ${text ? `<div class="rule-markdown">${renderMarkdown(text)}</div>` : ""}
-            ${tag ? `<span class="tag">${escapeHtml(tag)}</span>` : ""}
+            ${tag ? `
+              <button
+                type="button"
+                class="tag rule-tag-button"
+                data-search-tag="${escapeAttr(tag)}"
+                title="Pesquisar regras com a tag ${escapeAttr(tag)}"
+              >${escapeHtml(tag)}</button>
+            ` : ""}
             ${image ? `<img class="rule-image" src="${escapeAttr(image)}" alt="" loading="lazy" onerror="this.style.display='none'">` : ""}
           </div>
         </div>
@@ -854,16 +869,168 @@ function renderCategoryNavigation(currentIndex){
 }
 
 /* =========================================================
-   PESQUISA
+   PESQUISA — TEXTO + FILTRO POR TAG
 ========================================================= */
 
-function search(query,target){
+const searchState = {
+  pageTag:"",
+  overlayTag:""
+};
+
+function normalizedTag(value){
+  return String(value || "").trim().toLowerCase();
+}
+
+function allTags(){
+  const map = new Map();
+
+  allRules().forEach(rule => {
+    const raw = String(rule.tag || "").trim();
+    if(!raw) return;
+
+    const key = normalizedTag(raw);
+
+    if(!map.has(key)){
+      map.set(key,raw);
+    }
+  });
+
+  return [...map.values()].sort((a,b) =>
+    a.localeCompare(b,"pt-BR",{sensitivity:"base"})
+  );
+}
+
+function ensureTagFilters(inputId,containerId,mode){
+  const input = $(inputId);
+  if(!input) return null;
+
+  let container = $(containerId);
+
+  if(!container){
+    container = document.createElement("div");
+    container.id = containerId;
+    container.className = "search-tag-filters";
+    container.dataset.searchMode = mode;
+    input.insertAdjacentElement("afterend",container);
+  }
+
+  return container;
+}
+
+function selectedSearchTag(mode){
+  return mode === "overlay"
+    ? searchState.overlayTag
+    : searchState.pageTag;
+}
+
+function setSelectedSearchTag(mode,value){
+  if(mode === "overlay"){
+    searchState.overlayTag = value || "";
+  }else{
+    searchState.pageTag = value || "";
+  }
+}
+
+function renderSearchTagFilters(mode = "page"){
+  const overlay = mode === "overlay";
+
+  const container = ensureTagFilters(
+    overlay ? "overlaySearch" : "searchInput",
+    overlay ? "overlayTagFilters" : "searchTagFilters",
+    mode
+  );
+
+  if(!container) return;
+
+  const current = selectedSearchTag(mode);
+  const tags = allTags();
+
+  container.innerHTML = `
+    <button
+      type="button"
+      class="search-tag-chip ${!current ? "active" : ""}"
+      data-filter-tag=""
+      data-filter-mode="${escapeAttr(mode)}"
+    >
+      TODAS
+    </button>
+
+    ${tags.map(tag => `
+      <button
+        type="button"
+        class="search-tag-chip ${
+          normalizedTag(current) === normalizedTag(tag)
+            ? "active"
+            : ""
+        }"
+        data-filter-tag="${escapeAttr(tag)}"
+        data-filter-mode="${escapeAttr(mode)}"
+      >
+        ${escapeHtml(tag)}
+      </button>
+    `).join("")}
+  `;
+}
+
+function resultPlainText(value){
+  return String(value || "")
+    .replace(/[#>*_`]/g,"")
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+function locateSearchResult(rule){
+  const routeId = categoryId(rule.cat,rule.catIndex);
+  route(routeId);
+  history.replaceState(null,"","#" + routeId);
+
+  setTimeout(() => {
+    const categoryPage = $("categoryPage");
+    if(!categoryPage) return;
+
+    const articles = [...categoryPage.querySelectorAll(".rule")];
+
+    const target = articles.find(article => {
+      const sameCode =
+        String(article.dataset.ruleCode || "") ===
+        String(rule.code || "");
+
+      const sameTitle =
+        String(article.dataset.ruleTitle || "") ===
+        String(rule.title || "");
+
+      return sameCode && sameTitle;
+    });
+
+    if(target){
+      target.scrollIntoView({
+        behavior:"smooth",
+        block:"center"
+      });
+
+      target.classList.add("search-hit");
+
+      setTimeout(() => {
+        target.classList.remove("search-hit");
+      },1800);
+    }
+  },100);
+}
+
+function search(query,target,mode = "page"){
   if(!target) return;
 
   const q = String(query || "").trim().toLowerCase();
+  const selectedTag = selectedSearchTag(mode);
+  const selectedTagNormalized = normalizedTag(selectedTag);
 
-  if(!q){
-    target.innerHTML = "";
+  if(!q && !selectedTagNormalized){
+    target.innerHTML = `
+      <div class="search-empty-state">
+        <strong>PESQUISE PELO NOME OU ESCOLHA UMA TAG</strong>
+        <p>Você pode combinar texto + tag para encontrar uma regra específica.</p>
+      </div>
+    `;
     return;
   }
 
@@ -880,53 +1047,148 @@ function search(query,target){
         ${rule.tag || ""}
       `.toLowerCase();
 
-      return searchable.includes(q);
+      const matchesText =
+        !q || searchable.includes(q);
+
+      const matchesTag =
+        !selectedTagNormalized ||
+        normalizedTag(rule.tag) === selectedTagNormalized;
+
+      return matchesText && matchesTag;
     })
-    .slice(0,30);
+    .slice(0,60);
 
   target.innerHTML = results.length
-    ? results.map(rule => {
+    ? `
+      <div class="search-summary">
+        <strong>${results.length} ${results.length === 1 ? "REGRA ENCONTRADA" : "REGRAS ENCONTRADAS"}</strong>
+        ${
+          selectedTag
+            ? `<span>TAG: ${escapeHtml(selectedTag)}</span>`
+            : ""
+        }
+      </div>
+
+      ${results.map((rule,index) => {
         const routeId = categoryId(rule.cat,rule.catIndex);
 
         return `
-          <div class="result" data-route="${escapeAttr(routeId)}">
-            <small>
-              ${escapeHtml(
-                rule.cat.short || rule.cat.name || ""
-              )}${rule.sub ? ` › ${escapeHtml(rule.sub.name || rule.sub.title || "")}` : ""}
-              ·
-              ${escapeHtml(
-                rule.code ||
-                rule.cat.code ||
-                ""
-              )}
-            </small>
+          <button
+            type="button"
+            class="result"
+            data-search-result="${index}"
+            data-search-mode="${escapeAttr(mode)}"
+          >
+            <div class="result-path">
+              <small>
+                ${escapeHtml(rule.cat.short || rule.cat.name || "")}
+                ${
+                  rule.sub
+                    ? ` › ${escapeHtml(rule.sub.name || rule.sub.title || "")}`
+                    : ""
+                }
+                ·
+                ${escapeHtml(rule.code || rule.cat.code || "")}
+              </small>
+
+              ${
+                rule.tag
+                  ? `<span class="result-tag">${escapeHtml(rule.tag)}</span>`
+                  : ""
+              }
+            </div>
 
             <h3>${escapeHtml(rule.title || "")}</h3>
 
             <p>${escapeHtml(
-              String(rule.text || "")
-                .replace(/[#>*_`]/g,"")
-                .slice(0,240)
+              resultPlainText(rule.text).slice(0,240)
             )}</p>
-          </div>
+
+            <span class="result-open">ABRIR REGRA →</span>
+          </button>
         `;
-      }).join("")
+      }).join("")}
+    `
     : `
-      <div class="result">
-        <h3>Nenhuma regra encontrada.</h3>
-        <p>Tente outra palavra.</p>
+      <div class="search-empty-state">
+        <strong>NENHUMA REGRA ENCONTRADA</strong>
+        <p>Tente outra palavra ou selecione uma tag diferente.</p>
       </div>
     `;
 
-  target.querySelectorAll("[data-route]").forEach(result => {
-    result.addEventListener("click",() => {
-      const routeId = result.dataset.route;
-      route(routeId);
-      history.replaceState(null,"","#" + routeId);
+  target.querySelectorAll("[data-search-result]").forEach(button => {
+    button.addEventListener("click",() => {
+      const index = Number(button.dataset.searchResult);
+      const resultsAgain = allRules()
+        .filter(rule => {
+          const searchable = `
+            ${rule.cat?.short || ""}
+            ${rule.cat?.name || ""}
+            ${rule.cat?.code || ""}
+            ${rule.sub?.name || rule.sub?.title || ""}
+            ${rule.code || ""}
+            ${rule.title || ""}
+            ${rule.text || ""}
+            ${rule.tag || ""}
+          `.toLowerCase();
+
+          const matchesText =
+            !q || searchable.includes(q);
+
+          const matchesTag =
+            !selectedTagNormalized ||
+            normalizedTag(rule.tag) === selectedTagNormalized;
+
+          return matchesText && matchesTag;
+        })
+        .slice(0,60);
+
+      const rule = resultsAgain[index];
+      if(!rule) return;
+
+      $("searchOverlay")?.classList.remove("open");
+      locateSearchResult(rule);
     });
   });
 }
+
+function refreshSearch(mode){
+  const overlay = mode === "overlay";
+
+  renderSearchTagFilters(mode);
+
+  search(
+    overlay
+      ? $("overlaySearch")?.value
+      : $("searchInput")?.value,
+    overlay
+      ? $("overlayResults")
+      : $("searchResults"),
+    mode
+  );
+}
+
+function openSearchByTag(tag){
+  const value = String(tag || "").trim();
+  if(!value) return;
+
+  searchState.overlayTag = value;
+
+  if($("overlaySearch")){
+    $("overlaySearch").value = "";
+  }
+
+  $("searchOverlay")?.classList.add("open");
+
+  renderSearchTagFilters("overlay");
+
+  search(
+    "",
+    $("overlayResults"),
+    "overlay"
+  );
+}
+
 
 /* =========================================================
    ROTAS
@@ -1013,6 +1275,15 @@ document.addEventListener("click",event => {
 
 $("searchOpen")?.addEventListener("click",() => {
   $("searchOverlay")?.classList.add("open");
+
+  renderSearchTagFilters("overlay");
+
+  search(
+    $("overlaySearch")?.value || "",
+    $("overlayResults"),
+    "overlay"
+  );
+
   $("overlaySearch")?.focus();
 });
 
@@ -1027,11 +1298,54 @@ $("searchOverlay")?.addEventListener("click",event => {
 });
 
 $("overlaySearch")?.addEventListener("input",event => {
-  search(event.target.value,$("overlayResults"));
+  search(
+    event.target.value,
+    $("overlayResults"),
+    "overlay"
+  );
 });
 
 $("searchInput")?.addEventListener("input",event => {
-  search(event.target.value,$("searchResults"));
+  search(
+    event.target.value,
+    $("searchResults"),
+    "page"
+  );
+});
+
+/* Clique nos filtros de tag */
+document.addEventListener("click",event => {
+  const chip = event.target.closest("[data-filter-tag]");
+
+  if(chip){
+    event.preventDefault();
+    event.stopPropagation();
+
+    const mode =
+      chip.dataset.filterMode === "overlay"
+        ? "overlay"
+        : "page";
+
+    setSelectedSearchTag(
+      mode,
+      chip.dataset.filterTag || ""
+    );
+
+    refreshSearch(mode);
+    return;
+  }
+
+  /* A própria tag no final de cada regra vira um atalho de busca. */
+  const ruleTag = event.target.closest("[data-search-tag]");
+
+  if(ruleTag){
+    event.preventDefault();
+    event.stopPropagation();
+
+    openSearchByTag(
+      ruleTag.dataset.searchTag
+    );
+  }
 });
 
 document.addEventListener("keydown",event => {
