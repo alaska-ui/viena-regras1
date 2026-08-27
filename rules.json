@@ -1027,6 +1027,48 @@
               "text": "O valor de **unban** acompanha a quantidade de banimentos anteriores do jogador. Em reincidência, o valor é multiplicado pela quantidade correspondente.\n\nA retirada de **advertência** segue a mesma lógica: o valor considera quantas vezes o jogador já foi advertido.\n\n**Exemplo:** na segunda ocorrência, o valor correspondente é multiplicado por **2**.\n\n> ⏱️ **PRAZO**\n> A advertência poderá ser retirada dentro do prazo de **1 semana**.\n\n> 🚫 **BLOQUEIO**\n> Não é permitido retirar uma advertência enquanto o jogador estiver sendo denunciado.",
               "tag": "PUNIÇÃO",
               "code": "12.07"
+            },
+            {
+              "title": "Ilha — Medida Administrativa",
+              "text": "A **Ilha** é uma medida administrativa da Viena utilizada em situações definidas pela Staff.\n\nEla pode ser aplicada sozinha ou em conjunto com **advertência, banimento ou outra consequência**, conforme a infração e o histórico do jogador.\n\n> 🏝️ **IMPORTANTE**\n> Cumprir ou retirar a Ilha não apaga automaticamente outras punições vinculadas ao caso.",
+              "tag": "ILHA",
+              "code": "12.08"
+            },
+            {
+              "title": "Tempo de Ilha",
+              "text": "Os tempos abaixo são uma **base inicial da Viena** e ficam totalmente editáveis pelo painel de regras.\n\n| CLASSIFICAÇÃO | TEMPO |\n| --- | ---: |\n| **Leve** | **30 minutos** |\n| **Moderada** | **1 hora** |\n| **Grave** | **2 horas** |\n| **Reincidência** | **Definido pela Administração** |\n\n> ✏️ **EDITÁVEL**\n> A Administração pode alterar nomes, tempos e critérios diretamente no conteúdo desta regra, sem precisar modificar o código do site.",
+              "tag": "ILHA",
+              "code": "12.09"
+            },
+            {
+              "title": "Cumprimento da Ilha",
+              "text": "Durante a punição é proibido utilizar meios para evitar ou reduzir artificialmente o período determinado.\n\n**Não é permitido:**\n- utilizar outro personagem para contornar a punição;\n- explorar bugs ou falhas para sair da Ilha;\n- solicitar ajuda externa para burlar o sistema;\n- manipular qualquer mecânica com a intenção de evitar a medida.\n\nFalhas técnicas legítimas devem ser comunicadas à Staff.",
+              "tag": "ILHA",
+              "code": "12.10"
+            },
+            {
+              "title": "Evasão, Crash e Tentativa de Burlar",
+              "text": "Crashar, perder conexão ou sair da cidade **não remove automaticamente a Ilha**.\n\nQuando houver falha legítima, o jogador deverá retornar e continuar o cumprimento conforme orientação administrativa.\n\n> ❌ **EVASÃO DE PUNIÇÃO**\n> Tentativa intencional de escapar ou manipular a punição poderá gerar **agravamento, nova medida administrativa ou advertência**.",
+              "tag": "ILHA",
+              "code": "12.11"
+            },
+            {
+              "title": "Retirada de Ilha",
+              "text": "Quando disponível oficialmente, o benefício de **Retirada de Ilha** remove apenas a medida de permanência na Ilha, observadas as condições administrativas vigentes.\n\n**A retirada não apaga automaticamente:**\n- advertências;\n- banimentos;\n- histórico disciplinar;\n- outras consequências vinculadas à ocorrência.\n\n> 🚫 A Administração poderá bloquear a retirada em casos sob investigação ou em situações excepcionais.",
+              "tag": "ILHA",
+              "code": "12.12"
+            },
+            {
+              "title": "Meses de Prisão",
+              "text": "Além das punições administrativas, determinadas ocorrências de RP podem gerar **meses de prisão**. Os valores abaixo ficam como base **editável** para a Viena.\n\n| SITUAÇÃO | MESES |\n| --- | ---: |\n| **Pena-base da ocorrência** | **Definida pela ação/regra específica** |\n| **Agravantes de RP** | **Somados à pena-base** |\n| **Anti-RP durante ação** | **Até 300 meses** |\n\n> ⛓️ **ATENÇÃO**\n> O limite de **até 300 meses para Anti-RP em ações** segue a referência utilizada nas regras da Sakura. Os demais meses devem ser definidos nas regras específicas de cada ação da Viena.",
+              "tag": "PRISÃO",
+              "code": "12.13"
+            },
+            {
+              "title": "Meses — Agravantes",
+              "text": "Quando a própria ação possuir uma pena pré-definida, agravantes cometidos durante o RP poderão ser **somados aos meses da ocorrência**, conforme a regra específica e a análise da situação.\n\nIsso permite que cada ação da Viena tenha seus próprios valores de **multa + meses**, sem deixar números fixos presos ao código do site.\n\n> ✏️ **EDITÁVEL**\n> Quando criarmos Banco, Joalheria, Sequestro, Helicrash e demais ações, os meses de cada uma poderão ser cadastrados e alterados individualmente.",
+              "tag": "PRISÃO",
+              "code": "12.14"
             }
           ]
         },
@@ -1039,25 +1081,25 @@
               "title": "Prazo para Denunciar",
               "text": "O denunciante possui **até 24 horas após o ocorrido** para registrar a denúncia pelos canais oficiais da Viena.\n\n> ⚠️ **ATENÇÃO**\n> Denúncias enviadas fora do prazo poderão ser encerradas sem análise, salvo situações excepcionais avaliadas pela Administração.",
               "tag": "DENÚNCIA",
-              "code": "12.08"
+              "code": "12.15"
             },
             {
               "title": "Requisitos da Denúncia",
               "text": "A denúncia deve ser clara, objetiva e permitir a identificação da situação analisada.\n\n**É necessário apresentar:**\n- ID do denunciado no clipe e no atendimento;\n- Áudio do **microfone + jogo**;\n- Contexto suficiente da ocorrência;\n- O máximo possível de provas relacionadas ao fato;\n- Solicitação de devolução de itens, quando houver.\n\n> 🎥 **CONTEXTO**\n> Como referência, envie clipes contendo aproximadamente **30 a 60 segundos anteriores** ao encerramento da ação. Em discussões, a gravação deve demonstrar o início e o fim do conflito.",
               "tag": "PROVA",
-              "code": "12.09"
+              "code": "12.16"
             },
             {
               "title": "Denúncia Própria",
               "text": "A denúncia deve partir de quem foi diretamente envolvido ou prejudicado pela situação apresentada.\n\n> ℹ️ **OBSERVAÇÃO**\n> Denúncias abertas somente a partir da visão de um terceiro que presenciou outra pessoa sofrendo uma quebra de regra não serão consideradas válidas.",
               "tag": "DENÚNCIA",
-              "code": "12.10"
+              "code": "12.17"
             },
             {
               "title": "Conduta no Ticket",
               "text": "Denunciante e denunciado devem manter **coerência, respeito e empatia** durante todo o atendimento.\n\nDiscussões, provocações, ofensas ou tentativas de transformar o ticket em conflito pessoal podem gerar medida administrativa própria.",
               "tag": "ATENDIMENTO",
-              "code": "12.11"
+              "code": "12.18"
             }
           ]
         },
@@ -1070,31 +1112,31 @@
               "title": "Contra-Prova",
               "text": "O denunciado possui **24 horas após o ocorrido** para apresentar sua contra-prova quando ela for necessária à análise.",
               "tag": "PROVA",
-              "code": "12.12"
+              "code": "12.19"
             },
             {
               "title": "Integridade das Provas",
               "text": "Vídeos deliberadamente cortados, editados, forjados ou manipulados para prejudicar outro jogador poderão invalidar a denúncia.\n\n> ❌ **PROIBIDO**\n> Manipular evidências ou omitir propositalmente partes essenciais do contexto pode resultar em advertência ao responsável.",
               "tag": "PROVA",
-              "code": "12.13"
+              "code": "12.20"
             },
             {
               "title": "Tela de Morto",
               "text": "Denúncias apresentadas apenas com **tela de morto**, sem elementos suficientes para demonstrar a quebra de regra, não serão utilizadas para aplicação de punição.",
               "tag": "PROVA",
-              "code": "12.14"
+              "code": "12.21"
             },
             {
               "title": "Logs e Identificação",
               "text": "Em ocorrências envolvendo morte ou dano, a Staff poderá consultar os **logs do servidor** para auxiliar na identificação dos envolvidos.\n\nEm situações de Dark RP, a Administração também poderá utilizar elementos disponíveis no próprio servidor, como voz ou personagem, quando necessários à apuração.",
               "tag": "ANÁLISE",
-              "code": "12.15"
+              "code": "12.22"
             },
             {
               "title": "Análise Integral",
               "text": "Toda denúncia será analisada de forma imparcial e considerando o contexto completo.\n\n> ⚖️ **VALE PARA OS DOIS LADOS**\n> Se as provas demonstrarem que o próprio denunciante também quebrou uma regra durante a ocorrência, ele poderá ser punido independentemente de ter sido quem abriu a denúncia.",
               "tag": "ANÁLISE",
-              "code": "12.16"
+              "code": "12.23"
             }
           ]
         },
@@ -1107,25 +1149,25 @@
               "title": "Prazo para Veredito",
               "text": "Após o envio das provas e contra-provas necessárias, o responsável pelo atendimento possui **até 48 horas** para apresentar o veredito final.",
               "tag": "ADMINISTRAÇÃO",
-              "code": "12.17"
+              "code": "12.24"
             },
             {
               "title": "Não Existe Pacificação",
               "text": "Uma quebra de regra comprovada não deixa de existir porque denunciante e denunciado decidiram se resolver posteriormente. Quando a ocorrência já estiver sob análise administrativa, caberá à Staff determinar o procedimento aplicável.",
               "tag": "ADMINISTRAÇÃO",
-              "code": "12.18"
+              "code": "12.25"
             },
             {
               "title": "Denúncias sem Fundamento",
               "text": "Denúncias criadas com a intenção de prejudicar outro jogador, sem fundamento legítimo ou sem respeito ao sistema administrativo poderão ser recusadas.\n\n> ❌ **MÁ-FÉ**\n> Quando comprovada tentativa deliberada de manipular o sistema de denúncias, o responsável poderá receber punição.",
               "tag": "CONDUTA",
-              "code": "12.19"
+              "code": "12.26"
             },
             {
               "title": "Advertência de Facção",
               "text": "Uma advertência de facção poderá ser aplicada quando **4 ou mais membros** estiverem diretamente envolvidos na mesma quebra de conduta.\n\nPara caracterização coletiva, os envolvidos devem ter contribuído ativamente para a infração.\n\n> ⚠️ **ATENÇÃO**\n> Situações excepcionais poderão receber avaliação administrativa específica conforme o contexto.",
               "tag": "FACÇÃO",
-              "code": "12.20"
+              "code": "12.27"
             }
           ]
         }
@@ -1134,6 +1176,12 @@
     }
   ],
   "updates": [
+    {
+      "date": "27 AGO 2026",
+      "title": "Ilha & Meses",
+      "text": "Sistema de Ilha e estrutura de meses de prisão adicionados ao Tribunal da Rua com valores editáveis.",
+      "tag": "PUNIÇÕES"
+    },
     {
       "date": "27 AGO 2026",
       "title": "Tribunal da Rua",
